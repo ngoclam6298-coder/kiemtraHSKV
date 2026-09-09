@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "name": "kiem-tra-hskv",
+  "cleanUrls": true,
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

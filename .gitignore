@@ -1,0 +1,27 @@
+# Development and scratch scripts
+*.py
+*.pyc
+__pycache__/
+*.csv
+!data/**/*.csv
+sample_*.csv
+data_csv/
+*.txt
+doc1.html
+all_sheets.json
+scratch*
+
+# Git portable / tools
+.mingit/
+*.zip
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Vercel / Node
+.vercel/
+node_modules/
+npm-debug.log*
