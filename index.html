@@ -642,11 +642,21 @@
             </select>
           </div>
 
-          <!-- 2. Trạm Đích -->
-          <div class="insert-form-group">
-            <label for="insertQueueTargetStation">🎯 2. Chọn Trạm Đích (Đúng ranh lưới điện):</label>
-            <select id="insertQueueTargetStation" class="form-control">
-              <option value="">-- Chọn Trạm Biến Áp Đích (Tùy chọn) --</option>
+          <!-- 2. Trạm Đích (Tìm kiếm theo ID hoặc Tên trạm) -->
+          <div class="insert-form-group target-station-search-wrapper">
+            <label for="insertQueueTargetSearchInput">🎯 2. Chọn Trạm Đích (Tìm theo ID hoặc Tên trạm):</label>
+            <div class="custom-search-select-box">
+              <input type="text" id="insertQueueTargetSearchInput" class="form-control"
+                placeholder="🔍 Gõ mã ID hoặc tên trạm đích..." autocomplete="off">
+              <button type="button" class="btn-clear-target" id="btnClearTargetStation" style="display: none;" title="Xóa chọn trạm đích">✕</button>
+            </div>
+            <!-- Dropdown kết quả tìm kiếm theo ID hoặc Tên trạm -->
+            <div class="target-station-dropdown-menu" id="targetStationDropdownMenu">
+              <!-- Loaded dynamically via JS -->
+            </div>
+            <!-- Hidden select để đồng bộ dữ liệu trạm đích -->
+            <select id="insertQueueTargetStation" style="display: none;">
+              <option value="">-- Chưa chọn trạm biến áp đích --</option>
             </select>
           </div>
 

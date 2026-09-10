@@ -31,7 +31,8 @@
       result: null
     },
     confirmedReinspectionStationIds: new Set(),
-    pendingReinspectionContext: null
+    pendingReinspectionContext: null,
+    selectedTargetStation: null
   };
 
   // Khởi tạo và nạp dữ liệu từ localStorage, tự động đồng bộ từ Google Sheet hàng chờ (gid: 71925172)
@@ -1491,14 +1492,230 @@
   }
 
   // ==========================================================================
-  // TAB 4: HÀNG CHỜ KHÁCH HÀNG ĐỀ XUẤT CHUYỂN TRẠM & ROLLOVER
   // ==========================================================================
+  // TAB 4: HÀNG CHỜ KHÁCH HÀNG ĐỀ XUẤT CHUYỂN TRẠM
+  // ==========================================================================
+
+  // Chuẩn hóa chuỗi tiếng Việt không dấu để tìm kiếm thông minh
+  function removeVietnameseTones(str) {
+    if (!str) return '';
+    str = String(str);
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+    str = str.replace(/đ/g, 'd');
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, 'A');
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, 'E');
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, 'I');
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, 'O');
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, 'U');
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, 'Y');
+    str = str.replace(/Đ/g, 'D');
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
+  // TÌM KIẾM TRẠM ĐÍCH THEO ID HOẶC TÊN TRẠM TRONG HÀNG CHỜ
+  let targetStationAutocompleteInitialized = false;
+
+  function initTargetStationAutocomplete() {
+    if (targetStationAutocompleteInitialized) return;
+
+    const input = document.getElementById('insertQueueTargetSearchInput');
+    const dropdown = document.getElementById('targetStationDropdownMenu');
+    const clearBtn = document.getElementById('btnClearTargetStation');
+    if (!input || !dropdown) return;
+
+    input.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
+      renderTargetStationSuggestions(val);
+    });
+
+    input.addEventListener('focus', () => {
+      renderTargetStationSuggestions(input.value);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdown.classList.remove('show');
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const items = dropdown.querySelectorAll('.target-dropdown-item');
+        if (items.length === 0) return;
+        let activeIdx = Array.from(items).findIndex(it => it.classList.contains('active'));
+        if (e.key === 'ArrowDown') {
+          activeIdx = (activeIdx + 1) % items.length;
+        } else {
+          activeIdx = (activeIdx - 1 + items.length) % items.length;
+        }
+        items.forEach((it, idx) => it.classList.toggle('active', idx === activeIdx));
+        if (items[activeIdx]) items[activeIdx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        const activeItem = dropdown.querySelector('.target-dropdown-item.active') || dropdown.querySelector('.target-dropdown-item');
+        if (activeItem) {
+          e.preventDefault();
+          const stationId = activeItem.getAttribute('data-id');
+          if (stationId) selectTargetStation(stationId);
+        }
+      }
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearTargetStationSearch();
+      });
+    }
+
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.target-station-search-wrapper')) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    targetStationAutocompleteInitialized = true;
+  }
+
+  function renderTargetStationSuggestions(query) {
+    const dropdown = document.getElementById('targetStationDropdownMenu');
+    if (!dropdown) return;
+
+    const allStations = getAllCompanyStations();
+    const qNorm = removeVietnameseTones(query || '').trim();
+
+    let matches = [];
+    if (!qNorm) {
+      // Khi ô tìm kiếm rỗng, hiển thị danh sách trạm nổi bật
+      matches = allStations.slice(0, 35);
+      dropdown.innerHTML = `
+        <div class="target-dropdown-header">
+          💡 Gõ mã ID hoặc tên trạm để tìm nhanh trong ${allStations.length.toLocaleString('vi-VN')} trạm:
+        </div>
+        ${matches.map((st, idx) => `
+          <div class="target-dropdown-item ${idx === 0 ? 'active' : ''}" 
+               data-id="${escapeHtml(st.station_id)}" 
+               onclick="window.AppController.selectTargetStation('${escapeHtml(st.station_id)}')">
+            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+              <span class="station-id-tag">[${escapeHtml(st.station_id)}]</span>
+              <span class="target-st-name">${escapeHtml(st.station_name)}</span>
+            </div>
+            <div class="target-st-meta">
+              <span>📍 ${escapeHtml(st.area)}</span>
+              ${st.loss_str ? `<span style="margin-left: 6px; font-weight: 600; color: #0284c7;">(${st.loss_str})</span>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      `;
+    } else {
+      // Lọc trạm theo ID hoặc Tên trạm (hỗ trợ cả có dấu và không dấu)
+      matches = allStations.filter(st => {
+        const idNorm = removeVietnameseTones(st.station_id || '');
+        const oldIdNorm = removeVietnameseTones(st.old_id || '');
+        const nameNorm = removeVietnameseTones(st.station_name || '');
+        const areaNorm = removeVietnameseTones(st.area || '');
+        return idNorm.includes(qNorm) || oldIdNorm.includes(qNorm) || nameNorm.includes(qNorm) || areaNorm.includes(qNorm);
+      }).slice(0, 45);
+
+      if (matches.length === 0) {
+        dropdown.innerHTML = `
+          <div class="target-dropdown-empty">
+            Không tìm thấy trạm nào khớp với từ khóa "<strong>${escapeHtml(query)}</strong>"<br>
+            <small style="color: #94a3b8;">Vui lòng thử gõ mã trạm ID (vd: 4301, 1501...) hoặc tên đường/khu vực.</small>
+          </div>
+        `;
+      } else {
+        dropdown.innerHTML = `
+          <div class="target-dropdown-header">
+            Tìm thấy <strong>${matches.length}</strong> trạm phù hợp theo ID / Tên:
+          </div>
+          ${matches.map((st, idx) => `
+            <div class="target-dropdown-item ${idx === 0 ? 'active' : ''}" 
+                 data-id="${escapeHtml(st.station_id)}" 
+                 onclick="window.AppController.selectTargetStation('${escapeHtml(st.station_id)}')">
+              <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                <span class="station-id-tag">[${escapeHtml(st.station_id)}]</span>
+                <span class="target-st-name">${escapeHtml(st.station_name)}</span>
+              </div>
+              <div class="target-st-meta">
+                <span>📍 ${escapeHtml(st.area)}</span>
+                ${st.loss_str ? `<span style="margin-left: 6px; font-weight: 600; color: #0284c7;">(${st.loss_str})</span>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        `;
+      }
+    }
+
+    dropdown.classList.add('show');
+  }
+
+  function selectTargetStation(stationId) {
+    const allStations = getAllCompanyStations();
+    const st = allStations.find(s => String(s.station_id) === String(stationId));
+    if (!st) return;
+
+    state.selectedTargetStation = st;
+
+    const input = document.getElementById('insertQueueTargetSearchInput');
+    const dropdown = document.getElementById('targetStationDropdownMenu');
+    const clearBtn = document.getElementById('btnClearTargetStation');
+    const tgtSelect = document.getElementById('insertQueueTargetStation');
+
+    if (input) {
+      input.value = `[${st.station_id}] ${st.station_name} (${st.area})`;
+    }
+    if (clearBtn) {
+      clearBtn.style.display = 'flex';
+    }
+    if (dropdown) {
+      dropdown.classList.remove('show');
+    }
+
+    if (tgtSelect) {
+      let opt = tgtSelect.querySelector(`option[value="${st.station_id}"]`);
+      if (!opt) {
+        opt = document.createElement('option');
+        opt.value = st.station_id;
+        tgtSelect.appendChild(opt);
+      }
+      opt.text = `[${st.station_id}] ${st.station_name} (${st.loss_str || '-'})`;
+      tgtSelect.value = st.station_id;
+    }
+
+    // Tự động gợi ý vào ô đề xuất nếu ô đề xuất đang trống hoặc mặc định
+    const dxInput = document.getElementById('insertQueueDeXuat');
+    if (dxInput && (!dxInput.value || dxInput.value.includes('Chuyển về đúng ranh') || dxInput.value.includes('trạm'))) {
+      dxInput.value = `Chuyển về trạm [${st.station_id}] ${st.station_name}`;
+    }
+  }
+
+  function clearTargetStationSearch() {
+    state.selectedTargetStation = null;
+    const input = document.getElementById('insertQueueTargetSearchInput');
+    const dropdown = document.getElementById('targetStationDropdownMenu');
+    const clearBtn = document.getElementById('btnClearTargetStation');
+    const tgtSelect = document.getElementById('insertQueueTargetStation');
+
+    if (input) {
+      input.value = '';
+    }
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (dropdown) dropdown.classList.remove('show');
+    if (tgtSelect) tgtSelect.value = '';
+  }
+
   let queueInsertBarInitialized = false;
 
   function initQueueInsertStationBar() {
+    initTargetStationAutocomplete();
+
     const srcSelect = document.getElementById('insertQueueSourceStation');
     const tgtSelect = document.getElementById('insertQueueTargetStation');
-    if (!srcSelect || !tgtSelect) return;
+    if (!srcSelect) return;
 
     if (queueInsertBarInitialized && srcSelect.options.length > 10) return;
 
@@ -1509,7 +1726,7 @@
       if (groups[ar]) groups[ar].push(st);
     });
 
-    let srcHtml = '<option value="">-- Chọn Trạm Biến Áp Nguồn Cần Insert --</option>';
+    let srcHtml = '<option value="">-- Chọn Trạm Biến Áp Nguồn Cần Thêm --</option>';
     let tgtHtml = '<option value="">-- Chọn Trạm Đích Nhận Ranh (Tùy chọn) --</option>';
 
     ['Phú Mỹ', 'Vũng Tàu', 'Bà Rịa'].forEach(areaName => {
@@ -1528,7 +1745,7 @@
     });
 
     srcSelect.innerHTML = srcHtml;
-    tgtSelect.innerHTML = tgtHtml;
+    if (tgtSelect) tgtSelect.innerHTML = tgtHtml;
     queueInsertBarInitialized = true;
   }
 
@@ -1578,7 +1795,7 @@
 
     const sourceId = srcSelect ? srcSelect.value : '';
     if (!sourceId) {
-      showToast('Vui lòng chọn Trạm Nguồn cần insert vào hàng chờ!', 'warning');
+      showToast('Vui lòng chọn Trạm Nguồn cần thêm vào hàng chờ!', 'warning');
       if (srcSelect) srcSelect.focus();
       return;
     }
@@ -1592,9 +1809,11 @@
       kh_count: 10
     };
 
-    const targetId = tgtSelect ? tgtSelect.value : '';
+    const targetId = (state.selectedTargetStation?.station_id) || (tgtSelect ? tgtSelect.value : '');
     let targetName = 'Chưa xác định trạm đích (Đang khảo sát)';
-    if (tgtSelect && tgtSelect.selectedIndex > 0) {
+    if (state.selectedTargetStation) {
+      targetName = `[${state.selectedTargetStation.station_id}] ${state.selectedTargetStation.station_name}`;
+    } else if (tgtSelect && tgtSelect.selectedIndex > 0) {
       targetName = tgtSelect.options[tgtSelect.selectedIndex].text;
     }
 
@@ -1698,10 +1917,11 @@
       showToast(`Đã thêm 1 dòng đại diện trạm [${sourceId}] vào hàng chờ!`, 'success');
     }
 
-    // Reset input trạm nguồn
+    // Reset input trạm nguồn và trạm đích
     if (srcSelect) srcSelect.value = '';
     const previewEl = document.getElementById('insertBarStationPreview');
     if (previewEl) previewEl.innerHTML = '';
+    clearTargetStationSearch();
   }
 
   function renderQueueTable() {
@@ -3128,6 +3348,14 @@
         localStorage.removeItem('evn_hang_cho_webhook_url');
         showToast('Đã xóa cấu hình Webhook URL.', 'info');
       }
+    },
+
+    selectTargetStation: function (stationId) {
+      selectTargetStation(stationId);
+    },
+
+    clearTargetStationSearch: function () {
+      clearTargetStationSearch();
     }
   };
 
