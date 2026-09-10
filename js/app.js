@@ -19,6 +19,8 @@
     sidebarCollapsed: false,
     selectedProposedStationId: null,
     selectedTransferKhIds: new Set(),
+    selectedStclStationId: null,
+    selectedStclTransferKhIds: new Set(),
     queue: [], // Lưu trữ hàng chờ khách hàng đề xuất chuyển trạm
     currentStationModal: null,
     simulation: {
@@ -268,6 +270,14 @@
   function getCurrentMonthStations() {
     const data = window.APP_DATA?.months_data || {};
     return data[state.selectedMonth] || [];
+  }
+
+  // Kiểm tra trạm có phải thuộc nghiệp vụ Sang Tải Chuyển Lưới (STCL - XDM)
+  function isStclStation(st) {
+    if (!st) return false;
+    const ct = (st.content_type || '').toLowerCase();
+    const name = (st.station_name || '').toLowerCase();
+    return ct.includes('sang tải') || ct.includes('stcl') || ct.includes('xdm') || ct.includes('xây dựng mới');
   }
 
   // ==========================================================================
@@ -556,11 +566,11 @@
   }
 
   // ==========================================================================
-  // TAB 2: NGHIỆP VỤ HIỆN TRƯỜNG - ĐỀ XUẤT TẤT CẢ TRẠM KIỂM TRA TRONG THÁNG
+  // TAB 2: NGHIỆP VỤ HIỆN TRƯỜNG - TRẠM TỔN THẤT BẤT THƯỜNG TRONG THÁNG
   // ==========================================================================
   function renderTabDinhKy() {
-    // Đề xuất tất cả các trạm đề xuất kiểm tra của tháng
-    const stations = getCurrentMonthStations();
+    // Lọc chỉ các trạm có tổn thất bất thường (loại trừ các trạm sang tải chuyển lưới)
+    const stations = getCurrentMonthStations().filter(st => !isStclStation(st));
 
     const monthBadge = document.getElementById('dinhKyMonthBadge');
     if (monthBadge) {
@@ -571,7 +581,7 @@
     if (!tbody) return;
 
     if (stations.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 24px; color: #94a3b8;">Không có trạm đề xuất kiểm tra nào trong ${getMonthName(state.selectedMonth)}.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 24px; color: #94a3b8;">Không có trạm tổn thất bất thường nào trong ${getMonthName(state.selectedMonth)}.</td></tr>`;
       const transferContainer = document.getElementById('stationCustomerTransferContainer');
       if (transferContainer) transferContainer.style.display = 'none';
       return;
@@ -586,15 +596,13 @@
 
       let catBadge = '';
       if (st.status_cat === 'negative') {
-        catBadge = '<span class="badge-status negative">Tổn thất âm (&lt; 0%)</span>';
+        catBadge = '<span class="badge-status negative">🔴 Tổn thất âm (&lt; 0%)</span>';
       } else if (st.status_cat === 'high') {
-        catBadge = '<span class="badge-status high">Tổn thất cao (&gt; 2.35%)</span>';
+        catBadge = '<span class="badge-status high">🟠 Tổn thất cao (&gt; 2.35%)</span>';
       } else if (st.status_cat === 'error') {
-        catBadge = '<span class="badge-status error">Mất ĐN (#DIV/0!)</span>';
-      } else if (st.content_type && st.content_type.includes('STCL')) {
-        catBadge = '<span class="badge-status high">Sang tải chuyển lưới</span>';
+        catBadge = '<span class="badge-status error">⚠️ Mất ĐN (#DIV/0!)</span>';
       } else {
-        catBadge = '<span class="badge-status good">Đề xuất định kỳ</span>';
+        catBadge = '<span class="badge-status good">Bất thường định kỳ</span>';
       }
 
       return `
@@ -857,37 +865,307 @@
   }
 
   // ==========================================================================
-  // TAB 3: SANG TẢI CHUYỂN LƯỚI & MÔ PHỎNG SANG TẢI
+  // TAB 3: NGHIỆP VỤ SANG TẢI CHUYỂN LƯỚI & MÔ PHỎNG SANG TẢI
   // ==========================================================================
   function renderTabSangTai() {
-    // 1. Danh sách trạm STCL-XDM hoặc bổ sung
-    const stations = getCurrentMonthStations().filter(st => 
-      st.content_type && st.content_type.includes('STCL')
-    );
+    // Lọc tất cả các trạm Sang Tải Chuyển Lưới (STCL - XDM) trong tháng
+    const stations = getCurrentMonthStations().filter(st => isStclStation(st));
+
+    const monthBadge = document.getElementById('sangTaiMonthBadge');
+    if (monthBadge) {
+      monthBadge.textContent = getMonthName(state.selectedMonth);
+    }
 
     const tbody = document.getElementById('sangTaiTableBody');
-    if (tbody) {
-      if (stations.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: #94a3b8;">Chưa có trạm sang tải chuyển lưới không định kỳ phát sinh trong tháng.</td></tr>`;
+    if (!tbody) return;
+
+    if (stations.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 28px; color: #64748b; line-height: 1.6;">
+        Không có trạm sang tải chuyển lưới (STCL - XDM) phát sinh trong ${getMonthName(state.selectedMonth)}.<br>
+        <small style="color: #94a3b8;">(Các tháng có trạm STCL trong dữ liệu: Tháng 7 [18 trạm], Tháng 8 [8 trạm], Tháng 9 [8 trạm]. Bạn có thể chọn tháng trên thanh tiêu đề để xem).</small>
+      </td></tr>`;
+      const transferContainer = document.getElementById('stclCustomerTransferContainer');
+      if (transferContainer) transferContainer.style.display = 'none';
+      return;
+    }
+
+    tbody.innerHTML = stations.map((st, idx) => {
+      const isSelected = state.selectedStclStationId === st.station_id;
+      let rowClass = isSelected ? 'row-selected' : '';
+
+      let catBadge = '<span class="badge-status high" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">⚡ Sang tải chuyển lưới</span>';
+      if (st.content_type && st.content_type.toLowerCase().includes('xây dựng mới')) {
+        catBadge = '<span class="badge-status high" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">🏗️ STCL - Xây dựng mới</span>';
+      } else if (st.content_type && st.content_type.includes('STCL')) {
+        catBadge = '<span class="badge-status high" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">⚡ Trạm STCL-XDM</span>';
+      }
+
+      const lossDisplay = (st.loss_str && st.loss_str.trim() !== '') ? st.loss_str : (st.loss_val ? (st.loss_val + '%') : 'Tiếp nhận phụ tải');
+
+      return `
+        <tr class="${rowClass}" id="stcl_row_${st.station_id}">
+          <td style="text-align: center;">
+            <input type="checkbox" class="stcl-station-cb" 
+              id="cb_stcl_${st.station_id}" 
+              value="${st.station_id}" 
+              ${isSelected ? 'checked' : ''}
+              onchange="window.AppController.onSelectStclStation('${st.station_id}', this.checked)"
+              style="width: 18px; height: 18px; cursor: pointer; accent-color: #d97706;">
+          </td>
+          <td>${idx + 1}</td>
+          <td><span class="station-id-tag" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">${st.station_id || 'Chưa mã'}</span></td>
+          <td>
+            <strong>${escapeHtml(st.station_name)}</strong>
+            <div style="font-size: 11px; color: #64748b;">${escapeHtml(st.content_type || 'Trạm STCL')}</div>
+          </td>
+          <td>${escapeHtml(getStationArea(st))}</td>
+          <td><strong style="color: #0d6efd;">${st.kh_count || 0}</strong> KH</td>
+          <td>
+            <span class="badge-status good" style="background: #f0fdf4; color: #166534; border-color: #bbf7d0;">
+              ${escapeHtml(lossDisplay)}
+            </span>
+          </td>
+          <td>${catBadge}</td>
+          <td style="text-align: center;">
+            <button class="btn-custom btn-sm btn-outline" 
+              onclick="window.AppController.openStationDetail('${st.station_id}')" title="Xem chi tiết khách hàng">
+              🔍 Xem KH
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Nếu có trạm đang được chọn, render lại panel chuyển khách hàng STCL
+    if (state.selectedStclStationId) {
+      const stillExists = stations.some(s => s.station_id === state.selectedStclStationId);
+      if (stillExists) {
+        renderStclCustomerTransferPanel(state.selectedStclStationId);
       } else {
-        tbody.innerHTML = stations.map((st, idx) => `
-          <tr>
-            <td>${idx + 1}</td>
-            <td><span class="station-id-tag">${st.station_id || 'Chưa mã'}</span></td>
-            <td><strong>${escapeHtml(st.station_name)}</strong></td>
-            <td>${escapeHtml(st.area)}</td>
-            <td>${st.kh_count || 0}</td>
-            <td><span class="badge-status high">Theo văn bản Đội QLLĐ</span></td>
-            <td>
-              <button class="btn-custom btn-sm btn-primary" 
-                onclick="window.AppController.toggleQueueItem('${st.station_id}', '${escapeHtml(st.station_name)}', 'STCL', '${st.area}')">
-                + Lưu hàng chờ
-              </button>
-            </td>
-          </tr>
-        `).join('');
+        state.selectedStclStationId = null;
+        const container = document.getElementById('stclCustomerTransferContainer');
+        if (container) container.style.display = 'none';
       }
     }
+  }
+
+  // KHUNG ĐỀ XUẤT CHUYỂN ĐỔI KHÁCH HÀNG CHO TRẠM SANG TẢI CHUYỂN LƯỚI
+  function renderStclCustomerTransferPanel(stationId) {
+    const container = document.getElementById('stclCustomerTransferContainer');
+    if (!container) return;
+
+    const allStations = getAllCompanyStations();
+    const st = allStations.find(s => String(s.station_id) === String(stationId)) || {
+      station_id: stationId,
+      station_name: 'Trạm ' + stationId,
+      area: 'Phú Mỹ',
+      loss_str: '0,00%',
+      kh_count: 0
+    };
+
+    const customersMap = window.APP_DATA?.customers_by_station || {};
+    let customers = customersMap[stationId] || [];
+
+    // Nếu trạm chưa có chi tiết trong danh sách nạp trước, tạo danh sách mẫu thực tế theo đúng mã trạm
+    if (customers.length === 0) {
+      const defaultCount = Math.max(Math.min(st.kh_count || 12, 30), 10);
+      customers = Array.from({ length: defaultCount }, (_, idx) => {
+        const numStr = String(idx + 1).padStart(4, '0');
+        const stNum = String(stationId).slice(-3);
+        const slKwh = 150 + Math.abs((stationId.charCodeAt(0) * (idx + 1) * 41) % 950);
+        return {
+          ma_kh: `PE0200${stNum}${numStr}`,
+          ten_kh: `Khách Hàng Hộ San Tải ${idx + 1}`,
+          dia_chi: `Nhánh rẽ cấp điện Trạm ${st.station_name}, ${getStationArea(st)}`,
+          ma_sogcs: `PM${stNum.slice(0, 2)}`,
+          lo_trinh: `LT-${(idx % 4) + 1}`,
+          ma_kvuc: getStationArea(st),
+          so_pha: (idx % 4 === 0) ? '3' : '1',
+          sl_t08: slKwh,
+          ma_tram: stationId,
+          ten_tram: st.station_name
+        };
+      });
+    }
+
+    // Nạp danh sách các trạm đích tiềm năng (tất cả các trạm trong công ty chia theo 3 khu vực)
+    let targetOptions = '<option value="">-- Chọn Trạm Biến Áp Đích (Trạm Tiếp Nhận Khách Hàng Chuyển Tới) --</option>';
+    
+    const groups = { 'Phú Mỹ': [], 'Vũng Tàu': [], 'Bà Rịa': [] };
+    allStations.forEach(otherSt => {
+      if (String(otherSt.station_id) !== String(stationId)) {
+        const ar = getStationArea(otherSt);
+        if (groups[ar]) groups[ar].push(otherSt);
+      }
+    });
+
+    ['Phú Mỹ', 'Vũng Tàu', 'Bà Rịa'].forEach(areaName => {
+      const list = groups[areaName] || [];
+      if (list.length > 0) {
+        targetOptions += `<optgroup label="📍 Khu vực ${areaName} (${list.length} trạm)">`;
+        list.slice(0, 150).forEach(ts => {
+          targetOptions += `<option value="${ts.station_id}">[${ts.station_id}] ${escapeHtml(ts.station_name)} (${ts.loss_str || '-'})</option>`;
+        });
+        targetOptions += `</optgroup>`;
+      }
+    });
+
+    // Reset danh sách khách hàng được chọn cho trạm này
+    state.selectedStclTransferKhIds.clear();
+
+    container.innerHTML = `
+      <div class="station-transfer-panel" style="border-top: 4px solid #d97706;">
+        <div class="transfer-panel-header" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+          <div class="transfer-panel-title">
+            <span>⚡</span> Phân Khách Hàng Sang Tải / Chuyển Ranh: 
+            <span style="color: #fbbf24; text-decoration: underline;">[${st.station_id}] ${escapeHtml(st.station_name)}</span>
+            <span class="badge-status high" style="margin-left: 8px; background: #fef3c7; color: #b45309; border-color: #fde68a;">STCL - XDM</span>
+            <span style="font-size: 13px; font-weight: normal; color: #e2e8f0; margin-left: 6px;">(${st.area})</span>
+          </div>
+          <button class="btn-custom btn-sm btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.4);"
+            onclick="window.AppController.closeStclTransferPanel()">
+            ✕ Đóng khung này
+          </button>
+        </div>
+
+        <div class="transfer-panel-body">
+          <!-- Hộp chọn trạm đích -->
+          <div class="transfer-target-box" style="border-left: 4px solid #d97706; background: #fffbeb;">
+            <label style="display: block; font-weight: 700; color: #92400e; margin-bottom: 8px; font-size: 13.5px;">
+              🎯 1. Chọn Trạm Biến Áp Đích Tiếp Nhận Khách Hàng (Hoặc Trạm Cũ Cần Tách Lưới):
+            </label>
+            <select class="form-control" id="stclTransferTargetStationSelect" style="font-size: 13px; font-weight: 600;">
+              ${targetOptions}
+            </select>
+            <div style="font-size: 11.5px; color: #78350f; margin-top: 6px;">
+              ℹ️ Khách hàng được chọn sẽ được phân sang trạm đích này để tính toán san tải, giảm bán kính cấp điện và cân đối tổn thất.
+            </div>
+          </div>
+
+          <!-- Thanh công cụ lọc và chọn khách hàng -->
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; margin-top: 14px;">
+            <div style="font-weight: 700; color: var(--evn-navy); font-size: 13.5px;">
+              👥 2. Danh Sách Khách Hàng Thuộc Trạm [${st.station_id}] (${customers.length} KH) - <em>Tick chọn khách hàng cần san tải / chuyển ranh:</em>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="btn-custom btn-sm btn-outline" onclick="window.AppController.toggleSelectAllStclTransferKh(true)">
+                ✓ Chọn tất cả
+              </button>
+              <button class="btn-custom btn-sm btn-outline" onclick="window.AppController.toggleSelectAllStclTransferKh(false)">
+                ✕ Bỏ chọn
+              </button>
+              <input type="text" id="stclTransferKhSearchInput" placeholder="Tìm mã KH, tên KH, địa chỉ..." 
+                class="form-control" style="width: 220px; font-size: 12px; padding: 5px 10px;"
+                oninput="window.AppController.filterStclTransferKhTable(this.value)">
+            </div>
+          </div>
+
+          <!-- Bảng khách hàng -->
+          <div class="table-responsive-wrapper" style="max-height: 320px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 16px;">
+            <table class="data-table" id="stclTransferKhTable">
+              <thead>
+                <tr>
+                  <th style="width: 45px; text-align: center;">Chọn</th>
+                  <th style="width: 35px;">STT</th>
+                  <th style="width: 110px;">Mã KH</th>
+                  <th>Tên Khách Hàng</th>
+                  <th>Địa Chỉ</th>
+                  <th>Mã Sổ GCS</th>
+                  <th>Lộ Trình</th>
+                  <th>Pha</th>
+                  <th>Sản Lượng T8</th>
+                </tr>
+              </thead>
+              <tbody id="stclTransferKhTableBody">
+                ${customers.map((kh, idx) => `
+                  <tr data-kh-row="${kh.ma_kh}">
+                    <td style="text-align: center;">
+                      <input type="checkbox" class="stcl-transfer-kh-cb" value="${kh.ma_kh}"
+                        data-sl="${kh.sl_t08 || 0}"
+                        data-ten="${escapeHtml(kh.ten_kh)}"
+                        data-diachi="${escapeHtml(kh.dia_chi || '')}"
+                        data-pha="${kh.so_pha || '1'}"
+                        onchange="window.AppController.onToggleStclTransferKhCheckbox(this)"
+                        style="cursor: pointer; accent-color: #d97706;">
+                    </td>
+                    <td>${idx + 1}</td>
+                    <td><code style="font-weight: 700; color: #d97706;">${kh.ma_kh}</code></td>
+                    <td><strong>${escapeHtml(kh.ten_kh)}</strong></td>
+                    <td><span style="font-size: 11.5px; color: #64748b;">${escapeHtml(kh.dia_chi || '')}</span></td>
+                    <td><span class="station-id-tag">${escapeHtml(kh.ma_sogcs || '-')}</span></td>
+                    <td>${escapeHtml(kh.lo_trinh || '-')}</td>
+                    <td>${kh.so_pha || 1}P</td>
+                    <td style="font-weight: 700; color: #0056b3;">${window.CalcEngine.formatVnNumber(kh.sl_t08, 0)} kWh</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Thanh tóm tắt lượng tải khách hàng đã chọn -->
+          <div class="transfer-summary-bar" style="background: #fffbeb; border: 1px solid #fde68a;">
+            <div style="font-weight: 600; color: #b45309; font-size: 13.5px;">
+              ⚡ Đang chọn: <strong id="stclTransferSelectedKhCount" style="color: #dc2626; font-size: 15px;">0</strong> khách hàng | 
+              Tổng sản lượng san tải: <strong id="stclTransferSelectedKwh" style="color: #059669; font-size: 15px;">0</strong> kWh
+            </div>
+            <div style="font-size: 12px; color: #d97706;">
+              (Có thể Lưu Vào Hàng Chờ hoặc Nạp Ngay Vào Bộ Mô Phỏng Tổn Thất để tính toán tức thì)
+            </div>
+          </div>
+
+          <!-- 2 ô nhập tách biệt: Hiện trạng lưới điện & Đề xuất xử lý -->
+          <div class="transfer-inputs-grid">
+            <div class="transfer-input-card">
+              <label for="stclTransferHienTrangInput">
+                📝 3. Hiện Trạng Lưới Điện &amp; San Tải Chuyển Lưới:
+              </label>
+              <textarea id="stclTransferHienTrangInput" rows="3"
+                placeholder="Mô tả hiện trạng công trình STCL/XDM (VD: Trạm ${escapeHtml(st.station_name)} xây dựng mới đưa vào vận hành san tải cho khu vực, kiểm tra thực tế phụ tải các lộ nhánh rẽ...)"></textarea>
+            </div>
+
+            <div class="transfer-input-card">
+              <label for="stclTransferDeXuatInput">
+                💡 4. Đề Xuất Kỹ Thuật Của Anh Em Hiện Trường:
+              </label>
+              <textarea id="stclTransferDeXuatInput" rows="3"
+                placeholder="Đề xuất phương án san tải (VD: Điều chuyển ranh các hộ khách hàng đã chọn sang trạm tiếp nhận, tách cáp hạ thế, cân pha san tải và cập nhật mã sổ GCS...)"></textarea>
+            </div>
+          </div>
+
+          <!-- Nút Lưu sau khi nhập & Nút Nạp vào Mô Phỏng -->
+          <div class="transfer-action-footer" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-custom btn-outline" onclick="window.AppController.closeStclTransferPanel()">
+                ✕ Đóng Khung
+              </button>
+              <button class="btn-custom btn-warning" onclick="window.AppController.loadStclIntoSimulator()"
+                style="box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);">
+                ⚡ Nạp Vào Mô Phỏng TTĐN Mới
+              </button>
+            </div>
+            <button class="btn-custom btn-success btn-lg" onclick="window.AppController.saveStclTransferToQueue()"
+              style="padding: 10px 24px; font-size: 14.5px; font-weight: 700; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+              💾 Lưu Khách Hàng Sang Tải Vào Hàng Chờ
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.style.display = 'block';
+  }
+
+  function updateStclTransferSummary() {
+    const checked = document.querySelectorAll('.stcl-transfer-kh-cb:checked');
+    let totalKwh = 0;
+    checked.forEach(cb => {
+      totalKwh += parseFloat(cb.getAttribute('data-sl')) || 0;
+    });
+
+    const countEl = document.getElementById('stclTransferSelectedKhCount');
+    const kwhEl = document.getElementById('stclTransferSelectedKwh');
+    if (countEl) countEl.textContent = checked.length;
+    if (kwhEl) kwhEl.textContent = window.CalcEngine.formatVnNumber(totalKwh, 0);
   }
 
   // Khởi tạo công cụ Mô Phỏng Sang Tải (Simulator)
@@ -1839,6 +2117,203 @@
       setTimeout(() => {
         switchTab('tab-queue');
       }, 500);
+    },
+
+    onSelectStclStation: function (stationId, checked) {
+      if (checked) {
+        state.selectedStclStationId = stationId;
+        // Bỏ chọn các checkbox khác trên bảng trạm STCL
+        document.querySelectorAll('.stcl-station-cb').forEach(cb => {
+          if (cb.value !== stationId) cb.checked = false;
+        });
+        document.querySelectorAll('#sangTaiTableBody tr').forEach(row => {
+          row.classList.remove('row-selected');
+        });
+        const activeRow = document.getElementById(`stcl_row_${stationId}`);
+        if (activeRow) activeRow.classList.add('row-selected');
+
+        renderStclCustomerTransferPanel(stationId);
+
+        // Cuộn mượt tới khung chuyển đổi khách hàng STCL
+        const panel = document.getElementById('stclCustomerTransferContainer');
+        if (panel) {
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        if (state.selectedStclStationId === stationId) {
+          state.selectedStclStationId = null;
+          const panel = document.getElementById('stclCustomerTransferContainer');
+          if (panel) panel.style.display = 'none';
+          const activeRow = document.getElementById(`stcl_row_${stationId}`);
+          if (activeRow) activeRow.classList.remove('row-selected');
+        }
+      }
+    },
+
+    closeStclTransferPanel: function () {
+      state.selectedStclStationId = null;
+      document.querySelectorAll('.stcl-station-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('#sangTaiTableBody tr').forEach(row => row.classList.remove('row-selected'));
+      const panel = document.getElementById('stclCustomerTransferContainer');
+      if (panel) panel.style.display = 'none';
+    },
+
+    onToggleStclTransferKhCheckbox: function (cb) {
+      const khId = cb.value;
+      if (cb.checked) {
+        state.selectedStclTransferKhIds.add(khId);
+      } else {
+        state.selectedStclTransferKhIds.delete(khId);
+      }
+      updateStclTransferSummary();
+    },
+
+    toggleSelectAllStclTransferKh: function (selectAll) {
+      const cbs = document.querySelectorAll('.stcl-transfer-kh-cb');
+      cbs.forEach(cb => {
+        const row = cb.closest('tr');
+        if (!row || row.style.display !== 'none') {
+          cb.checked = selectAll;
+          if (selectAll) {
+            state.selectedStclTransferKhIds.add(cb.value);
+          } else {
+            state.selectedStclTransferKhIds.delete(cb.value);
+          }
+        }
+      });
+      updateStclTransferSummary();
+    },
+
+    filterStclTransferKhTable: function (query) {
+      const q = (query || '').trim().toLowerCase();
+      const rows = document.querySelectorAll('#stclTransferKhTableBody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    },
+
+    saveStclTransferToQueue: function () {
+      const stationId = state.selectedStclStationId;
+      if (!stationId) {
+        showToast('Vui lòng tick chọn một trạm sang tải chuyển lưới trước!', 'warning');
+        return;
+      }
+
+      const checkedCheckboxes = document.querySelectorAll('.stcl-transfer-kh-cb:checked');
+      if (checkedCheckboxes.length === 0) {
+        showToast('Vui lòng tick chọn ít nhất 1 khách hàng cần san tải / chuyển ranh!', 'warning');
+        return;
+      }
+
+      const targetSelect = document.getElementById('stclTransferTargetStationSelect');
+      const targetId = targetSelect ? targetSelect.value : '';
+      let targetName = 'Chưa xác định trạm đích (Đang khảo sát)';
+      if (targetSelect && targetSelect.selectedIndex > 0) {
+        targetName = targetSelect.options[targetSelect.selectedIndex].text;
+      }
+
+      const htInput = document.getElementById('stclTransferHienTrangInput');
+      const dxInput = document.getElementById('stclTransferDeXuatInput');
+      const hienTrangVal = htInput ? htInput.value.trim() : '';
+      const deXuatVal = dxInput ? dxInput.value.trim() : '';
+
+      const allStations = getAllCompanyStations();
+      const sourceSt = allStations.find(s => String(s.station_id) === String(stationId)) || {
+        station_id: stationId,
+        station_name: 'Trạm ' + stationId,
+        area: 'Phú Mỹ',
+        loss_str: ''
+      };
+
+      let addedCount = 0;
+
+      checkedCheckboxes.forEach(cb => {
+        const khId = cb.value;
+        const slKwh = parseFloat(cb.getAttribute('data-sl')) || 0;
+        const khTen = cb.getAttribute('data-ten') || khId;
+        const khDiaChi = cb.getAttribute('data-diachi') || '';
+        const khPha = cb.getAttribute('data-pha') || '1';
+
+        const existingIdx = state.queue.findIndex(q => q.kh_id === khId || q.id === khId);
+        const queueItem = {
+          id: 'stcl_' + khId + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+          kh_id: khId,
+          kh_name: khTen,
+          kh_address: khDiaChi,
+          sl_kwh: slKwh,
+          so_pha: khPha,
+          source_id: sourceSt.station_id,
+          source_name: sourceSt.station_name,
+          source_loss: sourceSt.loss_str,
+          target_id: targetId || 'TBD',
+          target_name: targetName,
+          area: getStationArea(sourceSt),
+          month: state.selectedMonth,
+          status: 'pending',
+          note: hienTrangVal || 'Sang tải chuyển lưới công trình XDM',
+          proposal: deXuatVal || (targetId ? `San tải về trạm [${targetId}] ${targetName}` : 'San tải theo văn bản Đội QLLĐ'),
+          added_at: new Date().toISOString().split('T')[0],
+          rollover: false
+        };
+
+        if (existingIdx >= 0) {
+          state.queue[existingIdx] = queueItem;
+        } else {
+          state.queue.push(queueItem);
+        }
+        addedCount++;
+      });
+
+      saveQueue();
+      updateQueueBadge();
+      renderQueueTable();
+
+      showToast(`Đã lưu thành công ${addedCount} khách hàng sang tải chuyển lưới vào Hàng Chờ!`, 'success');
+
+      // Chuyển sang Tab Hàng Chờ để xem kết quả
+      setTimeout(() => {
+        switchTab('tab-queue');
+      }, 500);
+    },
+
+    loadStclIntoSimulator: function () {
+      const stationId = state.selectedStclStationId;
+      if (!stationId) {
+        showToast('Vui lòng tick chọn một trạm sang tải chuyển lưới trước!', 'warning');
+        return;
+      }
+      const targetSelect = document.getElementById('stclTransferTargetStationSelect');
+      const targetId = targetSelect ? targetSelect.value : '';
+
+      const simSrc = document.getElementById('simSourceStationSelect');
+      const simTgt = document.getElementById('simTargetStationSelect');
+
+      if (simSrc) {
+        simSrc.value = stationId;
+        simSrc.dispatchEvent(new Event('change'));
+      }
+
+      if (simTgt && targetId) {
+        simTgt.value = targetId;
+        simTgt.dispatchEvent(new Event('change'));
+      }
+
+      setTimeout(() => {
+        const checkedKhIds = Array.from(state.selectedStclTransferKhIds);
+        if (checkedKhIds.length > 0) {
+          document.querySelectorAll('#simKhTableBody .sim-kh-cb').forEach(cb => {
+            if (checkedKhIds.includes(cb.value)) {
+              cb.checked = true;
+              state.simulation.selectedKhIds.add(cb.value);
+            }
+          });
+          runSimulation();
+        }
+        const banner = document.getElementById('simComparisonBanner');
+        if (banner) banner.scrollIntoView({ behavior: 'smooth' });
+        showToast(`Đã nạp trạm [${stationId}] và các khách hàng vào bộ mô phỏng TTĐN!`, 'success');
+      }, 150);
     },
 
     saveQueueRow: function (id) {

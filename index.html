@@ -98,13 +98,13 @@
       <a href="#dinhky" class="nav-item" data-tab="tab-dinhky">
         <span class="nav-icon">🔍</span>
         <span class="nav-label">Kiểm Tra Trạm Bất Thường</span>
-        <span class="nav-badge danger">Ưu tiên</span>
+        <span class="nav-badge danger">Bất thường</span>
       </a>
 
       <a href="#sangtai" class="nav-item" data-tab="tab-sangtai">
         <span class="nav-icon">⚡</span>
-        <span class="nav-label">Sang Tải & Mô Phỏng TTĐN</span>
-        <span class="nav-badge warning">Mới</span>
+        <span class="nav-label">Sang Tải Chuyển Lưới</span>
+        <span class="nav-badge warning">STCL</span>
       </a>
 
       <div class="nav-section-title">Nghiệp Vụ Hiện Trường</div>
@@ -311,10 +311,10 @@
       <div class="page-title-bar">
         <div class="page-title-wrapper">
           <h1 class="page-main-title">
-            <span>🔍</span> Nghiệp Vụ Hiện Trường: Danh Sách Trạm Đề Xuất Kiểm Tra &amp; Chuyển Đổi Khách Hàng
+            <span>🔍</span> Nghiệp Vụ Hiện Trường: Danh Sách Trạm Tổn Thất Bất Thường &amp; Chuyển Đổi Khách Hàng
           </h1>
           <p class="page-subtitle">
-            Tất cả các trạm đề xuất kiểm tra của tháng. Tick chọn trạm để hiển thị danh sách khách hàng trong trạm, chọn khách hàng cần chuyển về đúng trạm, nhập hiện trạng &amp; đề xuất rồi lưu vào hàng chờ.
+            Danh sách các trạm có tổn thất điện năng bất thường (âm, cao, mất ĐN) đề xuất kiểm tra của tháng. Tick chọn trạm để hiển thị danh sách khách hàng trong trạm, chọn khách hàng cần chuyển về đúng trạm, nhập hiện trạng &amp; đề xuất rồi lưu vào hàng chờ.
           </p>
         </div>
 
@@ -329,7 +329,7 @@
         <div class="table-filter-bar">
           <div class="filter-left-group">
             <span style="font-size: 13.5px; font-weight: 700; color: var(--evn-navy);">
-              🏢 Danh Sách Tất Cả Trạm Đề Xuất Kiểm Tra <span id="dinhKyMonthBadge" style="color: var(--color-danger);">Tháng 8</span>
+              🏢 Danh Sách Trạm Tổn Thất Bất Thường <span id="dinhKyMonthBadge" style="color: var(--color-danger);">Tháng 8</span>
             </span>
           </div>
           <div class="filter-right-group">
@@ -372,16 +372,65 @@
       <div class="page-title-bar">
         <div class="page-title-wrapper">
           <h1 class="page-main-title">
-            <span>⚡</span> Sang Tải Chuyển Lưới & Công Cụ Mô Phỏng Tính Toán Lại Tổn Thất Trạm
+            <span>⚡</span> Nghiệp Vụ Sang Tải Chuyển Lưới: Danh Sách Trạm STCL - XDM &amp; Điều Chuyển Khách Hàng
           </h1>
           <p class="page-subtitle">
-            Tiếp nhận trạm STCL không định kỳ theo văn bản Đội QLLĐ và mô phỏng sang tải khách hàng để tính toán lại TTĐN mới.
+            Tất cả các trạm sang tải chuyển lưới (STCL) và trạm xây dựng mới (XDM) tiếp nhận phụ tải của tháng. Tick chọn trạm để hiển thị danh sách khách hàng trong trạm, chọn khách hàng cần san tải sang trạm đích, nhập hiện trạng &amp; đề xuất rồi lưu vào hàng chờ hoặc nạp sang công cụ mô phỏng TTĐN.
           </p>
+        </div>
+
+        <div class="page-toolbar">
+          <button class="btn-custom btn-primary" onclick="switchTab('tab-queue')">
+            📋 Xem Hàng Chờ Chuyển Trạm (<span class="queue-badge-count">0</span>)
+          </button>
+          <button class="btn-custom btn-warning" onclick="document.getElementById('simComparisonBanner').scrollIntoView({behavior: 'smooth'})">
+            ⚡ Công Cụ Mô Phỏng TTĐN
+          </button>
         </div>
       </div>
 
+      <!-- Bảng Danh Sách Trạm Sang Tải Chuyển Lưới (STCL - XDM) -->
+      <div class="card-table-container">
+        <div class="table-filter-bar">
+          <div class="filter-left-group">
+            <span style="font-size: 13.5px; font-weight: 700; color: var(--evn-navy);">
+              ⚡ Danh Sách Trạm Sang Tải Chuyển Lưới (STCL - XDM) <span id="sangTaiMonthBadge" style="color: #d97706;">Tháng 8</span>
+            </span>
+          </div>
+          <div class="filter-right-group">
+            <span style="font-size: 12px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 4px 10px; border-radius: 6px;">
+              👉 Tick chọn vào trạm để mở danh sách khách hàng cần san tải / chuyển ranh
+            </span>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper" style="max-height: 420px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 55px; text-align: center;">Tick Chọn</th>
+                <th style="width: 45px;">STT</th>
+                <th style="width: 100px;">ID Trạm</th>
+                <th>Tên Trạm Biến Áp</th>
+                <th>Khu Vực</th>
+                <th>Số KH</th>
+                <th>Tỉ Lệ TTĐN / Sản Lượng</th>
+                <th>Phân Loại Nghiệp Vụ</th>
+                <th style="width: 140px; text-align: center;">Xem Khách Hàng</th>
+              </tr>
+            </thead>
+            <tbody id="sangTaiTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Khung hiển thị khách hàng trong trạm STCL đã tick chọn để chuyển đổi về đúng trạm -->
+      <div id="stclCustomerTransferContainer" style="display: none; margin-top: 24px;"></div>
+
       <!-- Simulator Comparison Banner -->
-      <div class="sim-comparison-banner" id="simComparisonBanner">
+      <div class="sim-comparison-banner" id="simComparisonBanner" style="margin-top: 32px;">
         <div class="sim-banner-info">
           <div class="sim-banner-title">⚡ Mô Phỏng Tính Toán Lại Tổn Thất Điện Năng Sau Sang Tải</div>
           <div class="sim-banner-subtitle">
@@ -473,36 +522,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Danh Sách Trạm STCL Không Định Kỳ (Có công văn) -->
-      <div class="card-table-container" style="margin-top: 24px;">
-        <div class="table-filter-bar">
-          <div class="filter-left-group">
-            <h3 style="font-size: 14px; font-weight: 700; color: var(--evn-navy);">
-              Danh Sách Trạm Sang Tải Chuyển Lưới Không Theo Kế Hoạch Định Kỳ (Bổ sung theo văn bản Đội QLLĐ)
-            </h3>
-          </div>
-        </div>
-
-        <div class="table-responsive-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>STT</th>
-                <th>Mã Trạm</th>
-                <th>Tên Trạm Biến Áp</th>
-                <th>Khu Vực</th>
-                <th>Số KH</th>
-                <th>Căn Cứ Bổ Sung</th>
-                <th>Hành Động</th>
-              </tr>
-            </thead>
-            <tbody id="sangTaiTableBody">
-              <!-- Loaded via JS -->
-            </tbody>
-          </table>
         </div>
       </div>
     </section>
@@ -952,9 +971,9 @@
       <span class="mobile-nav-icon">📊</span>
       <span class="mobile-nav-label">Tổng Quan</span>
     </button>
-    <button type="button" class="mobile-nav-item" data-tab="tab-dinhky" title="Kiểm tra định kỳ">
+    <button type="button" class="mobile-nav-item" data-tab="tab-dinhky" title="Kiểm tra trạm bất thường">
       <span class="mobile-nav-icon">🔍</span>
-      <span class="mobile-nav-label">Định Kỳ</span>
+      <span class="mobile-nav-label">Bất Thường</span>
     </button>
     <button type="button" class="mobile-nav-item" data-tab="tab-sangtai" title="Mô phỏng sang tải">
       <span class="mobile-nav-icon">⚡</span>
