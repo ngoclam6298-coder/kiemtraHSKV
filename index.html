@@ -161,10 +161,10 @@
       <div class="page-title-bar">
         <div class="page-title-wrapper">
           <h1 class="page-main-title">
-            <span>📊</span> Dashboard Theo Dõi Hiệu Suất Tổn Thất Trạm Biến Áp
+            <span>📊</span> Dashboard Hiệu Suất Tổn Thất Trạm Biến Áp Công Cộng
           </h1>
           <p class="page-subtitle">
-            Hệ thống tự động phát hiện trạm tổn thất bất thường và hỗ trợ đề xuất hướng xử lý kỹ thuật.
+            Hệ thống theo dõi toàn bộ các trạm biến áp công cộng do Công ty Điện lực Vũng Tàu quản lý, tự động phát hiện trạm tổn thất bất thường và hỗ trợ đề xuất hướng xử lý kỹ thuật.
           </p>
         </div>
 
@@ -187,11 +187,11 @@
       <div class="kpi-grid">
         <div class="stat-card">
           <div class="stat-card-header">
-            <span class="stat-card-title">Tổng Trạm Theo Dõi</span>
+            <span class="stat-card-title">Tổng Trạm Công Cộng</span>
             <div class="stat-icon-wrapper" style="background: #e2e8f0; color: #475569;">🏢</div>
           </div>
           <div class="stat-value" id="statTotalStations">0</div>
-          <div class="stat-desc">Tổng số trạm trong danh sách kỳ</div>
+          <div class="stat-desc">Trạm công cộng Công ty ĐL Vũng Tàu quản lý</div>
         </div>
 
         <div class="stat-card negative-loss">
@@ -261,14 +261,14 @@
         <div class="table-filter-bar">
           <div class="filter-left-group">
             <select class="filter-select" id="dashboardAreaFilter" onchange="state.areaFilter = this.value; window.AppController.onDashboardFilterChange();">
-              <option value="all">Tất cả 3 khu vực (Phú Mỹ, Vũng Tàu, Bà Rịa)</option>
-              <option value="Phú Mỹ">Khu vực Phú Mỹ</option>
-              <option value="Vũng Tàu">Khu vực Vũng Tàu</option>
-              <option value="Bà Rịa">Khu vực Bà Rịa</option>
+              <option value="all">Tất cả trạm công cộng 3 khu vực (Phú Mỹ, Vũng Tàu, Bà Rịa)</option>
+              <option value="Phú Mỹ">Khu vực Phú Mỹ (Trạm công cộng)</option>
+              <option value="Vũng Tàu">Khu vực Vũng Tàu (Trạm công cộng)</option>
+              <option value="Bà Rịa">Khu vực Bà Rịa (Trạm công cộng)</option>
             </select>
 
             <input type="text" class="filter-search-input" id="dashboardSearchInput" 
-              placeholder="Tìm nhanh mã trạm, tên trạm biến áp..." 
+              placeholder="Tìm nhanh mã trạm, tên trạm công cộng..." 
               oninput="window.AppController.onDashboardSearchInput(this.value)">
           </div>
 

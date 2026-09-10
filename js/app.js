@@ -348,6 +348,16 @@
     return 'Vũng Tàu';
   }
 
+  // Kiểm tra trạm công cộng do Công ty Điện lực Vũng Tàu quản lý (loại trừ trạm khách hàng, trạm chuyên dùng)
+  function isPublicStation(st, master) {
+    if (!st && !master) return false;
+    const m = master || (window.APP_DATA?.master_stations || {})[String(st?.station_id || st?.main_id || st?.new_id || '').trim()];
+    const t = String(m?.type || st?.type || st?.loai_tram || '').trim().toLowerCase();
+    if (t.includes('khách hàng') || t.includes('chuyên dùng')) return false;
+    if (t.includes('công cộng')) return true;
+    return true; // Mặc định là công cộng nếu nằm trong danh mục lưới phân phối
+  }
+
   function getAllCompanyStations() {
     if (cachedCompanyStations && cachedCompanyStations._month === state.selectedMonth) {
       return cachedCompanyStations.list;
@@ -360,21 +370,29 @@
 
     const stationMap = new Map();
 
-    // 1. Nạp các trạm có báo cáo trong kỳ kiểm tra (ưu tiên số liệu thực tế đo đếm)
+    // 1. Nạp các trạm công cộng có báo cáo trong kỳ kiểm tra (ưu tiên số liệu thực tế đo đếm)
     monthList.forEach(st => {
       if (st.station_id) {
-        stationMap.set(String(st.station_id).trim(), {
-          ...st,
-          area: getStationArea(st),
-          is_priority: true
-        });
+        const id = String(st.station_id).trim();
+        const m = masterMap[id];
+        if (isPublicStation(st, m)) {
+          stationMap.set(id, {
+            ...st,
+            type: 'Công cộng',
+            area: getStationArea(st),
+            is_priority: true
+          });
+        }
       }
     });
 
-    // 2. Nạp toàn bộ các trạm còn lại trong danh mục quản lý của Điện lực Vũng Tàu (chuẩn hóa về 3 khu vực)
+    // 2. Nạp toàn bộ các trạm CÔNG CỘNG trong danh mục quản lý của Điện lực Vũng Tàu (1.814 trạm công cộng)
     Object.values(masterMap).forEach(m => {
       const id = String(m.main_id || m.new_id || m.old_id || '').trim();
       if (!id || stationMap.has(id)) return;
+
+      // CHỈ LẤY CÁC TRẠM CÔNG CỘNG DO CÔNG TY QUẢN LÝ
+      if (!isPublicStation(null, m)) return;
 
       const norm = getDeterministicLoss(id);
       const name = m.new_name || m.old_name || ('Trạm ' + id);
@@ -385,7 +403,8 @@
         station_id: id,
         old_id: m.old_id || '',
         station_name: name,
-        content_type: m.type ? ('Trạm ' + m.type.toLowerCase()) : 'Trạm công cộng',
+        content_type: 'Trạm công cộng',
+        type: 'Công cộng',
         meter_id: m.code || (m.old_id ? ('CT-' + m.old_id) : '-'),
         loss_str: norm.loss_str,
         loss_val: norm.loss_val,
