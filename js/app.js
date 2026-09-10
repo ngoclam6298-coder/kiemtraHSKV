@@ -169,9 +169,11 @@
     const monthBtns = document.querySelectorAll('.month-pill-btn');
     monthBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        monthBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.selectedMonth = btn.getAttribute('data-month');
+        const targetMonth = btn.getAttribute('data-month');
+        state.selectedMonth = targetMonth;
+        document.querySelectorAll('.month-pill-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-month') === targetMonth);
+        });
         if (state.confirmedReinspectionStationIds) state.confirmedReinspectionStationIds.clear();
         cachedCompanyStations = null;
         renderDashboard();
@@ -1644,7 +1646,7 @@
           source_id: sourceSt.station_id,
           source_name: sourceSt.station_name,
           source_loss: sourceSt.loss_str,
-          target_id: targetId || 'TBD',
+          target_id: targetId || 'Chưa chọn',
           target_name: targetName,
           area: getStationArea(sourceSt),
           month: state.selectedMonth,
@@ -1665,7 +1667,7 @@
       saveQueue();
       renderQueueTable();
       updateQueueBadge();
-      showToast(`Đã insert thành công toàn bộ ${addedCount} khách hàng của trạm [${sourceId}] vào hàng chờ!`, 'success');
+      showToast(`Đã thêm thành công toàn bộ ${addedCount} khách hàng của trạm [${sourceId}] vào hàng chờ!`, 'success');
 
     } else if (mode === 'station_summary') {
       const totalSl = customers.reduce((acc, c) => acc + (parseFloat(c.sl_t08) || 0), 0) || ((sourceSt.kh_count || 10) * 265);
@@ -1679,7 +1681,7 @@
         source_id: sourceSt.station_id,
         source_name: sourceSt.station_name,
         source_loss: sourceSt.loss_str,
-        target_id: targetId || 'TBD',
+        target_id: targetId || 'Chưa chọn',
         target_name: targetName,
         area: getStationArea(sourceSt),
         month: state.selectedMonth,
@@ -1693,7 +1695,7 @@
       saveQueue();
       renderQueueTable();
       updateQueueBadge();
-      showToast(`Đã insert 1 dòng đại diện trạm [${sourceId}] vào hàng chờ!`, 'success');
+      showToast(`Đã thêm 1 dòng đại diện trạm [${sourceId}] vào hàng chờ!`, 'success');
     }
 
     // Reset input trạm nguồn
@@ -1709,18 +1711,15 @@
     if (!tbody) return;
 
     if (state.queue.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 32px; color: #94a3b8;">Hàng chờ khách hàng đề xuất chuyển trạm hiện đang trống. Hãy sử dụng thanh Insert theo trạm ở trên hoặc vào tab "Nghiệp Vụ Hiện Trường" để thêm khách hàng.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 32px; color: #94a3b8;">Hàng chờ khách hàng đề xuất chuyển trạm hiện đang trống. Hãy sử dụng thanh Thêm nhanh theo trạm ở trên hoặc vào tab "Nghiệp Vụ Hiện Trường" để thêm khách hàng.</td></tr>`;
       const summaryText = document.getElementById('queueSummaryText');
       if (summaryText) summaryText.innerHTML = 'Hàng chờ hiện đang trống (0 khách hàng đề xuất)';
       return;
     }
 
     const query = (state.queueSearchQuery || '').trim().toLowerCase();
-    const statusFilter = state.queueStatusFilter || 'all';
 
     const filteredQueue = state.queue.filter(item => {
-      const itemStatus = item.status || 'pending';
-      const matchStatus = statusFilter === 'all' || itemStatus === statusFilter;
       const matchText = !query ||
         String(item.kh_id || item.id || '').toLowerCase().includes(query) ||
         String(item.kh_name || item.station_name || '').toLowerCase().includes(query) ||
@@ -1732,27 +1731,27 @@
         String(item.area || '').toLowerCase().includes(query) ||
         String(item.note || '').toLowerCase().includes(query) ||
         String(item.proposal || '').toLowerCase().includes(query);
-      return matchStatus && matchText;
+      return matchText;
     });
 
     if (filteredQueue.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 28px; color: #94a3b8;">Không tìm thấy khách hàng nào phù hợp với từ khóa "${escapeHtml(query)}" trong hàng chờ.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 28px; color: #94a3b8;">Không tìm thấy khách hàng nào phù hợp với từ khóa "${escapeHtml(query)}" trong hàng chờ.</td></tr>`;
     } else {
       tbody.innerHTML = filteredQueue.map((item, idx) => {
-        const isCompleted = item.status === 'completed';
-        const isInProgress = item.status === 'in_progress';
-        const isPending = item.status === 'pending' || !item.status;
         const khId = item.kh_id || item.id;
         const khName = item.kh_name || item.station_name || 'Khách hàng';
         const slText = window.CalcEngine.formatVnNumber(item.sl_kwh || 0, 0);
 
         return `
-          <tr class="${isCompleted ? 'row-completed' : ''}" id="queue_row_${item.id}">
-            <td>${idx + 1}</td>
+          <tr id="queue_row_${item.id}">
+            <td style="text-align: center;">
+              <button class="btn-del-queue" onclick="window.AppController.removeFromQueue('${item.id}')" title="Xóa khách hàng này khỏi hàng chờ">✕</button>
+            </td>
+            <td style="text-align: center; font-weight: 600; color: #64748b;">${idx + 1}</td>
             <td><code style="font-weight: 700; color: var(--evn-blue);">${escapeHtml(khId)}</code></td>
             <td>
               <strong>${escapeHtml(khName)}</strong>
-              ${item.rollover ? '<span class="badge-status high" style="font-size: 10px; margin-left: 4px;">Rollover</span>' : ''}
+              ${item.rollover ? '<span class="badge-status high" style="font-size: 10px; margin-left: 4px; background:#fef3c7; color:#b45309;">Chuyển tiếp</span>' : ''}
             </td>
             <td><span style="font-size: 11.5px; color: #64748b;">${escapeHtml(item.kh_address || '-')}</span></td>
             <td style="font-weight: 700; color: #0056b3; white-space: nowrap;">${slText} kWh</td>
@@ -1770,29 +1769,14 @@
             <td>
               <textarea class="form-control" id="queue_ht_${item.id}" rows="2" 
                 style="font-size: 12px; width: 100%; min-height: 48px; padding: 4px 6px;"
-                placeholder="Hiện trạng lưới điện...">${escapeHtml(item.note || '')}</textarea>
+                onchange="window.AppController.updateQueueNote('${item.id}', this.value)"
+                placeholder="Hiện trạng câu nối, nhánh rẽ, công tơ...">${escapeHtml(item.note || '')}</textarea>
             </td>
             <td>
               <textarea class="form-control" id="queue_dx_${item.id}" rows="2" 
                 style="font-size: 12px; width: 100%; min-height: 48px; padding: 4px 6px;"
-                placeholder="Đề xuất xử lý...">${escapeHtml(item.proposal || '')}</textarea>
-            </td>
-            <td>
-              <select class="form-control" id="queue_status_${item.id}" style="font-size: 12px; padding: 4px 8px; width: auto;">
-                <option value="pending" ${isPending ? 'selected' : ''}>⏳ Chưa thực hiện</option>
-                <option value="in_progress" ${isInProgress ? 'selected' : ''}>⚙️ Đang xử lý</option>
-                <option value="completed" ${isCompleted ? 'selected' : ''}>✅ Đã thực hiện</option>
-              </select>
-            </td>
-            <td>
-              <div class="queue-action-btns">
-                <button class="btn-custom btn-sm btn-success" onclick="window.AppController.saveQueueRow('${item.id}')" title="Lưu cập nhật hiện trạng & đề xuất">
-                  💾 Lưu
-                </button>
-                <button class="btn-custom btn-sm btn-danger" onclick="window.AppController.removeFromQueue('${item.id}')" title="Xóa khách hàng khỏi hàng chờ">
-                  ✕
-                </button>
-              </div>
+                onchange="window.AppController.updateQueueProposal('${item.id}', this.value)"
+                placeholder="Đề xuất chuyển ranh, tách cáp...">${escapeHtml(item.proposal || '')}</textarea>
             </td>
           </tr>
         `;
@@ -1800,29 +1784,23 @@
     }
 
     // Cập nhật số liệu tóm tắt hàng chờ
-    const pendingCount = state.queue.filter(q => q.status === 'pending' || !q.status).length;
-    const progressCount = state.queue.filter(q => q.status === 'in_progress').length;
-    const completedCount = state.queue.filter(q => q.status === 'completed').length;
     const totalKwh = state.queue.reduce((acc, cur) => acc + (parseFloat(cur.sl_kwh) || 0), 0);
 
     const summaryText = document.getElementById('queueSummaryText');
     if (summaryText) {
       summaryText.innerHTML = `
-        Tổng cộng: <strong>${state.queue.length}</strong> khách hàng (${window.CalcEngine.formatVnNumber(totalKwh, 0)} kWh) | 
-        <span style="color: #dc2626;">Chưa thực hiện: <strong>${pendingCount}</strong></span> | 
-        <span style="color: #d97706;">Đang xử lý: <strong>${progressCount}</strong></span> | 
-        <span style="color: #059669;">Đã hoàn thành: <strong>${completedCount}</strong></span>
-        ${filteredQueue.length !== state.queue.length ? ` | <span style="color: #0284c7;">Đang hiển thị lọc: <strong>${filteredQueue.length}</strong></span>` : ''}
+        Tổng cộng: <strong>${state.queue.length}</strong> khách hàng (${window.CalcEngine.formatVnNumber(totalKwh, 0)} kWh) đề xuất chuyển trạm
+        ${filteredQueue.length !== state.queue.length ? ` | <span style="color: #0284c7;">Đang hiển thị tìm kiếm: <strong>${filteredQueue.length}</strong></span>` : ''}
       `;
     }
   }
 
-  // TÍNH NĂNG ĐẶC BIỆT: ROLLOVER CÁC KHÁCH HÀNG CHƯA HOÀN THÀNH SANG THÁNG SAU
+  // TÍNH NĂNG ĐẶC BIỆT: CHUYỂN TIẾP CÁC KHÁCH HÀNG CHƯA HOÀN THÀNH SANG THÁNG SAU
   function handleRolloverQueue() {
-    const incompleteItems = state.queue.filter(q => q.status !== 'completed');
+    const itemsToRollover = state.queue.filter(q => q.status !== 'completed');
 
-    if (incompleteItems.length === 0) {
-      showToast('Tất cả các trường hợp đề xuất trong tháng đã hoàn thành! Không có bản ghi nào cần rollover.', 'info');
+    if (itemsToRollover.length === 0) {
+      showToast('Tất cả các trường hợp đề xuất trong tháng đã hoàn thành! Không có bản ghi nào cần chuyển tiếp.', 'info');
       return;
     }
 
@@ -1830,19 +1808,19 @@
     const nextMNum = (parseInt(currentM.replace('thang_', ''), 10) % 9) + 1;
     const nextMonthKey = `thang_${nextMNum}`;
 
-    const confirmMsg = `Có ${incompleteItems.length} khách hàng chưa hoàn tất chuyển ranh trạm trong kỳ kiểm tra. Bạn có chắc chắn muốn chuyển toàn bộ sang kỳ ${getMonthName(nextMonthKey)} để tiếp tục theo dõi cùng các trạm mới?`;
+    const confirmMsg = `Có ${itemsToRollover.length} khách hàng chưa hoàn tất chuyển ranh trạm trong kỳ kiểm tra. Bạn có chắc chắn muốn chuyển toàn bộ sang kỳ ${getMonthName(nextMonthKey)} để tiếp tục theo dõi cùng các trạm mới?`;
     
     if (!confirm(confirmMsg)) return;
 
-    incompleteItems.forEach(item => {
+    itemsToRollover.forEach(item => {
       item.month = nextMonthKey;
       item.rollover = true;
-      item.note = `[Rollover từ ${getMonthName(currentM)}] ${item.note || ''}`;
+      item.note = `[Chuyển tiếp từ ${getMonthName(currentM)}] ${item.note || ''}`;
     });
 
     saveQueue();
     renderQueueTable();
-    showToast(`Đã chuyển thành công ${incompleteItems.length} khách hàng sang ${getMonthName(nextMonthKey)}!`, 'success');
+    showToast(`Đã chuyển thành công ${itemsToRollover.length} khách hàng sang ${getMonthName(nextMonthKey)}!`, 'success');
   }
 
   // ==========================================================================

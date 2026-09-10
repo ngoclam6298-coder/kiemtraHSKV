@@ -369,6 +369,17 @@
         </div>
 
         <div class="page-toolbar">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Kỳ kiểm tra:</span>
+          <div class="month-selector-group">
+            <button class="month-pill-btn" data-month="thang_1">T1</button>
+            <button class="month-pill-btn" data-month="thang_2">T2</button>
+            <button class="month-pill-btn" data-month="thang_3">T3</button>
+            <button class="month-pill-btn" data-month="thang_5">T5</button>
+            <button class="month-pill-btn" data-month="thang_6">T6</button>
+            <button class="month-pill-btn" data-month="thang_7">T7</button>
+            <button class="month-pill-btn active" data-month="thang_8">T8</button>
+            <button class="month-pill-btn" data-month="thang_9">T9</button>
+          </div>
           <button class="btn-custom btn-primary" onclick="switchTab('tab-queue')">
             📋 Xem Hàng Chờ Chuyển Trạm (<span class="queue-badge-count">0</span>)
           </button>
@@ -430,6 +441,17 @@
         </div>
 
         <div class="page-toolbar">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Kỳ kiểm tra:</span>
+          <div class="month-selector-group">
+            <button class="month-pill-btn" data-month="thang_1">T1</button>
+            <button class="month-pill-btn" data-month="thang_2">T2</button>
+            <button class="month-pill-btn" data-month="thang_3">T3</button>
+            <button class="month-pill-btn" data-month="thang_5">T5</button>
+            <button class="month-pill-btn" data-month="thang_6">T6</button>
+            <button class="month-pill-btn" data-month="thang_7">T7</button>
+            <button class="month-pill-btn active" data-month="thang_8">T8</button>
+            <button class="month-pill-btn" data-month="thang_9">T9</button>
+          </div>
           <button class="btn-custom btn-primary" onclick="switchTab('tab-queue')">
             📋 Xem Hàng Chờ Chuyển Trạm (<span class="queue-badge-count">0</span>)
           </button>
@@ -577,7 +599,7 @@
     </section>
 
     <!-- ========================================================================
-         TAB 4: HÀNG CHỜ KHÁCH HÀNG ĐỀ XUẤT CHUYỂN TRẠM & ROLLOVER
+         TAB 4: HÀNG CHỜ KHÁCH HÀNG ĐỀ XUẤT CHUYỂN TRẠM
          ======================================================================== -->
     <section class="tab-content-panel" id="tab-queue">
       <div class="page-title-bar">
@@ -586,24 +608,24 @@
             <span>📋</span> Hàng Chờ Khách Hàng Đề Xuất Chuyển Trạm Về Đúng Hiện Trạng
           </h1>
           <p class="page-subtitle">
-            Danh sách khách hàng đề xuất chuyển về đúng trạm cấp điện thực tế. Ghi nhận hiện trạng, đề xuất xử lý và tự động chuyển tiếp (rollover) các trường hợp chưa hoàn thành.
+            Danh sách khách hàng đề xuất chuyển về đúng trạm cấp điện thực tế. Ghi nhận hiện trạng, đề xuất xử lý và tự động chuyển tiếp các trường hợp chưa hoàn thành sang kỳ tiếp theo.
           </p>
         </div>
 
         <div class="page-toolbar">
-          <button class="btn-rollover" id="btnRolloverQueue" title="Chuyển các khách hàng chưa hoàn tất sang tháng sau để tiếp tục">
-            <span>🔄</span> Chuyển Khách Hàng Chưa Xong Sang Tháng Sau (Rollover)
+          <button class="btn-rollover" id="btnRolloverQueue" title="Chuyển các khách hàng chưa hoàn tất sang tháng sau để tiếp tục theo dõi">
+            <span>🔄</span> Chuyển Khách Hàng Chưa Xong Sang Tháng Sau
           </button>
         </div>
       </div>
 
       <!-- ====================================================================
-           THANH INSERT THEO TRẠM TRONG HÀNG CHỜ (Queue Station Insert Bar)
+           THANH THÊM NHANH THEO TRẠM TRONG HÀNG CHỜ
            ==================================================================== -->
       <div class="queue-insert-station-bar">
         <div class="insert-bar-header">
           <div class="insert-bar-title">
-            <span>⚡</span> <strong>Thanh Insert Theo Trạm Vào Hàng Chờ:</strong>
+            <span>⚡</span> <strong>Thanh Thêm Nhanh Theo Trạm Vào Hàng Chờ:</strong>
             <span style="font-weight: normal; font-size: 12px; color: #64748b;">(Chọn trạm để chèn nhanh danh bạ/phụ tải vào hàng chờ theo dõi &amp; xuất sang Google Sheet)</span>
           </div>
           <div class="insert-bar-quick-stats" id="insertBarStationPreview" style="font-size: 12.5px; color: #0284c7; font-weight: 600;">
@@ -642,7 +664,7 @@
 
           <!-- 5. Chế độ chèn -->
           <div class="insert-form-group" style="min-width: 175px;">
-            <label for="insertQueueModeSelect">⚙️ 5. Chế Độ Insert:</label>
+            <label for="insertQueueModeSelect">⚙️ 5. Chế Độ Thêm:</label>
             <select id="insertQueueModeSelect" class="form-control">
               <option value="all_customers">👥 Chèn toàn bộ KH của trạm</option>
               <option value="station_summary">🏢 Chèn 1 dòng đại diện trạm</option>
@@ -650,10 +672,10 @@
             </select>
           </div>
 
-          <!-- 6. Nút Thực Hiện Insert -->
+          <!-- 6. Nút Thực Hiện Thêm -->
           <div class="insert-form-group" style="align-self: flex-end;">
-            <button class="btn-custom btn-primary insert-btn" onclick="window.AppController.insertStationToQueue()" id="btnExecuteInsertStation" title="Chèn trạm này vào hàng chờ">
-              <span>➕</span> Insert Vào Hàng Chờ
+            <button class="btn-custom btn-primary insert-btn" onclick="window.AppController.insertStationToQueue()" id="btnExecuteInsertStation" title="Thêm trạm này vào hàng chờ">
+              <span>➕</span> Thêm Vào Hàng Chờ
             </button>
           </div>
         </div>
@@ -666,16 +688,9 @@
             Đang tải dữ liệu hàng chờ...
           </div>
           <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px; flex-wrap: wrap;">
-            <input type="text" id="queueFilterInput" placeholder="🔍 Lọc nhanh theo trạm hoặc mã KH..."
-              class="form-control" style="width: 250px; font-size: 12px; padding: 4px 10px; height: 32px;"
+            <input type="text" id="queueFilterInput" placeholder="🔍 Tìm kiếm nhanh theo trạm hoặc mã KH..."
+              class="form-control" style="width: 300px; font-size: 12.5px; padding: 5px 12px; height: 34px;"
               oninput="window.AppController.filterQueueTable(this.value)">
-            <select id="queueStatusFilterSelect" class="form-control" style="width: 160px; font-size: 12px; padding: 4px 8px; height: 32px;"
-              onchange="window.AppController.filterQueueStatus(this.value)">
-              <option value="all">Tất cả trạng thái</option>
-              <option value="pending">⏳ Chưa thực hiện</option>
-              <option value="in_progress">⚙️ Đang xử lý</option>
-              <option value="completed">✅ Đã thực hiện</option>
-            </select>
           </div>
         </div>
 
@@ -704,17 +719,16 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th style="width: 40px;">STT</th>
+                <th style="width: 45px; text-align: center;">Xóa</th>
+                <th style="width: 45px; text-align: center;">STT</th>
                 <th style="width: 110px;">Mã KH</th>
                 <th>Tên Khách Hàng</th>
                 <th>Địa Chỉ</th>
-                <th>Sản Lượng</th>
+                <th style="width: 100px;">Sản Lượng</th>
                 <th>Trạm Nguồn (Hiện tại)</th>
                 <th>Trạm Đích (Đúng ranh)</th>
-                <th style="min-width: 160px;">Hiện trạng lưới điện</th>
-                <th style="min-width: 160px;">Đề xuất xử lý</th>
-                <th style="width: 140px;">Trạng Thái</th>
-                <th style="width: 120px; text-align: center;">Thao Tác</th>
+                <th style="min-width: 180px;">Hiện trạng lưới điện</th>
+                <th style="min-width: 180px;">Đề xuất xử lý</th>
               </tr>
             </thead>
             <tbody id="queueTableBody">
