@@ -183,60 +183,66 @@
         </div>
       </div>
 
-      <!-- KPI Stat Cards Grid -->
+      <!-- KPI Stat Cards Grid (Interactive: Bấm trực tiếp để lọc bảng) -->
       <div class="kpi-grid">
-        <div class="stat-card">
+        <div class="stat-card clickable active-filter" id="statCardTotal" onclick="window.AppController.setDashboardStatusFilter('all')" title="Bấm để hiển thị tất cả các trạm công cộng">
           <div class="stat-card-header">
             <span class="stat-card-title">Tổng Trạm Công Cộng</span>
             <div class="stat-icon-wrapper" style="background: #e2e8f0; color: #475569;">🏢</div>
           </div>
           <div class="stat-value" id="statTotalStations">0</div>
           <div class="stat-desc">Trạm công cộng Công ty ĐL Vũng Tàu quản lý</div>
+          <div class="stat-card-hint">👉 Bấm để xem tất cả</div>
         </div>
 
-        <div class="stat-card negative-loss">
+        <div class="stat-card negative-loss clickable" id="statCardNegative" onclick="window.AppController.setDashboardStatusFilter('negative')" title="Bấm để lọc các trạm có tổn thất âm (< 0%)">
           <div class="stat-card-header">
             <span class="stat-card-title">Trạm TTĐN &lt; 0% (Báo Động Đỏ)</span>
             <div class="stat-icon-wrapper">⚠️</div>
           </div>
           <div class="stat-value" id="statNegativeLoss">0</div>
           <div class="stat-desc">Thương phẩm &gt; Đầu nguồn (Ưu tiên đi kiểm tra trước)</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm âm</div>
         </div>
 
-        <div class="stat-card high-loss">
+        <div class="stat-card high-loss clickable" id="statCardHigh" onclick="window.AppController.setDashboardStatusFilter('high')" title="Bấm để lọc các trạm có tổn thất cao (> 2,35%)">
           <div class="stat-card-header">
             <span class="stat-card-title">Trạm TTĐN Cao (&gt; 2,35%)</span>
             <div class="stat-icon-wrapper">📈</div>
           </div>
           <div class="stat-value" id="statHighLoss">0</div>
           <div class="stat-desc">Vượt ngưỡng quy chuẩn kỹ thuật EVN</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm cao</div>
         </div>
 
-        <div class="stat-card normal-loss">
+        <div class="stat-card normal-loss clickable" id="statCardGood" onclick="window.AppController.setDashboardStatusFilter('good')" title="Bấm để lọc các trạm tổn thất bình thường (0 - 2,35%)">
           <div class="stat-card-header">
             <span class="stat-card-title">Trạm Bình Thường (0 - 2,35%)</span>
             <div class="stat-icon-wrapper">✅</div>
           </div>
           <div class="stat-value" id="statGoodLoss">0</div>
           <div class="stat-desc">Tổn thất trong ngưỡng kỹ thuật cho phép</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm tốt</div>
         </div>
 
-        <div class="stat-card error-loss">
+        <div class="stat-card error-loss clickable" id="statCardError" onclick="window.AppController.setDashboardStatusFilter('error')" title="Bấm để lọc các trạm mất điện nhận đầu nguồn (#DIV/0!)">
           <div class="stat-card-header">
             <span class="stat-card-title">Mất Đầu Nguồn (#DIV/0!)</span>
             <div class="stat-icon-wrapper">⚡</div>
           </div>
           <div class="stat-value" id="statErrorLoss">0</div>
           <div class="stat-desc">Mất điện nhận công tơ tổng / Sai đo đếm</div>
+          <div class="stat-card-hint">👉 Bấm để lọc mất ĐN</div>
         </div>
 
-        <div class="stat-card queue-stat">
+        <div class="stat-card queue-stat clickable" onclick="switchTab('tab-queue')" title="Bấm để chuyển sang Tab Hàng Chờ">
           <div class="stat-card-header">
             <span class="stat-card-title">Hàng Chờ Hiện Trường</span>
             <div class="stat-icon-wrapper">📋</div>
           </div>
           <div class="stat-value queue-badge-count" id="statQueueCount">0</div>
           <div class="stat-desc">Trạm đã lập kế hoạch kiểm tra</div>
+          <div class="stat-card-hint">👉 Xem hàng chờ</div>
         </div>
       </div>
 
@@ -258,6 +264,40 @@
 
       <!-- Main Station Table -->
       <div class="card-table-container">
+        <!-- Status Filter Pills Bar (Dựa theo Sheet Chú Thích EVN) -->
+        <div class="dashboard-status-pills-bar" id="dashboardStatusPillsBar">
+          <button class="status-pill-btn active" data-status="all" onclick="window.AppController.setDashboardStatusFilter('all')" title="Tất cả các trạm công cộng do công ty quản lý">
+            <span class="pill-icon">🏢</span>
+            <span class="pill-text">Tất Cả Trạm</span>
+            <span class="pill-count" id="pillCountAll">0</span>
+          </button>
+          <button class="status-pill-btn pill-abnormal" data-status="abnormal" onclick="window.AppController.setDashboardStatusFilter('abnormal')" title="Lọc các trạm tổn thất bất thường (gồm Âm và Mất điện nhận)">
+            <span class="pill-icon">🚨</span>
+            <span class="pill-text">Tổn Thất Bất Thường</span>
+            <span class="pill-count" id="pillCountAbnormal">0</span>
+          </button>
+          <button class="status-pill-btn pill-negative" data-status="negative" onclick="window.AppController.setDashboardStatusFilter('negative')" title="STT 3 Chú Thích: Tổn thất âm (< 0%)">
+            <span class="pill-icon">⚠️</span>
+            <span class="pill-text">TTĐN Âm (&lt; 0%)</span>
+            <span class="pill-count" id="pillCountNegative">0</span>
+          </button>
+          <button class="status-pill-btn pill-high" data-status="high" onclick="window.AppController.setDashboardStatusFilter('high')" title="STT 2 Chú Thích: Tổn thất > 2,35%">
+            <span class="pill-icon">📈</span>
+            <span class="pill-text">Tổn Thất Cao (&gt; 2,35%)</span>
+            <span class="pill-count" id="pillCountHigh">0</span>
+          </button>
+          <button class="status-pill-btn pill-good" data-status="good" onclick="window.AppController.setDashboardStatusFilter('good')" title="STT 1 Chú Thích: Từ 0 đến 2,35%">
+            <span class="pill-icon">✅</span>
+            <span class="pill-text">Tốt / Bình Thường (0 - 2,35%)</span>
+            <span class="pill-count" id="pillCountGood">0</span>
+          </button>
+          <button class="status-pill-btn pill-error" data-status="error" onclick="window.AppController.setDashboardStatusFilter('error')" title="STT 4 Chú Thích: #DIV/0! do mất điện nhận đầu nguồn">
+            <span class="pill-icon">⚡</span>
+            <span class="pill-text">Mất Đầu Nguồn (#DIV/0!)</span>
+            <span class="pill-count" id="pillCountError">0</span>
+          </button>
+        </div>
+
         <div class="table-filter-bar">
           <div class="filter-left-group">
             <select class="filter-select" id="dashboardAreaFilter" onchange="state.areaFilter = this.value; window.AppController.onDashboardFilterChange();">
@@ -265,6 +305,15 @@
               <option value="Phú Mỹ">Khu vực Phú Mỹ (Trạm công cộng)</option>
               <option value="Vũng Tàu">Khu vực Vũng Tàu (Trạm công cộng)</option>
               <option value="Bà Rịa">Khu vực Bà Rịa (Trạm công cộng)</option>
+            </select>
+
+            <select class="filter-select" id="dashboardStatusSelect" onchange="window.AppController.onDashboardStatusSelect(this.value)">
+              <option value="all">🔍 Tất cả trạng thái tổn thất (Theo Chú Thích)</option>
+              <option value="abnormal">🚨 Tổn thất bất thường (Gồm Âm &amp; Mất ĐN)</option>
+              <option value="negative">⚠️ Tổn thất âm (&lt; 0%)</option>
+              <option value="high">📈 Tổn thất cao (&gt; 2,35%)</option>
+              <option value="good">✅ Tốt / Bình thường (0 - 2,35%)</option>
+              <option value="error">⚡ Mất điện nhận đầu nguồn (#DIV/0!)</option>
             </select>
 
             <input type="text" class="filter-search-input" id="dashboardSearchInput" 
@@ -293,6 +342,7 @@
                 <th>Số Công Tơ Tổng</th>
                 <th>Số KH</th>
                 <th>Tỉ Lệ TTĐN Thực</th>
+                <th>Phân Loại (Theo Chú Thích)</th>
                 <th style="width: 220px;">Hành Động</th>
               </tr>
             </thead>

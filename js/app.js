@@ -14,6 +14,7 @@
     areaFilter: 'all',
     searchQuery: '',
     dashboardSearchQuery: '',
+    dashboardStatusFilter: 'all',
     queueSearchQuery: '',
     queueStatusFilter: 'all',
     sidebarCollapsed: false,
@@ -442,23 +443,43 @@
     return fullList;
   }
 
+  // Phân loại tổn thất theo sheet Chú Thích EVN
+  function renderClassificationBadge(st) {
+    const cat = st.status_cat;
+    if (cat === 'negative') {
+      return `<span class="badge-classification negative" title="STT 3 Chú Thích: Tổn thất âm (< 0%) -> Tổn thất bất thường"><span class="badge-icon">⚠️</span> Bất thường (Âm &lt; 0%)</span>`;
+    }
+    if (cat === 'error') {
+      return `<span class="badge-classification error" title="STT 4 Chú Thích: #DIV/0! -> Tổn thất bất thường có thể do mất điện nhận đầu nguồn"><span class="badge-icon">⚡</span> Bất thường (Mất ĐN #DIV/0!)</span>`;
+    }
+    if (cat === 'high') {
+      return `<span class="badge-classification high" title="STT 2 Chú Thích: Tổn thất > 2,35% -> Tổn thất cao"><span class="badge-icon">📈</span> Tổn thất cao (&gt; 2,35%)</span>`;
+    }
+    return `<span class="badge-classification good" title="STT 1 Chú Thích: Từ 0 đến 2,35% -> Tốt"><span class="badge-icon">✅</span> Tốt (0 - 2,35%)</span>`;
+  }
+
   function renderDashboard() {
     const allStations = getAllCompanyStations();
 
-    // Thống kê KPI trên toàn bộ danh mục trạm của công ty
-    let countTotal = allStations.length;
+    // Thống kê số lượng trạm theo khu vực hiện tại để hiển thị số đếm chính xác trên pill và KPI
+    const currentArea = state.areaFilter;
+    const areaStations = currentArea === 'all' ? allStations : allStations.filter(st => st.area === currentArea);
+
+    let countTotal = areaStations.length;
     let countNegative = 0;
     let countHigh = 0;
     let countGood = 0;
     let countError = 0;
 
-    allStations.forEach(st => {
+    areaStations.forEach(st => {
       const cat = st.status_cat;
       if (cat === 'negative') countNegative++;
       else if (cat === 'high') countHigh++;
       else if (cat === 'good') countGood++;
       else if (cat === 'error') countError++;
     });
+
+    const countAbnormal = countNegative + countError;
 
     // Cập nhật DOM thẻ KPI
     const elTotal = document.getElementById('statTotalStations');
@@ -474,6 +495,44 @@
     if (elGood) elGood.textContent = countGood.toLocaleString('vi-VN');
     if (elError) elError.textContent = countError.toLocaleString('vi-VN');
     if (elQueue) elQueue.textContent = state.queue.length;
+
+    // Cập nhật số đếm trên thanh status pill filter
+    const pillAll = document.getElementById('pillCountAll');
+    const pillAbnormal = document.getElementById('pillCountAbnormal');
+    const pillNeg = document.getElementById('pillCountNegative');
+    const pillHigh = document.getElementById('pillCountHigh');
+    const pillGood = document.getElementById('pillCountGood');
+    const pillError = document.getElementById('pillCountError');
+
+    if (pillAll) pillAll.textContent = countTotal.toLocaleString('vi-VN');
+    if (pillAbnormal) pillAbnormal.textContent = countAbnormal.toLocaleString('vi-VN');
+    if (pillNeg) pillNeg.textContent = countNegative.toLocaleString('vi-VN');
+    if (pillHigh) pillHigh.textContent = countHigh.toLocaleString('vi-VN');
+    if (pillGood) pillGood.textContent = countGood.toLocaleString('vi-VN');
+    if (pillError) pillError.textContent = countError.toLocaleString('vi-VN');
+
+    // Đồng bộ trạng thái active của select & pills & stat-cards
+    const currentStatus = state.dashboardStatusFilter || 'all';
+    const statusSelect = document.getElementById('dashboardStatusSelect');
+    if (statusSelect) statusSelect.value = currentStatus;
+
+    document.querySelectorAll('.status-pill-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-status') === currentStatus);
+    });
+
+    const cardMap = {
+      'all': 'statCardTotal',
+      'negative': 'statCardNegative',
+      'high': 'statCardHigh',
+      'good': 'statCardGood',
+      'error': 'statCardError'
+    };
+    Object.keys(cardMap).forEach(key => {
+      const cardEl = document.getElementById(cardMap[key]);
+      if (cardEl) {
+        cardEl.classList.toggle('active-filter', currentStatus === key || (key === 'negative' && currentStatus === 'abnormal'));
+      }
+    });
 
     // Render bảng danh sách trạm trên dashboard với thanh cuộn
     initDashboardTableScrollListener();
@@ -495,15 +554,26 @@
   function resetAndRenderDashboardTable() {
     const allStations = getAllCompanyStations();
     const query = (state.dashboardSearchQuery || '').trim().toLowerCase();
+    const statusFilter = state.dashboardStatusFilter || 'all';
 
-    // Lọc theo 3 khu vực: Phú Mỹ, Vũng Tàu, Bà Rịa (bỏ bộ lọc tất cả trạng thái)
+    // Lọc theo 3 khu vực: Phú Mỹ, Vũng Tàu, Bà Rịa VÀ lọc theo trạng thái tổn thất theo Chú Thích
     currentFilteredStations = allStations.filter(st => {
       const matchArea = state.areaFilter === 'all' || st.area === state.areaFilter;
+
+      let matchStatus = true;
+      if (statusFilter === 'abnormal') {
+        matchStatus = (st.status_cat === 'negative' || st.status_cat === 'error');
+      } else if (statusFilter !== 'all') {
+        matchStatus = (st.status_cat === statusFilter);
+      }
+
       const matchSearch = !query || 
         String(st.station_id).toLowerCase().includes(query) || 
         String(st.station_name).toLowerCase().includes(query) ||
-        String(st.area).toLowerCase().includes(query);
-      return matchArea && matchSearch;
+        String(st.area).toLowerCase().includes(query) ||
+        String(st.status_label || '').toLowerCase().includes(query);
+
+      return matchArea && matchStatus && matchSearch;
     });
 
     currentRenderedIndex = 0;
@@ -513,7 +583,7 @@
     tbody.innerHTML = '';
 
     if (currentFilteredStations.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 32px; color: #94a3b8;">Không tìm thấy trạm nào phù hợp với bộ lọc trong tháng ${getMonthName(state.selectedMonth)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 32px; color: #94a3b8;">Không tìm thấy trạm nào phù hợp với bộ lọc trong tháng ${getMonthName(state.selectedMonth)}</td></tr>`;
       updateDashboardTableCounter(0, 0);
       return;
     }
@@ -552,6 +622,9 @@
             </span>
           </td>
           <td>
+            ${renderClassificationBadge(st)}
+          </td>
+          <td>
             <div style="display: flex; gap: 6px;">
               <button class="btn-custom btn-sm btn-primary" 
                 onclick="window.AppController.goToFieldInspection('${st.station_id}')" title="Đề xuất chuyển trạm tại nghiệp vụ hiện trường">
@@ -576,10 +649,19 @@
   function updateDashboardTableCounter(rendered, total) {
     const counterEl = document.getElementById('dashboardTableCounter');
     if (counterEl) {
+      const statusLabels = {
+        'all': '',
+        'abnormal': ' • Bất thường',
+        'negative': ' • TTĐN âm < 0%',
+        'high': ' • Tổn thất cao > 2,35%',
+        'good': ' • Tốt (0 - 2,35%)',
+        'error': ' • Mất đầu nguồn #DIV/0!'
+      };
+      const statusSuffix = statusLabels[state.dashboardStatusFilter] || '';
       if (rendered >= total) {
-        counterEl.innerHTML = `Hiển thị: <strong>${total.toLocaleString('vi-VN')}</strong> / <strong>${total.toLocaleString('vi-VN')}</strong> trạm (Đã tải hết)`;
+        counterEl.innerHTML = `Hiển thị: <strong>${total.toLocaleString('vi-VN')}</strong> / <strong>${total.toLocaleString('vi-VN')}</strong> trạm${statusSuffix} (Đã tải hết)`;
       } else {
-        counterEl.innerHTML = `Hiển thị: <strong>${rendered.toLocaleString('vi-VN')}</strong> / <strong>${total.toLocaleString('vi-VN')}</strong> trạm (Cuộn xuống xem tiếp)`;
+        counterEl.innerHTML = `Hiển thị: <strong>${rendered.toLocaleString('vi-VN')}</strong> / <strong>${total.toLocaleString('vi-VN')}</strong> trạm${statusSuffix} (Cuộn xuống xem tiếp)`;
       }
     }
   }
@@ -2583,8 +2665,43 @@
       window.print();
     },
 
-    onDashboardFilterChange: function () {
+    setDashboardStatusFilter: function (status) {
+      state.dashboardStatusFilter = status;
+
+      // Cập nhật giá trị trong dropdown select
+      const sel = document.getElementById('dashboardStatusSelect');
+      if (sel) sel.value = status;
+
+      // Cập nhật trạng thái active của các pills
+      const pills = document.querySelectorAll('.status-pill-btn');
+      pills.forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-status') === status);
+      });
+
+      // Cập nhật viền active của các thẻ KPI
+      const cardMap = {
+        'all': 'statCardTotal',
+        'negative': 'statCardNegative',
+        'high': 'statCardHigh',
+        'good': 'statCardGood',
+        'error': 'statCardError'
+      };
+      Object.keys(cardMap).forEach(key => {
+        const cardEl = document.getElementById(cardMap[key]);
+        if (cardEl) {
+          cardEl.classList.toggle('active-filter', status === key || (key === 'negative' && status === 'abnormal'));
+        }
+      });
+
       resetAndRenderDashboardTable();
+    },
+
+    onDashboardStatusSelect: function (val) {
+      window.AppController.setDashboardStatusFilter(val);
+    },
+
+    onDashboardFilterChange: function () {
+      renderDashboard();
     },
 
     onDashboardSearchInput: function (val) {
