@@ -1214,6 +1214,38 @@ button, input, select, textarea {
   font-size: 12px;
 }
 
+.badge-reinspect-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+  cursor: help;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.badge-reinspect-tag:hover {
+  background: #fde68a;
+  border-color: #f59e0b;
+}
+
+.reinspect-warning-banner {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca;
+  border-left: 5px solid #dc2626;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
 /* ==========================================================================
    LOAD TRANSFER SIMULATOR (TAB 3 SPECIAL FEATURE)
    ========================================================================== */

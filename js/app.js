@@ -29,7 +29,9 @@
       targetStationId: null,
       selectedKhIds: new Set(),
       result: null
-    }
+    },
+    confirmedReinspectionStationIds: new Set(),
+    pendingReinspectionContext: null
   };
 
   // Khởi tạo và nạp dữ liệu từ localStorage, tự động đồng bộ từ Google Sheet hàng chờ (gid: 71925172)
@@ -170,6 +172,7 @@
         monthBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.selectedMonth = btn.getAttribute('data-month');
+        if (state.confirmedReinspectionStationIds) state.confirmedReinspectionStationIds.clear();
         cachedCompanyStations = null;
         renderDashboard();
         renderTabDinhKy();
@@ -695,6 +698,13 @@
       if (isSelected) rowClass = 'row-selected';
       else if (isNegative) rowClass = 'row-danger';
 
+      const histInfo = getStationInspectionHistory(st.station_id, true);
+      let reinspectBadge = '';
+      if (histInfo.hasHistory) {
+        const monthShorts = histInfo.history.map(h => h.monthName.replace('Tháng ', 'T')).join(', ');
+        reinspectBadge = `<span class="badge-reinspect-tag" title="Trạm này đã từng kiểm tra trong: ${histInfo.history.map(h => h.monthName).join(', ')}">🔁 Đã KT ${monthShorts || 'kỳ trước'}</span>`;
+      }
+
       let catBadge = '';
       if (st.status_cat === 'negative') {
         catBadge = '<span class="badge-status negative">🔴 Tổn thất âm (&lt; 0%)</span>';
@@ -719,7 +729,7 @@
           <td>${idx + 1}</td>
           <td><span class="station-id-tag">${st.station_id}</span></td>
           <td>
-            <strong>${escapeHtml(st.station_name)}</strong>
+            <strong>${escapeHtml(st.station_name)}</strong>${reinspectBadge}
             <div style="font-size: 11px; color: #64748b;">${escapeHtml(st.content_type || 'Trạm biến áp')}</div>
           </td>
           <td>${escapeHtml(getStationArea(st))}</td>
@@ -994,6 +1004,13 @@
       const isSelected = state.selectedStclStationId === st.station_id;
       let rowClass = isSelected ? 'row-selected' : '';
 
+      const histInfo = getStationInspectionHistory(st.station_id, true);
+      let reinspectBadge = '';
+      if (histInfo.hasHistory) {
+        const monthShorts = histInfo.history.map(h => h.monthName.replace('Tháng ', 'T')).join(', ');
+        reinspectBadge = `<span class="badge-reinspect-tag" title="Trạm này đã từng kiểm tra trong: ${histInfo.history.map(h => h.monthName).join(', ')}">🔁 Đã KT ${monthShorts || 'kỳ trước'}</span>`;
+      }
+
       let catBadge = '<span class="badge-status high" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">⚡ Sang tải chuyển lưới</span>';
       if (st.content_type && st.content_type.toLowerCase().includes('xây dựng mới')) {
         catBadge = '<span class="badge-status high" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">🏗️ STCL - Xây dựng mới</span>';
@@ -1016,7 +1033,7 @@
           <td>${idx + 1}</td>
           <td><span class="station-id-tag" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">${st.station_id || 'Chưa mã'}</span></td>
           <td>
-            <strong>${escapeHtml(st.station_name)}</strong>
+            <strong>${escapeHtml(st.station_name)}</strong>${reinspectBadge}
             <div style="font-size: 11px; color: #64748b;">${escapeHtml(st.content_type || 'Trạm STCL')}</div>
           </td>
           <td>${escapeHtml(getStationArea(st))}</td>
@@ -1531,8 +1548,15 @@
     const khList = customersMap[stationId] || [];
     const khCount = khList.length || st.kh_count || 0;
 
+    const historyInfo = getStationInspectionHistory(stationId, false);
+    let histBadge = '';
+    if (historyInfo.hasHistory) {
+      const months = historyInfo.history.map(h => h.monthName.replace('Tháng ', 'T')).join(', ');
+      histBadge = ` • <span class="badge-reinspect-tag" title="Đã từng kiểm tra trong: ${historyInfo.history.map(h => h.monthName).join(', ')}">⚠️ Đã KT: ${months || 'Có trong dữ liệu'}</span>`;
+    }
+
     if (previewEl) {
-      previewEl.innerHTML = `🏢 [${st.station_id}] <strong>${escapeHtml(st.station_name)}</strong> • TTĐN: <span class="badge-status ${st.status_cat || 'high'}" style="font-size: 11px;">${st.loss_str}</span> • Khu vực: <strong>${st.area}</strong> • <strong>${khCount} KH</strong>`;
+      previewEl.innerHTML = `🏢 [${st.station_id}] <strong>${escapeHtml(st.station_name)}</strong>${histBadge} • TTĐN: <span class="badge-status ${st.status_cat || 'high'}" style="font-size: 11px;">${st.loss_str}</span> • Khu vực: <strong>${st.area}</strong> • <strong>${khCount} KH</strong>`;
     }
 
     if (htInput && !htInput.value) {
@@ -2060,36 +2084,280 @@
     document.body.removeChild(ta);
   }
 
+  // ==========================================================================
+  // XỬ LÝ CẢNH BÁO CHỌN TRÙNG TRẠM ĐÃ KIỂM TRA Ở CÁC THÁNG TRƯỚC
+  // ==========================================================================
+  function getStationInspectionHistory(stationId, excludeCurrentMonth = false) {
+    if (!stationId) return { hasHistory: false, history: [], inQueue: false, queueItems: [] };
+
+    const targetId = String(stationId).trim();
+    const monthsData = window.APP_DATA?.months_data || {};
+    const currentMonthKey = state.selectedMonth;
+
+    const history = [];
+
+    // Duyệt qua tất cả các tháng (thang_1 đến thang_9)
+    const monthKeys = ['thang_1', 'thang_2', 'thang_3', 'thang_4', 'thang_5', 'thang_6', 'thang_7', 'thang_8', 'thang_9'];
+    monthKeys.forEach(mKey => {
+      if (excludeCurrentMonth && mKey === currentMonthKey) return;
+      const list = monthsData[mKey] || [];
+      const found = list.find(s => String(s.station_id).trim() === targetId);
+      if (found) {
+        history.push({
+          type: 'monthly_report',
+          monthKey: mKey,
+          monthName: getMonthName(mKey),
+          loss_str: found.loss_str || (found.loss_val !== null && found.loss_val !== undefined ? (found.loss_val + '%') : '-'),
+          status_cat: found.status_cat || 'unknown',
+          status_label: found.status_label || '',
+          content_type: found.content_type || '',
+          note: found.note || '',
+          proposal: found.proposal || '',
+          meter_id: found.meter_id || '',
+          kh_count: found.kh_count || 0
+        });
+      }
+    });
+
+    // Duyệt qua hàng chờ kiểm tra hiện trường (state.queue)
+    const queueItems = (state.queue || []).filter(q => 
+      String(q.source_id || q.station_id || q.id).trim() === targetId
+    ).map(q => ({
+      type: 'queue',
+      month: q.month || 'Hàng chờ',
+      monthName: q.month ? getMonthName(q.month) : 'Hàng chờ hiện tại',
+      status: q.status || 'pending',
+      added_at: q.added_at || '',
+      note: q.note || '',
+      proposal: q.proposal || '',
+      kh_name: q.kh_name || '',
+      target_id: q.target_id || '',
+      target_name: q.target_name || ''
+    }));
+
+    return {
+      hasHistory: history.length > 0 || queueItems.length > 0,
+      history: history,
+      inQueue: queueItems.length > 0,
+      queueItems: queueItems
+    };
+  }
+
+  function openReinspectWarningModal({ stationId, historyInfo, onContinue, onCancel }) {
+    state.pendingReinspectionContext = { stationId, onContinue, onCancel };
+
+    const modal = document.getElementById('stationReinspectModal');
+    const modalBody = document.getElementById('stationReinspectModalBody');
+    if (!modal || !modalBody) {
+      if (typeof onContinue === 'function') onContinue();
+      return;
+    }
+
+    const allStations = getAllCompanyStations();
+    const st = allStations.find(s => String(s.station_id) === String(stationId)) || {
+      station_id: stationId,
+      station_name: 'Trạm ' + stationId,
+      area: 'Vũng Tàu'
+    };
+
+    const historyItems = historyInfo.history || [];
+    const queueItems = historyInfo.queueItems || [];
+
+    const monthListStr = historyItems.map(h => `<strong>${h.monthName}</strong>`).join(', ');
+
+    modalBody.innerHTML = `
+      <div class="reinspect-warning-banner">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px;">
+          <div>
+            <div style="font-size: 15px; font-weight: 800; color: #991b1b;">
+              🏢 [${st.station_id}] ${escapeHtml(st.station_name)}
+            </div>
+            <div style="font-size: 12px; color: #b91c1c; margin-top: 2px;">
+              Khu vực: <strong>${escapeHtml(st.area || getStationArea(st))}</strong> • Kỳ hiện tại: <strong>${getMonthName(state.selectedMonth)}</strong>
+            </div>
+          </div>
+          <span class="station-id-tag" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;">
+            Trùng trạm đã kiểm tra
+          </span>
+        </div>
+        <p style="font-size: 13px; color: #7f1d1d; margin: 0; line-height: 1.5;">
+          ⚠️ Trạm biến áp này <strong>đã từng được đưa vào danh sách kiểm tra trong: ${monthListStr || 'các kỳ trước'}</strong>.
+        </p>
+      </div>
+
+      <!-- Bảng lịch sử kiểm tra các kỳ -->
+      ${historyItems.length > 0 ? `
+        <div style="margin-bottom: 16px;">
+          <h4 style="font-size: 13px; font-weight: 700; color: var(--evn-navy); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span>📋</span> Lịch Sử Kiểm Tra Trong Dữ Liệu (${historyItems.length} kỳ):
+          </h4>
+          <div class="table-responsive-wrapper" style="max-height: 190px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <table class="data-table" style="font-size: 12px;">
+              <thead>
+                <tr style="background: #f8fafc;">
+                  <th style="width: 85px;">Kỳ KT</th>
+                  <th style="width: 95px;">Tỉ Lệ TTĐN</th>
+                  <th>Phân Loại / Hiện Trạng</th>
+                  <th>Đề Xuất Đã Ghi</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${historyItems.map(h => `
+                  <tr>
+                    <td><strong>${escapeHtml(h.monthName)}</strong></td>
+                    <td>
+                      <span class="badge-status ${h.status_cat}">
+                        ${escapeHtml(h.loss_str)}
+                      </span>
+                    </td>
+                    <td>
+                      <div><strong>${escapeHtml(h.status_label || h.content_type || 'Kiểm tra')}</strong></div>
+                      ${h.note ? `<div style="font-size: 11px; color: #64748b; margin-top: 2px;">${escapeHtml(h.note)}</div>` : ''}
+                    </td>
+                    <td>
+                      <span style="font-size: 11.5px; color: #334155;">${escapeHtml(h.proposal || '-')}</span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- Thông tin trong hàng chờ nếu có -->
+      ${queueItems.length > 0 ? `
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;">
+          <div style="font-weight: 700; color: #1e40af; font-size: 12.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>📋</span> Hiện Đang Có Trong Hàng Chờ Hiện Trường (${queueItems.length} bản ghi):
+          </div>
+          <div style="font-size: 12px; color: #1e3a8a; line-height: 1.5;">
+            Trạm này đã có công việc trong Hàng Chờ (Trạng thái: <strong>${queueItems[0].status === 'done' ? '✅ Đã thực hiện' : (queueItems[0].status === 'processing' ? '⚙️ Đang xử lý' : '⏳ Chưa thực hiện')}</strong>, ngày tạo: <code>${queueItems[0].added_at || 'Gần đây'}</code>).
+          </div>
+        </div>
+      ` : ''}
+
+      <div style="background: #fffbeb; border: 1px solid #fef08a; border-radius: 8px; padding: 12px 16px; font-size: 12.5px; color: #78350f; line-height: 1.5;">
+        💡 <strong>Bạn có muốn kiểm tra lại trạm này không?</strong><br>
+        Nếu trạm này vẫn còn tổn thất bất thường hoặc cần tiếp tục rà soát ranh phụ tải trong <strong>${getMonthName(state.selectedMonth)}</strong>, bạn hãy nhấn nút <strong>"➡️ Tiếp Tục Kiểm Tra Lại"</strong> bên dưới. Nếu không, bấm <strong>"✕ Hủy / Bỏ Chọn"</strong>.
+      </div>
+    `;
+
+    modal.classList.add('show');
+  }
+
+  function proceedReinspectContinue() {
+    const ctx = state.pendingReinspectionContext;
+    const modal = document.getElementById('stationReinspectModal');
+    if (modal) modal.classList.remove('show');
+
+    if (ctx && ctx.stationId) {
+      state.confirmedReinspectionStationIds.add(ctx.stationId);
+      showToast(`Đã xác nhận kiểm tra lại trạm [${ctx.stationId}] cho kỳ ${getMonthName(state.selectedMonth)}!`, 'info');
+      if (typeof ctx.onContinue === 'function') {
+        ctx.onContinue();
+      }
+    }
+    state.pendingReinspectionContext = null;
+  }
+
+  function cancelReinspectModal() {
+    const ctx = state.pendingReinspectionContext;
+    const modal = document.getElementById('stationReinspectModal');
+    if (modal) modal.classList.remove('show');
+
+    if (ctx && typeof ctx.onCancel === 'function') {
+      ctx.onCancel();
+    }
+    state.pendingReinspectionContext = null;
+  }
+
+  function executeSelectProposedStation(stationId) {
+    state.selectedProposedStationId = stationId;
+    document.querySelectorAll('.dinh-ky-station-cb').forEach(cb => {
+      cb.checked = (cb.value === stationId);
+    });
+    document.querySelectorAll('#dinhKyTableBody tr').forEach(row => {
+      row.classList.remove('row-selected');
+    });
+    const activeRow = document.getElementById(`dinh_ky_row_${stationId}`);
+    if (activeRow) activeRow.classList.add('row-selected');
+
+    renderCustomerTransferPanel(stationId);
+
+    const panel = document.getElementById('stationCustomerTransferContainer');
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function executeDeselectProposedStation(stationId) {
+    if (state.selectedProposedStationId === stationId) {
+      state.selectedProposedStationId = null;
+      const panel = document.getElementById('stationCustomerTransferContainer');
+      if (panel) panel.style.display = 'none';
+      const activeRow = document.getElementById(`dinh_ky_row_${stationId}`);
+      if (activeRow) activeRow.classList.remove('row-selected');
+    }
+  }
+
+  function executeSelectStclStation(stationId) {
+    state.selectedStclStationId = stationId;
+    document.querySelectorAll('.stcl-station-cb').forEach(cb => {
+      cb.checked = (cb.value === stationId);
+    });
+    document.querySelectorAll('#sangTaiTableBody tr').forEach(row => {
+      row.classList.remove('row-selected');
+    });
+    const activeRow = document.getElementById(`stcl_row_${stationId}`);
+    if (activeRow) activeRow.classList.add('row-selected');
+
+    renderStclCustomerTransferPanel(stationId);
+
+    const panel = document.getElementById('stclCustomerTransferContainer');
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function executeDeselectStclStation(stationId) {
+    if (state.selectedStclStationId === stationId) {
+      state.selectedStclStationId = null;
+      const panel = document.getElementById('stclCustomerTransferContainer');
+      if (panel) panel.style.display = 'none';
+      const activeRow = document.getElementById(`stcl_row_${stationId}`);
+      if (activeRow) activeRow.classList.remove('row-selected');
+    }
+  }
+
   // Expose API cho Controller gọi từ HTML
   window.AppController = {
     onSelectProposedStation: function (stationId, checked) {
       if (checked) {
-        state.selectedProposedStationId = stationId;
-        // Bỏ chọn các checkbox khác trên bảng đề xuất trạm
-        document.querySelectorAll('.dinh-ky-station-cb').forEach(cb => {
-          if (cb.value !== stationId) cb.checked = false;
-        });
-        document.querySelectorAll('#dinhKyTableBody tr').forEach(row => {
-          row.classList.remove('row-selected');
-        });
-        const activeRow = document.getElementById(`dinh_ky_row_${stationId}`);
-        if (activeRow) activeRow.classList.add('row-selected');
-
-        renderCustomerTransferPanel(stationId);
-
-        // Cuộn mượt tới khung chuyển đổi khách hàng
-        const panel = document.getElementById('stationCustomerTransferContainer');
-        if (panel) {
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!state.confirmedReinspectionStationIds.has(stationId)) {
+          const historyInfo = getStationInspectionHistory(stationId, true);
+          if (historyInfo.hasHistory) {
+            const cb = document.getElementById(`cb_station_${stationId}`);
+            if (cb) cb.checked = false;
+            openReinspectWarningModal({
+              stationId: stationId,
+              historyInfo: historyInfo,
+              onContinue: () => {
+                const targetCb = document.getElementById(`cb_station_${stationId}`);
+                if (targetCb) targetCb.checked = true;
+                executeSelectProposedStation(stationId);
+              },
+              onCancel: () => {
+                const targetCb = document.getElementById(`cb_station_${stationId}`);
+                if (targetCb) targetCb.checked = false;
+              }
+            });
+            return;
+          }
         }
+        executeSelectProposedStation(stationId);
       } else {
-        if (state.selectedProposedStationId === stationId) {
-          state.selectedProposedStationId = null;
-          const panel = document.getElementById('stationCustomerTransferContainer');
-          if (panel) panel.style.display = 'none';
-          const activeRow = document.getElementById(`dinh_ky_row_${stationId}`);
-          if (activeRow) activeRow.classList.remove('row-selected');
-        }
+        executeDeselectProposedStation(stationId);
       }
     },
 
@@ -2222,32 +2490,30 @@
 
     onSelectStclStation: function (stationId, checked) {
       if (checked) {
-        state.selectedStclStationId = stationId;
-        // Bỏ chọn các checkbox khác trên bảng trạm STCL
-        document.querySelectorAll('.stcl-station-cb').forEach(cb => {
-          if (cb.value !== stationId) cb.checked = false;
-        });
-        document.querySelectorAll('#sangTaiTableBody tr').forEach(row => {
-          row.classList.remove('row-selected');
-        });
-        const activeRow = document.getElementById(`stcl_row_${stationId}`);
-        if (activeRow) activeRow.classList.add('row-selected');
-
-        renderStclCustomerTransferPanel(stationId);
-
-        // Cuộn mượt tới khung chuyển đổi khách hàng STCL
-        const panel = document.getElementById('stclCustomerTransferContainer');
-        if (panel) {
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!state.confirmedReinspectionStationIds.has(stationId)) {
+          const historyInfo = getStationInspectionHistory(stationId, true);
+          if (historyInfo.hasHistory) {
+            const cb = document.getElementById(`cb_stcl_${stationId}`);
+            if (cb) cb.checked = false;
+            openReinspectWarningModal({
+              stationId: stationId,
+              historyInfo: historyInfo,
+              onContinue: () => {
+                const targetCb = document.getElementById(`cb_stcl_${stationId}`);
+                if (targetCb) targetCb.checked = true;
+                executeSelectStclStation(stationId);
+              },
+              onCancel: () => {
+                const targetCb = document.getElementById(`cb_stcl_${stationId}`);
+                if (targetCb) targetCb.checked = false;
+              }
+            });
+            return;
+          }
         }
+        executeSelectStclStation(stationId);
       } else {
-        if (state.selectedStclStationId === stationId) {
-          state.selectedStclStationId = null;
-          const panel = document.getElementById('stclCustomerTransferContainer');
-          if (panel) panel.style.display = 'none';
-          const activeRow = document.getElementById(`stcl_row_${stationId}`);
-          if (activeRow) activeRow.classList.remove('row-selected');
-        }
+        executeDeselectStclStation(stationId);
       }
     },
 
@@ -2714,7 +2980,38 @@
     },
 
     insertStationToQueue: function () {
+      const srcSelect = document.getElementById('insertQueueSourceStation');
+      const sourceId = srcSelect ? srcSelect.value : '';
+      if (!sourceId) {
+        showToast('Vui lòng chọn Trạm Nguồn cần insert vào hàng chờ!', 'warning');
+        if (srcSelect) srcSelect.focus();
+        return;
+      }
+
+      if (!state.confirmedReinspectionStationIds.has(sourceId)) {
+        const historyInfo = getStationInspectionHistory(sourceId, false);
+        if (historyInfo.hasHistory) {
+          openReinspectWarningModal({
+            stationId: sourceId,
+            historyInfo: historyInfo,
+            onContinue: () => {
+              executeInsertStationToQueue();
+            },
+            onCancel: () => {}
+          });
+          return;
+        }
+      }
+
       executeInsertStationToQueue();
+    },
+
+    proceedReinspectContinue: function () {
+      proceedReinspectContinue();
+    },
+
+    cancelReinspectModal: function () {
+      cancelReinspectModal();
     },
 
     filterQueueTable: function (query) {

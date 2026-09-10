@@ -924,6 +924,31 @@
   </div>
 
   <!-- ==========================================================================
+       MODAL: CẢNH BÁO CHỌN TRÙNG TRẠM ĐÃ KIỂM TRA CÁC THÁNG TRƯỚC
+       ========================================================================== -->
+  <div class="modal-backdrop" id="stationReinspectModal">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%); color: #fff;">
+        <h3 class="modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span> Cảnh Báo: Trạm Đã Từng Được Kiểm Tra
+        </h3>
+        <button class="modal-close-btn" style="color: #fff;" onclick="window.AppController.cancelReinspectModal()">✕</button>
+      </div>
+      <div class="modal-body" id="stationReinspectModalBody" style="padding: 20px;">
+        <!-- Injected dynamically: Station Info, Inspection History Table, Warning Callout -->
+      </div>
+      <div class="modal-footer" style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <button class="btn-custom btn-outline" onclick="window.AppController.cancelReinspectModal()">
+          ✕ Hủy / Bỏ Chọn
+        </button>
+        <button class="btn-custom btn-primary" id="btnConfirmReinspectContinue" onclick="window.AppController.proceedReinspectContinue()" style="background: #dc2626; border-color: #dc2626; color: #fff; font-weight: 700; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);">
+          ➡️ Tiếp Tục Kiểm Tra Lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
        MODAL: LƯU & ĐỒNG BỘ DỮ LIỆU HÀNG CHỜ LÊN GOOGLE SHEETS
        ========================================================================== -->
   <div class="modal-backdrop" id="googleSheetsSyncModal">
