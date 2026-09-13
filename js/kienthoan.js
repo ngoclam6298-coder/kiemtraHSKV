@@ -46,6 +46,7 @@
   let filteredCustomers = [];      // Filtered list
   let currentStationFilter = '';   // Selected station ID
   let currentAreaFilter = '';      // Selected Area
+  let currentConditionFilter = ''; // Selected condition filter (Hiện trạng đo đếm 12 mục)
   let currentStatusFilter = 'all'; // 'all' | 'pending' | 'completed'
   let currentSearchKeyword = '';   // Free text search
   let currentPage = 1;
@@ -67,16 +68,22 @@
     'Nguyễn Đức Thành'
   ];
 
-  // --- Preset Notes for Field Inspectors ---
-  const PRESET_NOTES = [
-    'Đo đếm tốt, niêm chì nguyên vẹn',
-    'Đứt chì hòm công tơ',
-    'Mặt kính mờ/vỡ',
-    'Sai tỷ số biến dòng TI/TU',
-    'Công tơ chạy sai/không hiển thị',
-    'Đã thay chì mới',
-    'Đã thay công tơ'
+  // --- 12 Hiện trạng hệ thống đo đếm chuẩn (PC Vũng Tàu) ---
+  const PRESET_CONDITIONS = [
+    'Hoạt động bình thường',
+    'Hoạt động bình thường ( nhưng không có chì niêm)',
+    'Cài đặt sai hệ số nhân',
+    'Điện kế quá hạn kiểm định',
+    'Điện kế mờ, đen màn hình',
+    'Đã cô lập hoặc đã thu hồi',
+    'Bị lỏng dây trên hệ thống đo đếm',
+    'Mất dòng, mất áp',
+    'Thùng điện kế, CB,... bị mục đáy, khe hở lớn, ....',
+    'Sai giờ thực tế',
+    'Điện kế hư, hỏng',
+    'Không kiểm tra được do nhiều lý do (khóa cửa, kh vắng nhà, ...)'
   ];
+  const PRESET_NOTES = PRESET_CONDITIONS; // Alias tương thích ngược
 
   // ==========================================================================
   // NUMBER NORMALIZATION (CONVERT 2,21E+14 -> 221000000000000)
@@ -311,7 +318,24 @@
           if (chk) chk.checked = false;
         }
         const noteInput = document.getElementById(`note-${data.ma_kh}`);
-        if (noteInput && data.inspection) noteInput.value = data.inspection.ghi_chu || '';
+        const noteVal = (data.inspection && data.inspection.ghi_chu) || '';
+        if (noteInput && data.inspection) noteInput.value = noteVal;
+
+        // Đồng bộ thanh xổ chọn hiện trạng trên bảng
+        const isPresetCond = PRESET_CONDITIONS.includes(noteVal);
+        const selCondVal = isPresetCond ? noteVal : (noteVal ? '__custom__' : '');
+        const selCond = document.getElementById(`sel-cond-${data.ma_kh}`);
+        if (selCond) selCond.value = selCondVal;
+
+        // Đồng bộ các ô tick chọn hiện trạng trên bảng
+        PRESET_CONDITIONS.forEach((cond, cIdx) => {
+          const isTicked = noteVal.includes(cond);
+          const chk = document.getElementById(`chk-cond-d-${data.ma_kh}-${cIdx}`);
+          if (chk) {
+            chk.checked = isTicked;
+            if (chk.parentElement) chk.parentElement.classList.toggle('active', isTicked);
+          }
+        });
 
         const selUp = document.getElementById(`sel-updater-${data.ma_kh}`);
         const upInput = document.getElementById(`updater-${data.ma_kh}`);
@@ -344,7 +368,25 @@
             mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
           }
         }
-        if (mnote && data.inspection) mnote.value = data.inspection.ghi_chu || '';
+        const noteVal = (data.inspection && data.inspection.ghi_chu) || '';
+        if (mnote && data.inspection) mnote.value = noteVal;
+
+        // Đồng bộ thanh xổ chọn hiện trạng trên thẻ di động
+        const isPresetCond = PRESET_CONDITIONS.includes(noteVal);
+        const selCondVal = isPresetCond ? noteVal : (noteVal ? '__custom__' : '');
+        const mselCond = document.getElementById(`msel-cond-${data.ma_kh}`);
+        if (mselCond) mselCond.value = selCondVal;
+
+        // Đồng bộ các ô tick chọn hiện trạng trên thẻ di động
+        PRESET_CONDITIONS.forEach((cond, cIdx) => {
+          const isTicked = noteVal.includes(cond);
+          const chk = document.getElementById(`chk-cond-m-${data.ma_kh}-${cIdx}`);
+          if (chk) {
+            chk.checked = isTicked;
+            if (chk.parentElement) chk.parentElement.classList.toggle('active', isTicked);
+          }
+        });
+
         if (mselUp) mselUp.value = selVal;
         if (mupdater) {
           mupdater.value = upVal;
@@ -824,6 +866,12 @@
       if (currentStatusFilter === 'completed' && !isCompleted) return false;
       if (currentStatusFilter === 'pending' && isCompleted) return false;
 
+      // Filter by condition (Hiện trạng đo đếm 12 mục)
+      if (currentConditionFilter) {
+        const custNote = (insp.ghi_chu || '').toLowerCase();
+        if (!custNote.includes(currentConditionFilter.toLowerCase())) return false;
+      }
+
       // Global search across all 12 fields
       if (kw) {
         const stationName = (stationsMeta[itemStation] && stationsMeta[itemStation].name) || item.ten_tram || '';
@@ -1008,9 +1056,35 @@
           </label>
         `;
 
-      let tagsHtmlDesktop = '';
-      PRESET_NOTES.slice(0, 3).forEach(tag => {
-        tagsHtmlDesktop += `<button type="button" class="btn-tag" onclick="window.PCVT.addTagNote('${escapeHTML(c.ma_kh)}', '${escapeHTML(tag)}')">+ ${escapeHTML(tag)}</button>`;
+      // Chuẩn bị thanh xổ xuống hiện trạng (12 mục chuẩn)
+      const currentNote = (insp.ghi_chu || '').trim();
+      let conditionOptions = `<option value="">-- Chọn hiện trạng đo đếm (12 mục) --</option>`;
+      PRESET_CONDITIONS.forEach((cond, cIdx) => {
+        const isSelected = (currentNote === cond);
+        conditionOptions += `<option value="${escapeHTML(cond)}" ${isSelected ? 'selected' : ''}>${cIdx + 1}. ${escapeHTML(cond)}</option>`;
+      });
+      const isCustomNote = Boolean(currentNote && !PRESET_CONDITIONS.includes(currentNote));
+      conditionOptions += `<option value="__custom__" ${isCustomNote ? 'selected' : ''}>✏️ Khác (Tự nhập tay)...</option>`;
+
+      // Chuẩn bị danh sách tick chọn nhiều hiện trạng (Checklist)
+      let conditionCheckboxesDesktop = '';
+      let conditionCheckboxesMobile = '';
+      PRESET_CONDITIONS.forEach((cond, cIdx) => {
+        const isTicked = currentNote.includes(cond);
+        conditionCheckboxesDesktop += `
+          <label class="condition-check-item ${isTicked ? 'active' : ''}">
+            <input type="checkbox" id="chk-cond-d-${escapeHTML(c.ma_kh)}-${cIdx}" ${isTicked ? 'checked' : ''} 
+                   onchange="window.PCVT.toggleConditionCheck('${escapeHTML(c.ma_kh)}', '${escapeHTML(cond)}', this.checked)">
+            <span><strong>${cIdx + 1}.</strong> ${escapeHTML(cond)}</span>
+          </label>
+        `;
+        conditionCheckboxesMobile += `
+          <label class="condition-check-item ${isTicked ? 'active' : ''}">
+            <input type="checkbox" id="chk-cond-m-${escapeHTML(c.ma_kh)}-${cIdx}" ${isTicked ? 'checked' : ''} 
+                   onchange="window.PCVT.toggleConditionCheck('${escapeHTML(c.ma_kh)}', '${escapeHTML(cond)}', this.checked)">
+            <span><strong>${cIdx + 1}.</strong> ${escapeHTML(cond)}</span>
+          </label>
+        `;
       });
 
       const phoneLink = c.sdt
@@ -1072,11 +1146,22 @@
           </td>
           <td class="col-note">
             <div class="note-wrapper">
+              <select class="condition-select" id="sel-cond-${escapeHTML(c.ma_kh)}" 
+                      onchange="window.PCVT.onConditionSelect('${escapeHTML(c.ma_kh)}', this.value)" title="Thanh xổ xuống chọn hiện trạng">
+                ${conditionOptions}
+              </select>
               <input type="text" class="note-input" id="note-${escapeHTML(c.ma_kh)}" 
-                     value="${escapeHTML(insp.ghi_chu || '')}" 
-                     placeholder="Ghi chú hiện trạng..."
+                     value="${escapeHTML(currentNote)}" 
+                     placeholder="Ghi chú chi tiết hoặc tự nhập..."
                      onchange="window.PCVT.updateNote('${escapeHTML(c.ma_kh)}', this.value)">
-              <div class="note-tags-quick">${tagsHtmlDesktop}</div>
+              <details class="condition-multicheck">
+                <summary class="condition-multicheck-toggle" title="Mở danh sách để tick chọn nhiều hiện trạng cùng lúc">
+                  <span>☑️ Tick chọn nhiều hiện trạng...</span>
+                </summary>
+                <div class="condition-multicheck-panel">
+                  ${conditionCheckboxesDesktop}
+                </div>
+              </details>
             </div>
           </td>
           <td class="col-photo" id="photo-cell-${escapeHTML(c.ma_kh)}">
@@ -1090,11 +1175,6 @@
 
       // 2. Mobile Responsive Card
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c.dia_chi_ddo || c.dia_chi_kh || '') + ', ' + (c.khu_vuc || 'Vũng Tàu'))}`;
-      
-      let mobileTagsHtml = '';
-      PRESET_NOTES.forEach(tag => {
-        mobileTagsHtml += `<button type="button" class="btn-tag" onclick="window.PCVT.addTagNote('${escapeHTML(c.ma_kh)}', '${escapeHTML(tag)}')">+ ${escapeHTML(tag)}</button>`;
-      });
 
       const photoHtmlMobile = insp.hinh_anh
         ? `
@@ -1199,11 +1279,23 @@
             </button>
 
             <div class="note-wrapper">
+              <label style="font-size:0.75rem; font-weight:700; color:#334155; margin-bottom:2px; display:block;">📋 Hiện trạng hệ thống đo đếm (12 mục):</label>
+              <select class="mobile-condition-select" id="msel-cond-${escapeHTML(c.ma_kh)}" 
+                      onchange="window.PCVT.onConditionSelect('${escapeHTML(c.ma_kh)}', this.value)" title="Thanh xổ xuống chọn hiện trạng">
+                ${conditionOptions}
+              </select>
               <input type="text" class="note-input" id="mnote-${escapeHTML(c.ma_kh)}" 
-                     value="${escapeHTML(insp.ghi_chu || '')}" 
-                     placeholder="Ghi chú hiện trạng (niêm chì, TU/TI, tủ điện)..."
+                     value="${escapeHTML(currentNote)}" 
+                     placeholder="Ghi chú chi tiết hoặc tự nhập..."
                      onchange="window.PCVT.updateNote('${escapeHTML(c.ma_kh)}', this.value)">
-              <div class="mobile-note-chips">${mobileTagsHtml}</div>
+              <details class="condition-multicheck">
+                <summary class="condition-multicheck-toggle" title="Mở danh sách để tick chọn nhiều hiện trạng cùng lúc">
+                  <span>☑️ Tick chọn nhiều hiện trạng...</span>
+                </summary>
+                <div class="condition-multicheck-panel">
+                  ${conditionCheckboxesMobile}
+                </div>
+              </details>
             </div>
 
             <div class="mobile-photo-row" id="mphoto-cell-${escapeHTML(c.ma_kh)}">
@@ -1344,6 +1436,15 @@
     if (filterAreaSelect) {
       filterAreaSelect.addEventListener('change', (e) => {
         currentAreaFilter = e.target.value;
+        applyFilters();
+        renderApp();
+      });
+    }
+
+    const filterConditionSelect = document.getElementById('filterConditionSelect');
+    if (filterConditionSelect) {
+      filterConditionSelect.addEventListener('change', (e) => {
+        currentConditionFilter = e.target.value;
         applyFilters();
         renderApp();
       });
@@ -1850,6 +1951,7 @@ function donDepLogDongBo() {
   function resetFilters() {
     currentStationFilter = '';
     currentAreaFilter = '';
+    currentConditionFilter = '';
     currentStatusFilter = 'all';
     currentSearchKeyword = '';
 
@@ -1857,6 +1959,8 @@ function donDepLogDongBo() {
     if (sInput) sInput.value = '';
     const aSelect = document.getElementById('filterAreaSelect');
     if (aSelect) aSelect.value = '';
+    const cSelect = document.getElementById('filterConditionSelect');
+    if (cSelect) cSelect.value = '';
     const gInput = document.getElementById('globalKeywordInput');
     if (gInput) gInput.value = '';
     const clearBtn = document.getElementById('btnClearStation');
@@ -2013,15 +2117,76 @@ function donDepLogDongBo() {
       }
     },
 
+    onConditionSelect: function(ma_kh, val) {
+      const dSel = document.getElementById(`sel-cond-${ma_kh}`);
+      const mSel = document.getElementById(`msel-cond-${ma_kh}`);
+      const dNote = document.getElementById(`note-${ma_kh}`);
+      const mNote = document.getElementById(`mnote-${ma_kh}`);
+
+      if (dSel && dSel.value !== val) dSel.value = val;
+      if (mSel && mSel.value !== val) mSel.value = val;
+
+      if (val === '__custom__') {
+        if (dNote) dNote.focus();
+        if (mNote) mNote.focus();
+      } else if (val) {
+        this.updateNote(ma_kh, val);
+        showToast(`Đã chọn hiện trạng: "${val}"`, 'info');
+      } else {
+        this.updateNote(ma_kh, '');
+      }
+    },
+
+    toggleConditionCheck: function(ma_kh, cond, isChecked) {
+      let currentVal = (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].ghi_chu) || '';
+      let items = currentVal ? currentVal.split(/;\s*|,\s*/).map(s => s.trim()).filter(Boolean) : [];
+
+      if (isChecked) {
+        if (!items.includes(cond)) {
+          items.push(cond);
+        }
+      } else {
+        items = items.filter(item => item !== cond);
+      }
+
+      const newVal = items.join('; ');
+      this.updateNote(ma_kh, newVal);
+      showToast(isChecked ? `Đã tick chọn: "${cond}"` : `Đã bỏ chọn: "${cond}"`, 'info');
+    },
+
     updateNote: function(ma_kh, value) {
       if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
-      inspectionsMap[ma_kh].ghi_chu = value;
+      const trimmed = (value || '').trim();
+      inspectionsMap[ma_kh].ghi_chu = trimmed;
       syncItemImmediately(ma_kh);
 
       const deskInput = document.getElementById(`note-${ma_kh}`);
       const mobInput = document.getElementById(`mnote-${ma_kh}`);
-      if (deskInput && deskInput.value !== value) deskInput.value = value;
-      if (mobInput && mobInput.value !== value) mobInput.value = value;
+      if (deskInput && deskInput.value !== trimmed) deskInput.value = trimmed;
+      if (mobInput && mobInput.value !== trimmed) mobInput.value = trimmed;
+
+      // Đồng bộ thanh xổ chọn hiện trạng (Desktop & Mobile)
+      const isPreset = PRESET_CONDITIONS.includes(trimmed);
+      const selVal = isPreset ? trimmed : (trimmed ? '__custom__' : '');
+      const dSel = document.getElementById(`sel-cond-${ma_kh}`);
+      const mSel = document.getElementById(`msel-cond-${ma_kh}`);
+      if (dSel && dSel.value !== selVal) dSel.value = selVal;
+      if (mSel && mSel.value !== selVal) mSel.value = selVal;
+
+      // Đồng bộ các ô checkbox tick chọn (Desktop & Mobile)
+      PRESET_CONDITIONS.forEach((cond, cIdx) => {
+        const isTicked = trimmed.includes(cond);
+        const chkDesktop = document.getElementById(`chk-cond-d-${ma_kh}-${cIdx}`);
+        const chkMobile = document.getElementById(`chk-cond-m-${ma_kh}-${cIdx}`);
+        if (chkDesktop) {
+          chkDesktop.checked = isTicked;
+          if (chkDesktop.parentElement) chkDesktop.parentElement.classList.toggle('active', isTicked);
+        }
+        if (chkMobile) {
+          chkMobile.checked = isTicked;
+          if (chkMobile.parentElement) chkMobile.parentElement.classList.toggle('active', isTicked);
+        }
+      });
     },
 
     updateUpdater: function(ma_kh, value) {
