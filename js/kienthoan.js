@@ -1670,19 +1670,27 @@ function doPost(e) {
     if (!maKH) return ContentService.createTextOutput(JSON.stringify({status: 'no_makh'}));
 
     // =========================================================================
-    // 1. CẬP NHẬT TRANG CHÍNH (CỘT L: NGƯỜI CẬP NHẬT, CỘT M: TRẠNG THÁI DẤU X)
+    // 1. CẬP NHẬT TRANG CHÍNH (DÒ TÌM ĐỘNG CỘT NGƯỜI CẬP NHẬT & TRẠNG THÁI)
     // =========================================================================
     var rowIndex = -1;
     var rangeB = sheet.getRange("B:B");
     var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
     if (foundCell) {
       rowIndex = foundCell.getRow();
+      var headerVals = sheet.getRange(1, 1, 1, Math.min(sheet.getLastColumn(), 25)).getValues()[0];
+      var colUpdaterIdx = 19; // Mặc định Cột S (cột 19)
+      var colStatusIdx = 20;  // Mặc định Cột T (cột 20)
+      for (var c = 0; c < headerVals.length; c++) {
+        var hName = String(headerVals[c] || '').toLowerCase().trim();
+        if (hName.indexOf('người cập nhật') !== -1 || hName.indexOf('nguoi cap nhat') !== -1) colUpdaterIdx = c + 1;
+        if (hName.indexOf('trạng thái') !== -1 || hName.indexOf('trang thai') !== -1) colStatusIdx = c + 1;
+      }
       if (trangThaiX === 'X') {
-        sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat); // Cột L: Người cập nhật
-        sheet.getRange(rowIndex, 13).setValue('X');          // Cột M: Trạng thái dấu X
+        sheet.getRange(rowIndex, colUpdaterIdx).setValue(nguoiCapNhat);
+        sheet.getRange(rowIndex, colStatusIdx).setValue('X');
       } else {
-        sheet.getRange(rowIndex, 12).setValue('');           // Xóa Cột L
-        sheet.getRange(rowIndex, 13).setValue('');           // Xóa Cột M (xem như chưa thực hiện)
+        sheet.getRange(rowIndex, colUpdaterIdx).setValue('');
+        sheet.getRange(rowIndex, colStatusIdx).setValue('');
       }
     }
 
@@ -2831,18 +2839,25 @@ function donDepLogDongBo() {
       statusPill.innerHTML = '🔄 ĐANG QUÉT CẬP NHẬT...';
     }
 
-    let newUpdates = [];
     const webhookUrl = getWebhookUrl();
+    let isConnected = false;
+    let sheetCheckedMap = new Map(); // Map: ma_kh -> updateObj
 
-    // Chiến lược 1: Nếu có Webhook URL, gọi doGet(e) nhận các thay đổi mới
+    // CHIẾN LƯỢC 1: Nếu có Webhook URL, gọi doGet lấy danh sách đồng bộ hiện có trên Google Sheet
     if (webhookUrl) {
       try {
-        const fetchUrl = `${webhookUrl}${webhookUrl.includes('?') ? '&' : '?'}action=get_updates&since=${lastLivePollTimestamp}`;
+        // Luôn lấy danh sách các bản ghi hiện có trên Log_DongBo (since=0 để so sánh đối chiếu)
+        const fetchUrl = `${webhookUrl}${webhookUrl.includes('?') ? '&' : '?'}action=get_updates&since=0`;
         const resp = await fetch(fetchUrl, { method: 'GET' });
         if (resp.ok) {
           const json = await resp.json();
-          if (json && json.updates && Array.isArray(json.updates) && json.updates.length > 0) {
-            newUpdates = json.updates;
+          if (json && json.status === 'success' && Array.isArray(json.updates)) {
+            isConnected = true;
+            json.updates.forEach(u => {
+              if (u.ma_kh && (u.trang_thai_x === 'X' || u.trang_thai === 'Đã kiểm tra')) {
+                sheetCheckedMap.set(u.ma_kh, u);
+              }
+            });
             if (json.server_time) lastLivePollTimestamp = json.server_time;
           }
         }
@@ -2851,17 +2866,16 @@ function donDepLogDongBo() {
       }
     }
 
-    // Chiến lược 2: Trực tiếp quét Google Sheet qua Google Visualization API (cực nhanh, chỉ trả về các dòng có dấu X)
-    if (newUpdates.length === 0) {
+    // CHIẾN LƯỢC 2: Nếu chưa kết nối Webhook hoặc Webhook lỗi, quét Google Sheet GViz API
+    if (!isConnected) {
       try {
         const sheetUrl = localStorage.getItem(STORAGE_KEY_SHEET_URL) || DEFAULT_SHEET_URL;
         const sheetIdMatch = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
-        const gidMatch = sheetUrl.match(/[#&?]gid=([0-9]+)/);
         const sheetId = sheetIdMatch ? sheetIdMatch[1] : '1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4';
-        const gid = gidMatch ? gidMatch[1] : '1392868293';
-
-        const gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&tq=` + encodeURIComponent("select B, L, M where M is not null and M != ''");
-        const resp = await fetch(gvizUrl);
+        
+        // Quét trang Log_DongBo qua GViz
+        const gvizLogUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Log_DongBo&tq=` + encodeURIComponent("select B, C, D, E, F where D = 'X' or D = 'x'");
+        const resp = await fetch(gvizLogUrl);
         if (resp.ok) {
           const raw = await resp.text();
           const start = raw.indexOf('{');
@@ -2869,24 +2883,23 @@ function donDepLogDongBo() {
           if (start !== -1 && end !== -1) {
             const gData = JSON.parse(raw.substring(start, end + 1));
             const rows = (gData.table && gData.table.rows) || [];
+            isConnected = true;
             rows.forEach(r => {
               const cCells = r.c || [];
               const ma_kh = (cCells[0] && cCells[0].v != null) ? String(cCells[0].v).trim() : '';
               const nguoi_cap_nhat = (cCells[1] && cCells[1].v != null) ? String(cCells[1].v).trim() : '';
-              const trang_thai_m = (cCells[2] && cCells[2].v != null) ? String(cCells[2].v).trim() : '';
+              const trang_thai = (cCells[2] && cCells[2].v != null) ? String(cCells[2].v).trim() : '';
+              const ngay_kt = (cCells[3] && cCells[3].v != null) ? String(cCells[3].v).trim() : '';
+              const ghi_chu = (cCells[4] && cCells[4].v != null) ? String(cCells[4].v).trim() : '';
 
-              if (ma_kh && trang_thai_m.toUpperCase() === 'X') {
-                const currentStatus = inspectionsMap[ma_kh] ? inspectionsMap[ma_kh].trang_thai : '';
-                const currentUpdater = inspectionsMap[ma_kh] ? inspectionsMap[ma_kh].nguoi_cap_nhat : '';
-                
-                if (currentStatus !== 'Đã kiểm tra' || (nguoi_cap_nhat && currentUpdater !== nguoi_cap_nhat)) {
-                  newUpdates.push({
-                    ma_kh: ma_kh,
-                    nguoi_cap_nhat: nguoi_cap_nhat,
-                    trang_thai_x: 'X',
-                    timestamp: Date.now()
-                  });
-                }
+              if (ma_kh && (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra')) {
+                sheetCheckedMap.set(ma_kh, {
+                  ma_kh: ma_kh,
+                  nguoi_cap_nhat: nguoi_cap_nhat,
+                  trang_thai_x: 'X',
+                  ngay_kiem_tra: ngay_kt,
+                  ghi_chu: ghi_chu
+                });
               }
             });
           }
@@ -2896,86 +2909,133 @@ function donDepLogDongBo() {
       }
     }
 
-    // Xử lý các bản ghi mới từ hiện trường
-    if (newUpdates.length > 0) {
+    // NẾU KẾT NỐI THÀNH CÔNG VỚI GOOGLE SHEET / WEBHOOK: TIẾN HÀNH ĐỐI SOÁT 2 CHIỀU (RECONCILE)
+    if (isConnected) {
+      let hasChanges = false;
       let newlyCheckedCount = 0;
+      let revertedCount = 0;
       const now = new Date();
       const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
 
-      newUpdates.forEach(item => {
-        const ma_kh = item.ma_kh;
-        if (!ma_kh) return;
+      // 1. TỰ ĐỘNG BỎ CHỌN CÁC KH ĐÃ BỊ XÓA BÊN ĐIỆN THOẠI (Không còn trong Log_DongBo)
+      Object.keys(inspectionsMap).forEach(ma_kh => {
+        if (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra') {
+          if (!sheetCheckedMap.has(ma_kh)) {
+            // Khách hàng này đã bị hủy bỏ/xóa bên điện thoại hoặc trên Google Sheet!
+            inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
+            inspectionsMap[ma_kh].ngay_kiem_tra = '';
+            hasChanges = true;
+            revertedCount++;
 
-        if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
-        const wasCompleted = inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra';
-        inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
-        if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
-        if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
-        if (!inspectionsMap[ma_kh].ngay_kiem_tra) {
-          inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra || `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-        }
+            // Revert giao diện bảng máy tính nếu đang hiển thị
+            const row = document.getElementById(`row-${ma_kh}`);
+            if (row) {
+              row.classList.remove('row-completed', 'row-just-updated');
+              const stEl = row.querySelector('.col-status');
+              if (stEl) stEl.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+              const chk = row.querySelector('.custom-checkbox input');
+              if (chk) chk.checked = false;
+            }
 
-        if (!wasCompleted) newlyCheckedCount++;
-
-        const cust = allCustomers.find(c => c.ma_kh === ma_kh) || {};
-        
-        liveActivityLog.unshift({
-          timestamp: Date.now(),
-          timeStr: timeStr,
-          ma_kh: ma_kh,
-          ten_kh: cust.ten_kh || item.ten_kh || 'Khách hàng',
-          station: cust.id_tram || cust.ma_tram || item.station || '',
-          nguoi_cap_nhat: item.nguoi_cap_nhat || cust.nguoi_cap_nhat || 'Cán bộ hiện trường'
-        });
-
-        // Cập nhật dòng bảng nếu đang mở trang này
-        const row = document.getElementById(`row-${ma_kh}`);
-        if (row) {
-          row.classList.add('row-completed', 'row-just-updated');
-          const stEl = row.querySelector('.col-status');
-          if (stEl) stEl.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
-          const chk = row.querySelector('.custom-checkbox input');
-          if (chk) chk.checked = true;
-          const upInput = document.getElementById(`updater-${ma_kh}`);
-          if (upInput && item.nguoi_cap_nhat) upInput.value = item.nguoi_cap_nhat;
-          setTimeout(() => row.classList.remove('row-just-updated'), 3500);
-        }
-
-        // Cập nhật thẻ di động nếu đang mở trang này
-        const card = document.getElementById(`mcard-${ma_kh}`);
-        if (card) {
-          card.classList.add('card-completed', 'row-just-updated');
-          const mstatus = document.getElementById(`mstatus-${ma_kh}`);
-          const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
-          if (mstatus) mstatus.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
-          if (mbtn) {
-            mbtn.className = 'btn-mobile-status-toggle completed';
-            mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
+            // Revert giao diện thẻ di động nếu đang hiển thị
+            const card = document.getElementById(`mcard-${ma_kh}`);
+            if (card) {
+              card.classList.remove('card-completed', 'row-just-updated');
+              const mstatus = document.getElementById(`mstatus-${ma_kh}`);
+              const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
+              if (mstatus) mstatus.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+              if (mbtn) {
+                mbtn.className = 'btn-mobile-status-toggle';
+                mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
+                mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', true)`);
+              }
+            }
           }
-          const mupdater = document.getElementById(`mupdater-${ma_kh}`);
-          if (mupdater && item.nguoi_cap_nhat) mupdater.value = item.nguoi_cap_nhat;
-          setTimeout(() => card.classList.remove('row-just-updated'), 3500);
         }
       });
 
-      if (liveActivityLog.length > 50) {
-        liveActivityLog = liveActivityLog.slice(0, 50);
+      // 2. CẬP NHẬT CÁC KHÁCH HÀNG MỚI ĐƯỢC KIỂM TRA TỪ HIỆN TRƯỜNG
+      sheetCheckedMap.forEach((item, ma_kh) => {
+        if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+        const wasCompleted = inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra';
+        const curUpdater = inspectionsMap[ma_kh].nguoi_cap_nhat || '';
+        const isNewCheck = !wasCompleted;
+        const isNewInfo = isNewCheck || (item.nguoi_cap_nhat && item.nguoi_cap_nhat !== curUpdater);
+
+        if (isNewInfo) {
+          inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
+          if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
+          if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
+          if (!inspectionsMap[ma_kh].ngay_kiem_tra) {
+            inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra || `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+          }
+          hasChanges = true;
+          if (isNewCheck) newlyCheckedCount++;
+
+          const cust = allCustomers.find(c => c.ma_kh === ma_kh) || {};
+          liveActivityLog.unshift({
+            timestamp: Date.now(),
+            timeStr: timeStr,
+            ma_kh: ma_kh,
+            ten_kh: cust.ten_kh || item.ten_kh || 'Khách hàng',
+            station: cust.id_tram || cust.ma_tram || '',
+            nguoi_cap_nhat: item.nguoi_cap_nhat || cust.nguoi_cap_nhat || 'Cán bộ hiện trường'
+          });
+
+          // Cập nhật giao diện dòng bảng
+          const row = document.getElementById(`row-${ma_kh}`);
+          if (row) {
+            row.classList.add('row-completed', 'row-just-updated');
+            const stEl = row.querySelector('.col-status');
+            if (stEl) stEl.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+            const chk = row.querySelector('.custom-checkbox input');
+            if (chk) chk.checked = true;
+            const upInput = document.getElementById(`updater-${ma_kh}`);
+            if (upInput && item.nguoi_cap_nhat) upInput.value = item.nguoi_cap_nhat;
+            setTimeout(() => row.classList.remove('row-just-updated'), 3500);
+          }
+
+          // Cập nhật giao diện thẻ di động
+          const card = document.getElementById(`mcard-${ma_kh}`);
+          if (card) {
+            card.classList.add('card-completed', 'row-just-updated');
+            const mstatus = document.getElementById(`mstatus-${ma_kh}`);
+            const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
+            if (mstatus) mstatus.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+            if (mbtn) {
+              mbtn.className = 'btn-mobile-status-toggle completed';
+              mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
+              mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', false)`);
+            }
+            const mupdater = document.getElementById(`mupdater-${ma_kh}`);
+            if (mupdater && item.nguoi_cap_nhat) mupdater.value = item.nguoi_cap_nhat;
+            setTimeout(() => card.classList.remove('row-just-updated'), 3500);
+          }
+        }
+      });
+
+      // 3. NẾU CÓ THAY ĐỔI -> LƯU VÀ LÀM MỚI TOÀN BỘ GIAO DIỆN
+      if (hasChanges) {
+        if (liveActivityLog.length > 50) liveActivityLog = liveActivityLog.slice(0, 50);
+        saveLocalInspections();
+        renderKPIs();
+        renderStationBanner();
+        renderMobileStickyBar();
+        renderLiveActivityFeed();
+
+        if (newlyCheckedCount > 0) {
+          if (isSoundAlertEnabled) playNotificationChime();
+          const latest = liveActivityLog[0];
+          showToast(`🔔 [Hiện trường] ${latest.nguoi_cap_nhat} vừa cập nhật KH ${latest.ma_kh} (${newlyCheckedCount} bản ghi mới)`, 'success');
+        }
+        if (revertedCount > 0) {
+          showToast(`🔄 [Đồng bộ] Đã chuyển ${revertedCount} KH về "Chưa kiểm tra" theo Google Sheet`, 'info');
+        }
+      } else if (isManual) {
+        showToast('Dữ liệu hiện trường đã ở trạng thái mới nhất!', 'info');
       }
-
-      saveLocalInspections();
-      renderKPIs();
-      renderStationBanner();
-      renderMobileStickyBar();
-      renderLiveActivityFeed();
-
-      if (isSoundAlertEnabled) {
-        playNotificationChime();
-      }
-
-      const latest = liveActivityLog[0];
-      showToast(`🔔 [Hiện trường] ${latest.nguoi_cap_nhat} vừa cập nhật KH ${latest.ma_kh} (${newUpdates.length} bản ghi mới)`, 'success');
     } else if (isManual) {
-      showToast('Dữ liệu hiện trường đã ở trạng thái mới nhất!', 'info');
+      showToast('Không thể kết nối đến Webhook Google Sheet để kiểm tra!', 'warning');
     }
 
     if (statusPill) {
