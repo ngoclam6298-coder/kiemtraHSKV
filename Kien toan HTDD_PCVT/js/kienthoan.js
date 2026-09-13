@@ -506,6 +506,17 @@
           mupdater.style.display = (!isPreset && upVal) ? 'block' : 'none';
         }
       }
+    } else if (data && data.type === 'sync_station_assignments' && data.assignments) {
+      stationAssignments = data.assignments;
+      saveStationAssignments();
+      renderSidebarWorkgroups();
+      updateGroupFilterUI();
+      updateFilterWorkgroupDropdown();
+      const assignModal = document.getElementById('modalStationAssignment');
+      if (assignModal && assignModal.classList.contains('active')) {
+        renderStationAssignmentModalTable();
+      }
+      renderDataList();
     }
   }
 
@@ -1800,15 +1811,113 @@
     const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
     if (btnCopyScript) {
       btnCopyScript.addEventListener('click', () => {
-        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU
-// BẢNG LOG_DONGBO 9 CỘT: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
+        const scriptCode = `// =========================================================================
+// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ ĐA THIẾT BỊ)
+// 1. Sheet Log_DongBo (9 cột): Nhật ký kiểm tra khách hàng
+// 2. Sheet PhanCong_Tram (7 cột): Phân công trạm cho 9 nhóm công tác
+// =========================================================================
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
-  lock.tryLock(10000);
+  lock.tryLock(15000);
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getActiveSheet();
     var data = JSON.parse(e.postData.contents);
+    var action = String(data.action || '').trim();
+    var nowTime = new Date().getTime();
+
+    // -------------------------------------------------------------------------
+    // A. XỬ LÝ ĐỒNG BỘ PHÂN CÔNG TRẠM (PhanCong_Tram)
+    // -------------------------------------------------------------------------
+    if (action === 'assign_stations' || action === 'unassign_stations' || data.type === 'station_assignment') {
+      var assignSheet = ss.getSheetByName('PhanCong_Tram');
+      if (!assignSheet) {
+        assignSheet = ss.insertSheet('PhanCong_Tram');
+        assignSheet.appendRow(['Timestamp', 'ID trạm', 'Tên trạm', 'Mã nhóm', 'Tên nhóm', 'Trưởng nhóm', 'Thời gian giao']);
+      } else if (assignSheet.getLastRow() === 0) {
+        assignSheet.appendRow(['Timestamp', 'ID trạm', 'Tên trạm', 'Mã nhóm', 'Tên nhóm', 'Trưởng nhóm', 'Thời gian giao']);
+      }
+
+      var assignLastRow = assignSheet.getLastRow();
+
+      if (action === 'unassign_stations') {
+        // Hủy giao việc: xóa dòng các trạm này khỏi PhanCong_Tram
+        var unassignIds = data.station_ids || [];
+        if (assignLastRow > 1 && unassignIds.length > 0) {
+          var idSet = {};
+          for (var u = 0; u < unassignIds.length; u++) idSet[String(unassignIds[u]).trim()] = true;
+          var allRows = assignSheet.getRange(2, 1, assignLastRow - 1, 7).getValues();
+          for (var r = allRows.length - 1; r >= 0; r--) {
+            var rowStId = String(allRows[r][1] || '').trim();
+            if (idSet[rowStId]) {
+              assignSheet.deleteRow(r + 2);
+            }
+          }
+        }
+        return ContentService.createTextOutput(JSON.stringify({
+          status: 'success',
+          action: 'unassigned',
+          count: unassignIds.length,
+          server_time: nowTime
+        })).setMimeType(ContentService.MimeType.JSON);
+
+      } else {
+        // Giao việc trạm: cập nhật dòng đã có hoặc thêm dòng mới
+        var assignments = data.assignments || [];
+        if (assignLastRow > 1 && assignments.length > 0) {
+          var existingData = assignSheet.getRange(2, 2, assignLastRow - 1, 1).getValues();
+          var idToRowMap = {};
+          for (var i = 0; i < existingData.length; i++) {
+            var existId = String(existingData[i][0] || '').trim();
+            if (existId) idToRowMap[existId] = i + 2;
+          }
+
+          assignments.forEach(function(item) {
+            var stId = String(item.stId || item.id || '').trim();
+            var rowVals = [
+              nowTime,
+              stId,
+              String(item.stName || item.name || '').trim(),
+              String(item.groupId || '').trim(),
+              String(item.groupName || '').trim(),
+              String(item.leader || '').trim(),
+              String(item.assignedAt || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm")).trim()
+            ];
+
+            if (idToRowMap[stId]) {
+              assignSheet.getRange(idToRowMap[stId], 1, 1, 7).setValues([rowVals]);
+            } else {
+              assignSheet.appendRow(rowVals);
+              idToRowMap[stId] = assignSheet.getLastRow();
+            }
+          });
+        } else {
+          assignments.forEach(function(item) {
+            assignSheet.appendRow([
+              nowTime,
+              String(item.stId || item.id || '').trim(),
+              String(item.stName || item.name || '').trim(),
+              String(item.groupId || '').trim(),
+              String(item.groupName || '').trim(),
+              String(item.leader || '').trim(),
+              String(item.assignedAt || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm")).trim()
+            ]);
+          });
+        }
+
+        return ContentService.createTextOutput(JSON.stringify({
+          status: 'success',
+          action: 'assigned',
+          count: assignments.length,
+          server_time: nowTime
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // B. XỬ LÝ ĐỒNG BỘ KHÁCH HÀNG (Log_DongBo 9 CỘT & Trang tính chính)
+    // -------------------------------------------------------------------------
+    var sheet = ss.getActiveSheet();
     var maKH = String(data.ma_kh || '').trim();
     var idTram = String(data.id_tram || '').trim();
     var tenTram = String(data.ten_tram || '').trim();
@@ -1820,17 +1929,15 @@ function doPost(e) {
 
     if (!maKH) return ContentService.createTextOutput(JSON.stringify({status: 'no_makh'}));
 
-    // =========================================================================
-    // 1. CẬP NHẬT TRANG CHÍNH (DÒ TÌM ĐỘNG CỘT NGƯỜI CẬP NHẬT & TRẠNG THÁI)
-    // =========================================================================
+    // 1. Cập nhật trang chính
     var rowIndex = -1;
     var rangeB = sheet.getRange("B:B");
     var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
     if (foundCell) {
       rowIndex = foundCell.getRow();
       var headerVals = sheet.getRange(1, 1, 1, Math.min(sheet.getLastColumn(), 25)).getValues()[0];
-      var colUpdaterIdx = 19; // Mặc định Cột S (cột 19)
-      var colStatusIdx = 20;  // Mặc định Cột T (cột 20)
+      var colUpdaterIdx = 19;
+      var colStatusIdx = 20;
       for (var c = 0; c < headerVals.length; c++) {
         var hName = String(headerVals[c] || '').toLowerCase().trim();
         if (hName.indexOf('người cập nhật') !== -1 || hName.indexOf('nguoi cap nhat') !== -1) colUpdaterIdx = c + 1;
@@ -1845,21 +1952,15 @@ function doPost(e) {
       }
     }
 
-    // =========================================================================
-    // 2. CẬP NHẬT TRANG NHẬT KÝ (Log_DongBo 9 CỘT): GHI ĐÚNG 1 HÀNG, XÓA NẾU HỦY
-    // Cấu trúc: [Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú]
-    // =========================================================================
+    // 2. Cập nhật trang nhật ký Log_DongBo 9 cột
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
       logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
-    } else {
-      if (logSheet.getLastRow() === 0) {
-        logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
-      }
+    } else if (logSheet.getLastRow() === 0) {
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
     }
 
-    // Tìm tất cả dòng chứa Mã KH này trong trang Log_DongBo
     var logLastRow = logSheet.getLastRow();
     var existingRows = [];
     if (logLastRow > 1) {
@@ -1870,20 +1971,16 @@ function doPost(e) {
     }
 
     if (trangThaiX === 'X') {
-      var rowData = [new Date().getTime(), maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu];
+      var rowData = [nowTime, maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu];
       if (existingRows.length > 0) {
-        // Đã có -> Ghi đè vào đúng 1 hàng duy nhất (9 cột)
         logSheet.getRange(existingRows[0], 1, 1, 9).setValues([rowData]);
-        // Nếu trước đó lỡ có nhiều dòng trùng thì xóa bỏ các dòng thừa
         for (var d = existingRows.length - 1; d >= 1; d--) {
           logSheet.deleteRow(existingRows[d]);
         }
       } else {
-        // Chưa có -> Thêm mới 1 hàng duy nhất
         logSheet.appendRow(rowData);
       }
     } else {
-      // Chuyển sang CHƯA THỰC HIỆN -> XÓA DÒNG ĐÓ ĐI (Xem như chưa thực hiện)
       if (existingRows.length > 0) {
         for (var r = existingRows.length - 1; r >= 0; r--) {
           logSheet.deleteRow(existingRows[r]);
@@ -1897,7 +1994,7 @@ function doPost(e) {
       ma_kh: maKH,
       trang_thai: trangThaiX,
       action: (trangThaiX === 'X') ? 'saved' : 'deleted',
-      server_time: new Date().getTime()
+      server_time: nowTime
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
@@ -1911,6 +2008,39 @@ function doPost(e) {
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var action = String((e && e.parameter && e.parameter.action) || 'get_updates').trim();
+    var nowTime = new Date().getTime();
+
+    // 1. ĐỌC DANH SÁCH TRẠM ĐÃ PHÂN CÔNG (PhanCong_Tram)
+    var stationAssignments = [];
+    var assignSheet = ss.getSheetByName('PhanCong_Tram');
+    if (assignSheet && assignSheet.getLastRow() > 1) {
+      var assignData = assignSheet.getDataRange().getValues();
+      for (var a = 1; a < assignData.length; a++) {
+        var aStId = String(assignData[a][1] || '').trim();
+        if (aStId) {
+          stationAssignments.push({
+            timestamp: Number(assignData[a][0] || 0),
+            stId: aStId,
+            stName: String(assignData[a][2] || '').trim(),
+            groupId: String(assignData[a][3] || '').trim(),
+            groupName: String(assignData[a][4] || '').trim(),
+            leader: String(assignData[a][5] || '').trim(),
+            assignedAt: String(assignData[a][6] || '').trim()
+          });
+        }
+      }
+    }
+
+    if (action === 'get_station_assignments') {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        server_time: nowTime,
+        station_assignments: stationAssignments
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. ĐỌC CẬP NHẬT KIỂM TRA KHÁCH HÀNG (Log_DongBo)
     var since = Number((e && e.parameter && e.parameter.since) || 0);
     var logSheet = ss.getSheetByName('Log_DongBo');
     var updates = [];
@@ -1936,7 +2066,6 @@ function doGet(e) {
               ghi_chu: String(data[i][8] || '')
             });
           } else {
-            // Định dạng cũ (6 cột)
             updates.push({
               timestamp: rowTime,
               ma_kh: String(data[i][1]),
@@ -1948,30 +2077,16 @@ function doGet(e) {
           }
         }
       }
-    } else {
-      var sheet = ss.getActiveSheet();
-      var lastRow = sheet.getLastRow();
-      if (lastRow >= 2) {
-        var vals = sheet.getRange(2, 1, lastRow - 1, 13).getValues();
-        for (var j = 0; j < vals.length; j++) {
-          if (String(vals[j][12] || '').trim().toUpperCase() === 'X') {
-            updates.push({
-              ma_kh: String(vals[j][1]),
-              nguoi_cap_nhat: String(vals[j][11] || ''),
-              trang_thai_x: 'X',
-              timestamp: new Date().getTime()
-            });
-          }
-        }
-      }
     }
 
     return ContentService.createTextOutput(JSON.stringify({
       status: 'success',
       count: updates.length,
-      server_time: new Date().getTime(),
-      updates: updates
+      server_time: nowTime,
+      updates: updates,
+      station_assignments: stationAssignments
     })).setMimeType(ContentService.MimeType.JSON);
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2353,6 +2468,104 @@ function donDepLogDongBo() {
     return stationAssignments[String(stationId).trim()] || null;
   }
 
+  function syncStationAssignmentsToCloud(stationIds, action = 'assign', groupId = '') {
+    const webhookUrl = getWebhookUrl();
+    if (!webhookUrl) return;
+
+    let payload = {};
+    if (action === 'assign') {
+      const g = PRESET_WORKGROUPS.find(item => item.id === groupId) || {};
+      const assignments = stationIds.map(stId => {
+        const meta = stationsMeta[stId] || {};
+        const assign = stationAssignments[stId] || {};
+        return {
+          stId: stId,
+          stName: meta.name || '',
+          groupId: groupId,
+          groupIndex: g.index || 1,
+          groupName: g.name || '',
+          leader: g.leader || '',
+          assignedAt: assign.assignedAt || ''
+        };
+      });
+      payload = {
+        action: 'assign_stations',
+        assignments: assignments,
+        timestamp: Date.now()
+      };
+    } else {
+      payload = {
+        action: 'unassign_stations',
+        station_ids: stationIds,
+        timestamp: Date.now()
+      };
+    }
+
+    fetch(webhookUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      console.log('PhanCong_Tram synced to cloud:', action, stationIds.length);
+    }).catch(err => {
+      console.warn('Error syncing PhanCong_Tram to cloud:', err);
+    });
+  }
+
+  function reconcileStationAssignmentsFromCloud(cloudAssignmentsList) {
+    if (!Array.isArray(cloudAssignmentsList)) return false;
+    let changed = false;
+    const cloudMap = new Map();
+
+    cloudAssignmentsList.forEach(item => {
+      const stId = String(item.stId || item.id || '').trim();
+      if (stId) {
+        const g = PRESET_WORKGROUPS.find(w => w.id === item.groupId || w.name === item.groupName || (w.index && w.index === Number(item.groupIndex))) || PRESET_WORKGROUPS[0];
+        cloudMap.set(stId, {
+          groupId: g ? g.id : (item.groupId || 'group_1'),
+          groupIndex: g ? g.index : 1,
+          groupName: g ? g.name : (item.groupName || ''),
+          leader: g ? g.leader : (item.leader || ''),
+          shortName: g ? g.shortName : (item.groupName || ''),
+          fullName: g ? g.fullName : (item.groupName || ''),
+          assignedAt: item.assignedAt || ''
+        });
+      }
+    });
+
+    // 1. Phân công bị xóa/hủy trên điện thoại hoặc thiết bị khác -> Xóa trên máy tính
+    Object.keys(stationAssignments).forEach(stId => {
+      if (!cloudMap.has(stId)) {
+        delete stationAssignments[stId];
+        changed = true;
+      }
+    });
+
+    // 2. Phân công mới hoặc thay đổi nhóm từ thiết bị khác -> Cập nhật trên máy
+    cloudMap.forEach((cloudObj, stId) => {
+      const localObj = stationAssignments[stId];
+      if (!localObj || localObj.groupId !== cloudObj.groupId) {
+        stationAssignments[stId] = cloudObj;
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      saveStationAssignments();
+      renderSidebarWorkgroups();
+      updateGroupFilterUI();
+      updateFilterWorkgroupDropdown();
+      const assignModal = document.getElementById('modalStationAssignment');
+      if (assignModal && assignModal.classList.contains('active')) {
+        renderStationAssignmentModalTable();
+      }
+      renderDataList();
+    }
+
+    return changed;
+  }
+
   function assignStationsToGroup(stationIds, groupId) {
     const group = PRESET_WORKGROUPS.find(g => g.id === groupId);
     if (!group) {
@@ -2387,7 +2600,17 @@ function donDepLogDongBo() {
     applyFilters();
     renderApp();
 
-    showToast(`Đã giao ${stationIds.length} trạm cho Nhóm ${group.index} (${group.shortName})!`, 'success');
+    // Broadcast đa tab trên cùng thiết bị
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({ type: 'sync_station_assignments', assignments: stationAssignments });
+      } catch (e) {}
+    }
+
+    // Đồng bộ tức thời lên Google Sheet cho các thiết bị khác (Điện thoại <-> Máy tính)
+    syncStationAssignmentsToCloud(stationIds, 'assign', groupId);
+
+    showToast(`Đã giao ${stationIds.length} trạm cho Nhóm ${group.index} (${group.shortName}) và đồng bộ lên đám mây!`, 'success');
   }
 
   function unassignStations(stationIds) {
@@ -2412,7 +2635,17 @@ function donDepLogDongBo() {
     applyFilters();
     renderApp();
 
-    showToast(`Đã hủy giao việc ${count} trạm!`, 'info');
+    // Broadcast đa tab trên cùng thiết bị
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({ type: 'sync_station_assignments', assignments: stationAssignments });
+      } catch (e) {}
+    }
+
+    // Đồng bộ tức thời hủy giao việc lên Google Sheet cho các thiết bị khác
+    syncStationAssignmentsToCloud(stationIds, 'unassign');
+
+    showToast(`Đã hủy giao việc ${count} trạm và đồng bộ lên đám mây!`, 'info');
   }
 
   function getGroupStationStats() {
@@ -3925,13 +4158,19 @@ function donDepLogDongBo() {
         const resp = await fetch(fetchUrl, { method: 'GET' });
         if (resp.ok) {
           const json = await resp.json();
-          if (json && json.status === 'success' && Array.isArray(json.updates)) {
+          if (json && json.status === 'success') {
             isConnected = true;
-            json.updates.forEach(u => {
-              if (u.ma_kh && (u.trang_thai_x === 'X' || u.trang_thai === 'Đã kiểm tra')) {
-                sheetCheckedMap.set(u.ma_kh, u);
-              }
-            });
+            if (Array.isArray(json.updates)) {
+              json.updates.forEach(u => {
+                if (u.ma_kh && (u.trang_thai_x === 'X' || u.trang_thai === 'Đã kiểm tra')) {
+                  sheetCheckedMap.set(u.ma_kh, u);
+                }
+              });
+            }
+            // Đồng bộ phân công trạm đa thiết bị từ Webhook
+            if (Array.isArray(json.station_assignments)) {
+              reconcileStationAssignmentsFromCloud(json.station_assignments);
+            }
             if (json.server_time) lastLivePollTimestamp = json.server_time;
           }
         }
@@ -4003,6 +4242,40 @@ function donDepLogDongBo() {
               }
             });
           }
+        }
+
+        // Quét trang PhanCong_Tram qua GViz (Đồng bộ đa thiết bị)
+        try {
+          const gvizAssignUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=PhanCong_Tram&tq=` + encodeURIComponent("select *");
+          const assignResp = await fetch(gvizAssignUrl);
+          if (assignResp.ok) {
+            const assignRaw = await assignResp.text();
+            const aStart = assignRaw.indexOf('{');
+            const aEnd = assignRaw.lastIndexOf('}');
+            if (aStart !== -1 && aEnd !== -1) {
+              const aData = JSON.parse(assignRaw.substring(aStart, aEnd + 1));
+              const aRows = (aData.table && aData.table.rows) || [];
+              const cloudAssignments = [];
+              aRows.forEach(r => {
+                const cCells = r.c || [];
+                const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
+                if (rawVals.length >= 4 && rawVals[1]) {
+                  cloudAssignments.push({
+                    timestamp: rawVals[0],
+                    stId: rawVals[1],
+                    stName: rawVals[2] || '',
+                    groupId: rawVals[3] || '',
+                    groupName: rawVals[4] || '',
+                    leader: rawVals[5] || '',
+                    assignedAt: rawVals[6] || ''
+                  });
+                }
+              });
+              reconcileStationAssignmentsFromCloud(cloudAssignments);
+            }
+          }
+        } catch (assignErr) {
+          console.warn('GViz PhanCong_Tram poll notice:', assignErr);
         }
       } catch (gErr) {
         console.warn('GViz live poll notice:', gErr);
