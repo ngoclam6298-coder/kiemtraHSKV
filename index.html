@@ -166,8 +166,8 @@
           <span class="yt-nav-label">Xuất Excel đầy đủ (13 cột)</span>
         </button>
         <button class="yt-nav-item" id="btnExportAssignments">
-          <span class="yt-nav-icon">📤</span>
-          <span class="yt-nav-label">Xuất danh sách trạm đã giao</span>
+          <span class="yt-nav-icon">📊</span>
+          <span class="yt-nav-label">Xuất danh sách trạm đã giao (.xlsx)</span>
         </button>
       </div>
     </div>
@@ -640,6 +640,10 @@
         <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: auto;">
           💡 Dữ liệu phân công trạm được lưu tự động trên hệ thống và hiển thị huy hiệu trên bảng kiểm tra.
         </span>
+        <button type="button" class="btn-secondary" onclick="window.PCVT.exportAssignments()" style="display:inline-flex; align-items:center; gap:6px; color:#15803d; border-color:#86efac; font-weight:600;" title="Xuất toàn bộ bảng phân công trạm ra file Excel (.xlsx)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Xuất Excel (.xlsx)
+        </button>
         <button class="btn-secondary" onclick="closeModal('modalStationAssignment')">Đóng</button>
       </div>
     </div>

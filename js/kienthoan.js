@@ -2860,44 +2860,116 @@ function donDepLogDongBo() {
   }
 
   function exportAssignments() {
-    const totalStations = Object.keys(stationsMeta);
-    if (totalStations.length === 0) {
+    const totalStationIds = Object.keys(stationsMeta);
+    if (totalStationIds.length === 0) {
       showToast('Chưa có danh sách trạm để xuất!', 'warning');
       return;
     }
 
-    const rows = [
-      ['STT', 'ID Tram', 'Ten Tram', 'Khu Vuc', 'Tong So KH', 'Ma Nhom', 'Ten Nhom Cong Tac', 'Truong Nhom', 'Thoi Gian Giao']
-    ];
+    showLoading(true, 'Đang tạo tệp Excel phân công trạm (.xlsx)...');
 
-    let idx = 1;
-    totalStations.sort().forEach(stId => {
-      const meta = stationsMeta[stId] || {};
-      const assign = stationAssignments[stId];
-      rows.push([
-        idx++,
-        stId,
-        meta.name || '',
-        meta.khu_vuc || '',
-        meta.count || 0,
-        assign ? assign.groupId : '',
-        assign ? assign.groupName : 'Chua giao viec',
-        assign ? assign.leader : '',
-        assign ? (assign.assignedAt || '') : ''
-      ]);
-    });
+    setTimeout(() => {
+      try {
+        const custStats = getStationCustStats();
+        const headers = [
+          'STT',
+          'ID Trạm',
+          'Tên Trạm',
+          'Khu Vực',
+          'Tổng Số KH',
+          'Đã Kiểm Tra',
+          'Tiến Độ (%)',
+          'Trạng Thái Giao Việc',
+          'Nhóm Nhận Việc',
+          'Tên Nhóm Công Tác',
+          'Trưởng Nhóm',
+          'Thời Gian Giao Việc'
+        ];
 
-    const csvContent = '\uFEFF' + rows.map(r => r.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Phan_Cong_Giao_Viec_Tram_PCVT_${Date.now()}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    showToast('Đã xuất danh sách trạm phân công thành công!', 'success');
+        const rows = [headers];
+
+        // Sort stations: assigned stations first, then sorted by ID numerically
+        const sortedIds = totalStationIds.slice().sort((a, b) => {
+          const aAssign = Boolean(stationAssignments[a]);
+          const bAssign = Boolean(stationAssignments[b]);
+          if (aAssign && !bAssign) return -1;
+          if (!aAssign && bAssign) return 1;
+          return a.localeCompare(b, undefined, { numeric: true });
+        });
+
+        let idx = 1;
+        sortedIds.forEach(stId => {
+          const meta = stationsMeta[stId] || {};
+          const assign = stationAssignments[stId];
+          const stats = custStats[stId] || { total: meta.count || 0, checked: 0 };
+          const pct = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
+
+          rows.push([
+            idx++,
+            String(stId || ''),
+            String(meta.name || ''),
+            String(meta.khu_vuc || ''),
+            Number(stats.total || 0),
+            Number(stats.checked || 0),
+            `${pct}%`,
+            assign ? 'Đã giao việc' : 'Chưa giao việc',
+            assign ? `Nhóm ${assign.groupIndex}` : '',
+            assign ? assign.groupName : '',
+            assign ? assign.leader : '',
+            assign ? (assign.assignedAt || '') : ''
+          ]);
+        });
+
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
+        const filename = `Phan_Cong_Giao_Viec_Tram_PCVT_${dateStr}.xlsx`;
+
+        if (typeof XLSX !== 'undefined') {
+          const ws = XLSX.utils.aoa_to_sheet(rows);
+
+          // Căn chỉnh độ rộng cột chuẩn thẩm mỹ chuyên nghiệp trong Excel
+          ws['!cols'] = [
+            { wch: 7 },   // STT
+            { wch: 14 },  // ID Trạm
+            { wch: 30 },  // Tên Trạm
+            { wch: 16 },  // Khu Vực
+            { wch: 13 },  // Tổng Số KH
+            { wch: 13 },  // Đã Kiểm Tra
+            { wch: 12 },  // Tiến Độ (%)
+            { wch: 22 },  // Trạng Thái Giao Việc
+            { wch: 16 },  // Nhóm Nhận Việc
+            { wch: 38 },  // Tên Nhóm Công Tác
+            { wch: 24 },  // Trưởng Nhóm
+            { wch: 20 }   // Thời Gian Giao Việc
+          ];
+
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Phân Công Trạm');
+          XLSX.writeFile(wb, filename);
+
+          showLoading(false);
+          showToast(`Đã xuất thành công tệp Excel: ${filename}`, 'success');
+        } else {
+          // Fallback to CSV with UTF-8 BOM
+          const csvContent = '\uFEFF' + rows.map(r => r.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `Phan_Cong_Giao_Viec_Tram_PCVT_${dateStr}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          showLoading(false);
+          showToast('Đã xuất file phân công trạm thành công!', 'success');
+        }
+      } catch (err) {
+        console.error('Export assignments error:', err);
+        showLoading(false);
+        showToast('Có lỗi khi tạo tệp Excel phân công: ' + err.message, 'error');
+      }
+    }, 50);
   }
 
   // YouTube-style Sidebar Drawer Toggle
