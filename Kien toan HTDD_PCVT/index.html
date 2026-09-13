@@ -551,7 +551,7 @@
        STATION ASSIGNMENT MODAL (GIAO VIỆC THEO ID TRẠM CHO 9 NHÓM CÔNG TÁC)
        ========================================================================== -->
   <div class="modal-overlay" id="modalStationAssignment">
-    <div class="modal-box modal-box-large" style="max-width: 960px; width: 96vw;">
+    <div class="modal-box modal-station-assign-box">
       <div class="modal-header">
         <div class="modal-title">
           <span>📋 GIAO VIỆC CHO NHÓM CÔNG TÁC THEO ID TRẠM</span>
@@ -559,7 +559,7 @@
         <button class="btn-close-modal" onclick="closeModal('modalStationAssignment')">✕</button>
       </div>
 
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 0.85rem; max-height: 75vh; overflow-y: auto;">
+      <div class="modal-body modal-station-assign-body">
         <!-- Step 1 & Action Card -->
         <div class="assign-action-card">
           <div class="assign-group-picker">
@@ -577,11 +577,13 @@
             </select>
           </div>
           <div class="assign-btn-actions">
-            <button type="button" class="btn-header primary" id="btnApplyStationAssign" style="min-height: 42px; font-weight:700; padding: 0 1.25rem;">
-              ⚡ Giao các trạm đã chọn cho nhóm
+            <button type="button" class="btn-header primary btn-assign-act" id="btnApplyStationAssign">
+              <span class="desktop-text">⚡ Giao các trạm đã chọn cho nhóm</span>
+              <span class="mobile-text">⚡ Giao trạm đã chọn</span>
             </button>
-            <button type="button" class="btn-secondary" id="btnUnassignSelectedStations" style="min-height: 42px; color: #dc2626; border-color: #fca5a5;">
-              🗑️ Hủy giao việc trạm đã chọn
+            <button type="button" class="btn-secondary btn-unassign-act" id="btnUnassignSelectedStations">
+              <span class="desktop-text">🗑️ Hủy giao việc trạm đã chọn</span>
+              <span class="mobile-text">🗑️ Hủy giao việc</span>
             </button>
           </div>
         </div>
@@ -604,12 +606,18 @@
         <!-- Selection Stats & Quick Select -->
         <div class="assign-selection-summary">
           <div class="assign-selected-count">
-            Đang chọn: <strong id="assignSelectedCount">0</strong> trạm
+            Đang chọn: <span id="assignSelectedCount"><strong>0</strong> trạm (0 KH)</span>
           </div>
           <div class="assign-quick-select-btns">
-            <button type="button" class="btn-link" id="btnSelectAllFilteredStations">Chọn tất cả trạm đang hiển thị</button>
+            <button type="button" class="btn-link" id="btnSelectAllFilteredStations">
+              <span class="desktop-text">Chọn tất cả trạm đang hiển thị</span>
+              <span class="mobile-text">Chọn tất cả</span>
+            </button>
             <span style="color:#cbd5e1;">|</span>
-            <button type="button" class="btn-link" id="btnClearAllSelectedStations">Bỏ chọn tất cả</button>
+            <button type="button" class="btn-link" id="btnClearAllSelectedStations">
+              <span class="desktop-text">Bỏ chọn tất cả</span>
+              <span class="mobile-text">Bỏ chọn</span>
+            </button>
           </div>
         </div>
 
@@ -636,15 +644,15 @@
         </div>
       </div>
 
-      <div class="modal-footer">
-        <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: auto;">
+      <div class="modal-footer assign-modal-footer">
+        <span class="assign-footer-hint" style="font-size: 0.8rem; color: var(--text-muted); margin-right: auto;">
           💡 Dữ liệu phân công trạm được lưu tự động trên hệ thống và hiển thị huy hiệu trên bảng kiểm tra.
         </span>
-        <button type="button" class="btn-secondary" onclick="window.PCVT.exportAssignments()" style="display:inline-flex; align-items:center; gap:6px; color:#15803d; border-color:#86efac; font-weight:600;" title="Xuất toàn bộ bảng phân công trạm ra file Excel (.xlsx)">
+        <button type="button" class="btn-secondary btn-export-assign-xlsx" onclick="window.PCVT.exportAssignments()" style="display:inline-flex; align-items:center; gap:6px; color:#15803d; border-color:#86efac; font-weight:600;" title="Xuất toàn bộ bảng phân công trạm ra file Excel (.xlsx)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Xuất Excel (.xlsx)
         </button>
-        <button class="btn-secondary" onclick="closeModal('modalStationAssignment')">Đóng</button>
+        <button class="btn-secondary btn-close-assign-modal" onclick="closeModal('modalStationAssignment')">Đóng</button>
       </div>
     </div>
   </div>
