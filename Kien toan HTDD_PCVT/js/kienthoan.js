@@ -20,9 +20,11 @@
   const STORAGE_KEY_SOUND_ENABLED = 'PCVT_SOUND_ENABLED';
   const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
-  // IndexedDB Constants for 221.038 customers
-  const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB';
-  const IDB_VERSION = 1;
+  // IndexedDB Constants for Customer Database (210.123 customers)
+  const DATASET_VERSION = '20260913_210123KH';
+  const STORAGE_KEY_DATASET_VER = 'PCVT_DATASET_VERSION';
+  const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB_V2';
+  const IDB_VERSION = 2;
   const IDB_STORE_CHUNKS = 'customer_chunks';
   const CHUNK_SIZE = 10000;
 
@@ -547,6 +549,22 @@
     }
   }
 
+  async function clearCustomersInIDB() {
+    try {
+      const db = await openIDB();
+      const tx = db.transaction(IDB_STORE_CHUNKS, 'readwrite');
+      const store = tx.objectStore(IDB_STORE_CHUNKS);
+      store.clear();
+      return new Promise((resolve) => {
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      });
+    } catch (e) {
+      console.warn('IndexedDB clear error:', e);
+      return false;
+    }
+  }
+
   // ==========================================================================
   // DATA LOADING & STORAGE
   // ==========================================================================
@@ -570,7 +588,7 @@
   }
 
   async function loadInitialData() {
-    showLoading(true, 'Đang tải danh mục 1.698 trạm biến áp...');
+    showLoading(true, 'Đang tải danh mục 1.696 trạm biến áp...');
 
     // 1. Load pre-built stations directory
     try {
@@ -582,22 +600,28 @@
       console.warn('Stations meta loading fallback:', e);
     }
 
-    // 2. Check IndexedDB cache first
+    // 2. Check IndexedDB cache and dataset version
     showLoading(true, 'Đang kiểm tra bộ nhớ đệm khách hàng...');
-    const cachedCustomers = await getCustomersFromIDB();
+    const currentVersion = localStorage.getItem(STORAGE_KEY_DATASET_VER);
 
-    if (cachedCustomers && cachedCustomers.length >= 200000) {
-      allCustomers = cachedCustomers;
-      buildStationsMetaFromCustomers();
-      applyFilters();
-      renderApp();
-      showLoading(false);
-      showToast(`Đã nạp toàn bộ ${allCustomers.length.toLocaleString('vi-VN')} khách hàng từ bộ nhớ!`, 'success');
-      return;
+    if (currentVersion === DATASET_VERSION) {
+      const cachedCustomers = await getCustomersFromIDB();
+      if (cachedCustomers && cachedCustomers.length >= 100000) {
+        allCustomers = cachedCustomers;
+        buildStationsMetaFromCustomers();
+        applyFilters();
+        renderApp();
+        showLoading(false);
+        showToast(`Đã nạp toàn bộ ${allCustomers.length.toLocaleString('vi-VN')} khách hàng từ bộ nhớ!`, 'success');
+        return;
+      }
+    } else {
+      // Xóa bộ đệm cũ của tập dữ liệu trước để nạp mới 210.123 khách hàng
+      await clearCustomersInIDB();
     }
 
     // 3. Load full dataset from data/kienthoan_sheet.csv.gz (6.8MB) or .csv
-    showLoading(true, 'Đang nạp toàn bộ 221.038 khách hàng từ Google Sheet...');
+    showLoading(true, 'Đang nạp toàn bộ 210.123 khách hàng từ Google Sheet...');
     let csvText = '';
 
     try {
@@ -626,7 +650,7 @@
     }
 
     if (csvText && csvText.length > 1000) {
-      showLoading(true, 'Đang xử lý dữ liệu 221.038 khách hàng...');
+      showLoading(true, 'Đang xử lý dữ liệu 210.123 khách hàng...');
       // Allow browser to render loading UI before parsing
       await new Promise(r => setTimeout(r, 40));
 
@@ -639,10 +663,11 @@
         showLoading(false);
         showToast(`Đã nạp toàn bộ ${allCustomers.length.toLocaleString('vi-VN')} khách hàng thành công!`, 'success');
 
-        // Save to IndexedDB in background
+        // Save to IndexedDB in background & set version
         setTimeout(async () => {
           await saveCustomersToIDB(allCustomers);
-          console.log('Saved all 221,038 customers to IndexedDB cache.');
+          localStorage.setItem(STORAGE_KEY_DATASET_VER, DATASET_VERSION);
+          console.log(`Saved all ${allCustomers.length} customers to IndexedDB cache.`);
         }, 100);
         return;
       }
@@ -749,7 +774,7 @@
     return false;
   }
 
-  // Fast line tokenizer for 221,038 records
+  // Fast line tokenizer for customer records (210,123 customers)
   function parseCSV(csvText) {
     const lines = csvText.split(/\r?\n/);
     const total = lines.length;
@@ -757,6 +782,22 @@
 
     const result = [];
     let isFirst = true;
+
+    // Default column indices (compatible with clean 13-column format)
+    let idxStt = 0;
+    let idxMaKh = 1;
+    let idxTenKh = 2;
+    let idxDcKh = 3;
+    let idxDcDdo = 4;
+    let idxTram = 5;
+    let idxTenTram = 6;
+    let idxDanhSo = 7;
+    let idxSdt = 8;
+    let idxSoNo = 9;
+    let idxKhuVuc = 10;
+    let idxUpdater = 11;
+    let idxTrangThai = 12;
+    let idxKq = -1;
 
     for (let i = 0; i < total; i++) {
       const line = lines[i];
@@ -788,33 +829,55 @@
 
       if (cols.length < 3) continue;
 
-      // Skip header row
+      // Skip and detect header row
       if (isFirst) {
         isFirst = false;
         const col0 = (cols[0] || '').toLowerCase();
         const col1 = (cols[1] || '').toLowerCase();
         if (col0.includes('stt') || col1.includes('mã kh') || col1.includes('makh')) {
+          cols.forEach((colName, cIdx) => {
+            const cn = colName.toLowerCase().trim();
+            if (cn.includes('stt')) idxStt = cIdx;
+            else if (cn.includes('mã kh') || cn.includes('makh')) idxMaKh = cIdx;
+            else if (cn.includes('tên kh') || cn.includes('tenkh')) idxTenKh = cIdx;
+            else if (cn.includes('địa chỉ kh') || cn.includes('diachikh')) idxDcKh = cIdx;
+            else if (cn.includes('điểm đo') || cn.includes('diachi_ddo')) idxDcDdo = cIdx;
+            else if (cn.includes('mã trạm') || cn.includes('matram')) idxTram = cIdx;
+            else if (cn.includes('tên trạm') || cn.includes('tentram')) idxTenTram = cIdx;
+            else if (cn.includes('danh số') || cn.includes('danhso')) idxDanhSo = cIdx;
+            else if (cn.includes('điện thoại') || cn.includes('sđt') || cn.includes('sdt')) idxSdt = cIdx;
+            else if (cn.includes('số no') || cn.includes('sono') || cn.includes('công tơ')) idxSoNo = cIdx;
+            else if (cn.includes('kết quả') || cn.includes('ket qua')) idxKq = cIdx;
+            else if (cn.includes('khu vực') || cn.includes('khuvuc')) idxKhuVuc = cIdx;
+            else if (cn.includes('người cập nhật') || cn.includes('nguoicapnhat')) idxUpdater = cIdx;
+            else if (cn.includes('trạng thái') || cn.includes('trangthai')) idxTrangThai = cIdx;
+          });
           continue;
         }
       }
 
-      const stt = cols[0] || (result.length + 1);
-      const ma_kh = cols[1] || '';
-      const ten_kh = cols[2] || '';
-      const dia_chi_kh = cols[3] || '';
-      const dia_chi_ddo = cols[4] || '';
-      const ma_tram = cols[5] || '';
-      const ten_tram = cols[6] || '';
-      const danh_so = cols[7] || '';
-      const sdt = cols[8] || '';
-      const so_no = formatMeterNo(cols[9] || '');
-      const khu_vuc = cols[10] || '';
-      const nguoi_cap_nhat = cols[11] || '';
-      const trang_thai_sheet = (cols[12] || '').trim();
+      // Skip rows that already have 'kết quả kiểm tra' (customers excluded by user)
+      if (idxKq !== -1 && cols[idxKq] && cols[idxKq].trim()) {
+        continue;
+      }
+
+      const stt = cols[idxStt] || (result.length + 1);
+      const ma_kh = cols[idxMaKh] || '';
+      const ten_kh = cols[idxTenKh] || '';
+      const dia_chi_kh = cols[idxDcKh] || '';
+      const dia_chi_ddo = cols[idxDcDdo] || '';
+      const ma_tram = cols[idxTram] || '';
+      const ten_tram = cols[idxTenTram] || '';
+      const danh_so = cols[idxDanhSo] || '';
+      const sdt = cols[idxSdt] || '';
+      const so_no = formatMeterNo(cols[idxSoNo] || '');
+      const khu_vuc = cols[idxKhuVuc] || '';
+      const nguoi_cap_nhat = cols[idxUpdater] || '';
+      const trang_thai_sheet = (cols[idxTrangThai] || '').trim();
 
       if (!ma_kh && !ten_kh) continue;
 
-      // Đồng bộ từ Google Sheet: Cột M ("Trạng thái") có dấu "X"
+      // Đồng bộ từ Google Sheet: Cột Trạng thái có dấu "X"
       if (trang_thai_sheet.toUpperCase() === 'X') {
         if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
         inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
@@ -919,7 +982,7 @@
 
     const pendingCount = Math.max(0, totalCount - completedCount);
     const percent = totalCount > 0 ? ((completedCount / totalCount) * 100).toFixed(1) : 0;
-    const stationsCount = Object.keys(stationsMeta).length || 1698;
+    const stationsCount = Object.keys(stationsMeta).length || 1696;
 
     const kpiTotal = document.getElementById('kpiTotalCount');
     const kpiCompleted = document.getElementById('kpiCompletedCount');
