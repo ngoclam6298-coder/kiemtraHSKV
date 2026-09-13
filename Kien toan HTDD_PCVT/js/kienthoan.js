@@ -339,6 +339,8 @@
 
   function syncItemImmediately(ma_kh) {
     // 1. Instant local persistence
+    if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+    inspectionsMap[ma_kh].localUpdatedAt = Date.now();
     saveLocalInspections();
 
     // 2. Broadcast to other open tabs
@@ -1929,30 +1931,7 @@ function doPost(e) {
 
     if (!maKH) return ContentService.createTextOutput(JSON.stringify({status: 'no_makh'}));
 
-    // 1. Cập nhật trang chính
-    var rowIndex = -1;
-    var rangeB = sheet.getRange("B:B");
-    var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
-    if (foundCell) {
-      rowIndex = foundCell.getRow();
-      var headerVals = sheet.getRange(1, 1, 1, Math.min(sheet.getLastColumn(), 25)).getValues()[0];
-      var colUpdaterIdx = 19;
-      var colStatusIdx = 20;
-      for (var c = 0; c < headerVals.length; c++) {
-        var hName = String(headerVals[c] || '').toLowerCase().trim();
-        if (hName.indexOf('người cập nhật') !== -1 || hName.indexOf('nguoi cap nhat') !== -1) colUpdaterIdx = c + 1;
-        if (hName.indexOf('trạng thái') !== -1 || hName.indexOf('trang thai') !== -1) colStatusIdx = c + 1;
-      }
-      if (trangThaiX === 'X') {
-        sheet.getRange(rowIndex, colUpdaterIdx).setValue(nguoiCapNhat);
-        sheet.getRange(rowIndex, colStatusIdx).setValue('X');
-      } else {
-        sheet.getRange(rowIndex, colUpdaterIdx).setValue('');
-        sheet.getRange(rowIndex, colStatusIdx).setValue('');
-      }
-    }
-
-    // 2. Cập nhật trang nhật ký Log_DongBo 9 cột
+    // 1. Cập nhật trang nhật ký Log_DongBo 9 cột TRƯỚC TIÊN (Siêu tốc < 100ms, đảm bảo đồng bộ tức thời)
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
@@ -1986,6 +1965,34 @@ function doPost(e) {
           logSheet.deleteRow(existingRows[r]);
         }
       }
+    }
+
+    // 2. Cập nhật trang tính dữ liệu chính (Sheet đầu tiên)
+    var rowIndex = -1;
+    try {
+      var sheet = ss.getSheets()[0];
+      var rangeB = sheet.getRange("B:B");
+      var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
+      if (foundCell) {
+        rowIndex = foundCell.getRow();
+        var headerVals = sheet.getRange(1, 1, 1, Math.min(sheet.getLastColumn(), 25)).getValues()[0];
+        var colUpdaterIdx = 19;
+        var colStatusIdx = 20;
+        for (var c = 0; c < headerVals.length; c++) {
+          var hName = String(headerVals[c] || '').toLowerCase().trim();
+          if (hName.indexOf('người cập nhật') !== -1 || hName.indexOf('nguoi cap nhat') !== -1) colUpdaterIdx = c + 1;
+          if (hName.indexOf('trạng thái') !== -1 || hName.indexOf('trang thai') !== -1) colStatusIdx = c + 1;
+        }
+        if (trangThaiX === 'X') {
+          sheet.getRange(rowIndex, colUpdaterIdx).setValue(nguoiCapNhat);
+          sheet.getRange(rowIndex, colStatusIdx).setValue('X');
+        } else {
+          sheet.getRange(rowIndex, colUpdaterIdx).setValue('');
+          sheet.getRange(rowIndex, colStatusIdx).setValue('');
+        }
+      }
+    } catch(sheetErr) {
+      // Bỏ qua lỗi timeout trang chính nếu có, vì Log_DongBo đã ghi thành công
     }
 
     return ContentService.createTextOutput(JSON.stringify({
@@ -3331,6 +3338,7 @@ function donDepLogDongBo() {
       if (isChecked) {
         inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
         inspectionsMap[ma_kh].ngay_kiem_tra = timeStr;
+        inspectionsMap[ma_kh].localUpdatedAt = Date.now();
         if (!inspectionsMap[ma_kh].nguoi_cap_nhat) {
           const curInsp = getCurrentInspector();
           if (curInsp) {
@@ -3357,6 +3365,7 @@ function donDepLogDongBo() {
         }
       } else {
         inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
+        inspectionsMap[ma_kh].localUpdatedAt = Date.now();
       }
 
       renderKPIs();
@@ -4195,52 +4204,60 @@ function donDepLogDongBo() {
           const end = raw.lastIndexOf('}');
           if (start !== -1 && end !== -1) {
             const gData = JSON.parse(raw.substring(start, end + 1));
-            const rows = (gData.table && gData.table.rows) || [];
-            isConnected = true;
-            rows.forEach(r => {
-              const cCells = r.c || [];
-              const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
-              let ma_kh = '';
-              let id_tram = '';
-              let ten_tram = '';
-              let danh_so = '';
-              let nguoi_cap_nhat = '';
-              let trang_thai = '';
-              let ngay_kt = '';
-              let ghi_chu = '';
+            const gCols = (gData.table && gData.table.cols) || [];
+            const firstColLabel = String((gCols[0] && gCols[0].label) || '').toLowerCase().trim();
 
-              if (rawVals.length >= 9) {
-                // Định dạng 9 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
-                ma_kh = rawVals[1];
-                id_tram = rawVals[2];
-                ten_tram = rawVals[3];
-                danh_so = rawVals[4];
-                nguoi_cap_nhat = rawVals[5];
-                trang_thai = rawVals[6];
-                ngay_kt = rawVals[7];
-                ghi_chu = rawVals[8];
-              } else if (rawVals.length >= 4) {
-                // Định dạng 6 cột cũ
-                ma_kh = rawVals[1];
-                nguoi_cap_nhat = rawVals[2];
-                trang_thai = rawVals[3];
-                ngay_kt = rawVals[4] || '';
-                ghi_chu = rawVals[5] || '';
-              }
+            // KIỂM TRA TÍNH HỢP LỆ: Nếu bảng trả về > 12 cột hoặc cột đầu là 'stt' -> Google Sheets trả về Sheet 1 (210k dòng)!
+            if (gCols.length > 12 || firstColLabel === 'stt' || firstColLabel.indexOf('stt') !== -1) {
+              console.warn('GViz query fell back to Sheet 1 instead of Log_DongBo. Ignoring to prevent false unchecking.');
+            } else {
+              const rows = (gData.table && gData.table.rows) || [];
+              isConnected = true;
+              rows.forEach(r => {
+                const cCells = r.c || [];
+                const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
+                let ma_kh = '';
+                let id_tram = '';
+                let ten_tram = '';
+                let danh_so = '';
+                let nguoi_cap_nhat = '';
+                let trang_thai = '';
+                let ngay_kt = '';
+                let ghi_chu = '';
 
-              if (ma_kh && (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra')) {
-                sheetCheckedMap.set(ma_kh, {
-                  ma_kh: ma_kh,
-                  id_tram: id_tram,
-                  ten_tram: ten_tram,
-                  danh_so: danh_so,
-                  nguoi_cap_nhat: nguoi_cap_nhat,
-                  trang_thai_x: 'X',
-                  ngay_kiem_tra: ngay_kt,
-                  ghi_chu: ghi_chu
-                });
-              }
-            });
+                if (rawVals.length >= 9) {
+                  // Định dạng 9 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
+                  ma_kh = rawVals[1];
+                  id_tram = rawVals[2];
+                  ten_tram = rawVals[3];
+                  danh_so = rawVals[4];
+                  nguoi_cap_nhat = rawVals[5];
+                  trang_thai = rawVals[6];
+                  ngay_kt = rawVals[7];
+                  ghi_chu = rawVals[8];
+                } else if (rawVals.length >= 4) {
+                  // Định dạng 6 cột cũ
+                  ma_kh = rawVals[1];
+                  nguoi_cap_nhat = rawVals[2];
+                  trang_thai = rawVals[3];
+                  ngay_kt = rawVals[4] || '';
+                  ghi_chu = rawVals[5] || '';
+                }
+
+                if (ma_kh && (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra')) {
+                  sheetCheckedMap.set(ma_kh, {
+                    ma_kh: ma_kh,
+                    id_tram: id_tram,
+                    ten_tram: ten_tram,
+                    danh_so: danh_so,
+                    nguoi_cap_nhat: nguoi_cap_nhat,
+                    trang_thai_x: 'X',
+                    ngay_kiem_tra: ngay_kt,
+                    ghi_chu: ghi_chu
+                  });
+                }
+              });
+            }
           }
         }
 
@@ -4254,24 +4271,32 @@ function donDepLogDongBo() {
             const aEnd = assignRaw.lastIndexOf('}');
             if (aStart !== -1 && aEnd !== -1) {
               const aData = JSON.parse(assignRaw.substring(aStart, aEnd + 1));
-              const aRows = (aData.table && aData.table.rows) || [];
-              const cloudAssignments = [];
-              aRows.forEach(r => {
-                const cCells = r.c || [];
-                const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
-                if (rawVals.length >= 4 && rawVals[1]) {
-                  cloudAssignments.push({
-                    timestamp: rawVals[0],
-                    stId: rawVals[1],
-                    stName: rawVals[2] || '',
-                    groupId: rawVals[3] || '',
-                    groupName: rawVals[4] || '',
-                    leader: rawVals[5] || '',
-                    assignedAt: rawVals[6] || ''
-                  });
+              const aCols = (aData.table && aData.table.cols) || [];
+              const aFirstCol = String((aCols[0] && aCols[0].label) || '').toLowerCase().trim();
+              if (aCols.length > 10 || aFirstCol === 'stt' || aFirstCol.indexOf('stt') !== -1) {
+                console.warn('GViz query fell back to Sheet 1 instead of PhanCong_Tram. Ignoring.');
+              } else {
+                const aRows = (aData.table && aData.table.rows) || [];
+                const cloudAssignments = [];
+                aRows.forEach(r => {
+                  const cCells = r.c || [];
+                  const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
+                  if (rawVals.length >= 4 && rawVals[1]) {
+                    cloudAssignments.push({
+                      timestamp: rawVals[0],
+                      stId: rawVals[1],
+                      stName: rawVals[2] || '',
+                      groupId: rawVals[3] || '',
+                      groupName: rawVals[4] || '',
+                      leader: rawVals[5] || '',
+                      assignedAt: rawVals[6] || ''
+                    });
+                  }
+                });
+                if (cloudAssignments.length > 0) {
+                  reconcileStationAssignmentsFromCloud(cloudAssignments);
                 }
-              });
-              reconcileStationAssignmentsFromCloud(cloudAssignments);
+              }
             }
           }
         } catch (assignErr) {
@@ -4289,43 +4314,59 @@ function donDepLogDongBo() {
       let revertedCount = 0;
       const now = new Date();
       const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+      const nowTs = Date.now();
+      const offlineQueue = getOfflineQueue();
+      const pendingMaKhSet = new Set(offlineQueue.map(q => q.ma_kh));
 
-      // 1. TỰ ĐỘNG BỎ CHỌN CÁC KH ĐÃ BỊ XÓA BÊN ĐIỆN THOẠI (Không còn trong Log_DongBo)
-      Object.keys(inspectionsMap).forEach(ma_kh => {
-        if (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra') {
-          if (!sheetCheckedMap.has(ma_kh)) {
-            // Khách hàng này đã bị hủy bỏ/xóa bên điện thoại hoặc trên Google Sheet!
-            inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
-            inspectionsMap[ma_kh].ngay_kiem_tra = '';
-            hasChanges = true;
-            revertedCount++;
-
-            // Revert giao diện bảng máy tính nếu đang hiển thị
-            const row = document.getElementById(`row-${ma_kh}`);
-            if (row) {
-              row.classList.remove('row-completed', 'row-just-updated');
-              const stEl = row.querySelector('.col-status');
-              if (stEl) stEl.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
-              const chk = row.querySelector('.custom-checkbox input');
-              if (chk) chk.checked = false;
+      // 1. TỰ ĐỘNG BỎ CHỌN CÁC KH ĐÃ BỊ XÓA BÊN THIẾT BỊ KHÁC
+      // ĐIỀU KIỆN BẢO VỆ AN TOÀN TUYỆT ĐỐI:
+      // - Chỉ đối soát khi sheetCheckedMap có ít nhất 1 bản ghi hợp lệ (sheetCheckedMap.size > 0). Không bao giờ xóa sạch khi danh sách cloud trống hoặc chưa tải được!
+      // - KHÔNG BAO GIỜ hủy các KH vừa được kiểm tra trực tiếp trên thiết bị này trong 30 phút hoặc đang trong hàng đợi gửi (offline queue)!
+      if (sheetCheckedMap.size > 0) {
+        Object.keys(inspectionsMap).forEach(ma_kh => {
+          if (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra') {
+            const localAge = nowTs - (inspectionsMap[ma_kh].localUpdatedAt || 0);
+            if (localAge < 30 * 60 * 1000) {
+              return; // Vừa kiểm tra trên máy này trong vòng 30 phút -> BẢO VỆ DỮ LIỆU, KHÔNG HỦY!
+            }
+            if (pendingMaKhSet.has(ma_kh)) {
+              return; // Đang nằm trong hàng đợi chờ gửi lên cloud -> BẢO VỆ DỮ LIỆU, KHÔNG HỦY!
             }
 
-            // Revert giao diện thẻ di động nếu đang hiển thị
-            const card = document.getElementById(`mcard-${ma_kh}`);
-            if (card) {
-              card.classList.remove('card-completed', 'row-just-updated');
-              const mstatus = document.getElementById(`mstatus-${ma_kh}`);
-              const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
-              if (mstatus) mstatus.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
-              if (mbtn) {
-                mbtn.className = 'btn-mobile-status-toggle';
-                mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
-                mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', true)`);
+            if (!sheetCheckedMap.has(ma_kh)) {
+              // Khách hàng này đã từng đồng bộ lên cloud trước đó nhưng nay đã bị xóa/hủy bên thiết bị khác
+              inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
+              inspectionsMap[ma_kh].ngay_kiem_tra = '';
+              hasChanges = true;
+              revertedCount++;
+
+              // Revert giao diện bảng máy tính nếu đang hiển thị
+              const row = document.getElementById(`row-${ma_kh}`);
+              if (row) {
+                row.classList.remove('row-completed', 'row-just-updated');
+                const stEl = row.querySelector('.col-status');
+                if (stEl) stEl.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+                const chk = row.querySelector('.custom-checkbox input');
+                if (chk) chk.checked = false;
+              }
+
+              // Revert giao diện thẻ di động nếu đang hiển thị
+              const card = document.getElementById(`mcard-${ma_kh}`);
+              if (card) {
+                card.classList.remove('card-completed', 'row-just-updated');
+                const mstatus = document.getElementById(`mstatus-${ma_kh}`);
+                const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
+                if (mstatus) mstatus.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+                if (mbtn) {
+                  mbtn.className = 'btn-mobile-status-toggle';
+                  mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
+                  mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', true)`);
+                }
               }
             }
           }
-        }
-      });
+        });
+      }
 
       // 2. CẬP NHẬT CÁC KHÁCH HÀNG MỚI ĐƯỢC KIỂM TRA TỪ HIỆN TRƯỜNG
       sheetCheckedMap.forEach((item, ma_kh) => {
