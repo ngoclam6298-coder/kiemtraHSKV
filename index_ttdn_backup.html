@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Công ty Điện lực Vũng Tàu - Hệ Thống Kiểm Tra Trạm Có Tổn Thất Bất Thường và Sang Tải Chuyển Lưới</title>
+  <meta name="description" content="Hệ thống kiểm tra hiệu suất khu vực các trạm, tìm nguyên nhân gây tổn thất, mô phỏng sang tải khách hàng, và quản lý hàng chờ kiểm tra hiện trường của Công ty Điện lực Vũng Tàu (EVNHCMC).">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="avph472lv.png">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP HEADER (Sticky, Global Search, Brand, Sync)
+       ========================================================================== -->
+  <header class="main-header">
+    <div class="header-left">
+      <button class="menu-toggle-btn" id="menuToggleBtn" title="Thu gọn / Mở rộng menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="brand-badge">
+        <img src="avph472lv.png" alt="EVNHCMC Logo" class="brand-logo-img">
+        <div class="brand-info">
+          <span class="brand-company">CÔNG TY ĐIỆN LỰC VŨNG TÀU</span>
+          <span class="brand-sub">Tổng công ty Điện lực TP. Hồ Chí Minh (EVNHCMC)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Smart Global Search -->
+    <div class="header-center">
+      <div class="search-box-wrapper">
+        <span class="search-icon-left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input type="text" class="search-input" id="globalSearchInput" 
+          placeholder="Tìm nhanh Mã trạm, Tên trạm biến áp, Khách hàng..." autocomplete="off">
+        <button class="search-clear-btn" id="searchClearBtn" title="Xóa tìm kiếm">✕</button>
+      </div>
+
+      <!-- Dropdown Search Results -->
+      <div class="search-results-dropdown" id="globalSearchDropdown"></div>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="header-right">
+      <div class="sync-status-indicator" id="syncStatusBadge" title="Trạng thái kết nối Google Sheets">
+        <span class="status-dot" id="syncStatusDot"></span>
+        <span id="syncStatusText">Google Sheets</span>
+      </div>
+
+      <button class="btn-header-action" id="btnSyncGoogleSheet" title="Đồng bộ lại từ Google Sheets">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        <span>Đồng bộ</span>
+      </button>
+
+      <button class="btn-header-action primary" onclick="window.AppController.exportQueueToCSV()" title="Xuất file kế hoạch kiểm tra">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Xuất Excel/CSV</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       SIDEBAR (YouTube Style, Collapsible)
+       ========================================================================== -->
+  <aside class="sidebar" id="appSidebar">
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Chức Năng Chính</div>
+
+      <a href="#dashboard" class="nav-item active" data-tab="tab-dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Tổng Quan Dashboard</span>
+      </a>
+
+      <a href="#dinhky" class="nav-item" data-tab="tab-dinhky">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Kiểm Tra Trạm Bất Thường</span>
+        <span class="nav-badge danger">Bất thường</span>
+      </a>
+
+      <a href="#sangtai" class="nav-item" data-tab="tab-sangtai">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Sang Tải Chuyển Lưới</span>
+        <span class="nav-badge warning">STCL</span>
+      </a>
+
+      <div class="nav-section-title">Nghiệp Vụ Hiện Trường</div>
+
+      <a href="#queue" class="nav-item" data-tab="tab-queue">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Hàng Chờ Kiểm Tra & Rollover</span>
+        <span class="nav-badge queue-badge-count">0</span>
+      </a>
+
+      <a href="#lookup" class="nav-item" data-tab="tab-lookup">
+        <span class="nav-icon">🔎</span>
+        <span class="nav-label">Tra Cứu Trạm & Khách Hàng</span>
+      </a>
+
+      <div class="nav-section-title">Cấu Hình & Hệ Thống</div>
+
+      <a href="#settings" class="nav-item" data-tab="tab-settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Google Sheets & Hướng Dẫn</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <img src="avph472lv.png" alt="EVNHCMC" style="height: 22px; width: auto; object-fit: contain;">
+        <strong style="color: #fff;">ĐIỆN LỰC VŨNG TÀU</strong>
+      </div>
+      <div>Phiên bản 2.0 • Sẵn sàng Vercel</div>
+      <div>Dữ liệu: 4.900+ Trạm • 25.000+ KH</div>
+    </div>
+  </aside>
+
+  <!-- Backdrop overlay for mobile drawer -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ==========================================================================
+       MAIN CONTENT WRAPPER
+       ========================================================================== -->
+  <main class="main-wrapper">
+
+    <!-- Official Printable Header (Visible only when printing) -->
+    <div class="print-header-official">
+      <h2>TỔNG CÔNG TY ĐIỆN LỰC THÀNH PHỐ HỒ CHÍ MINH</h2>
+      <h3>CÔNG TY ĐIỆN LỰC VŨNG TÀU</h3>
+      <h1 style="margin-top: 10px;">PHIẾU GIAO VIỆC KIỂM TRA HIỆN TRƯỜNG TRẠM TỔN THẤT BẤT THƯỜNG & SANG TẢI</h1>
+      <p style="font-style: italic;">Ban hành kèm theo quy trình kiểm soát ranh trạm và tổn thất điện năng</p>
+    </div>
+
+    <!-- ========================================================================
+         TAB 1: TỔNG QUAN (DASHBOARD)
+         ======================================================================== -->
+    <section class="tab-content-panel active" id="tab-dashboard">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>📊</span> Dashboard Hiệu Suất Tổn Thất Trạm Biến Áp Công Cộng
+          </h1>
+          <p class="page-subtitle">
+            Hệ thống theo dõi toàn bộ các trạm biến áp công cộng do Công ty Điện lực Vũng Tàu quản lý, tự động phát hiện trạm tổn thất bất thường và hỗ trợ đề xuất hướng xử lý kỹ thuật.
+          </p>
+        </div>
+
+        <div class="page-toolbar">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Kỳ kiểm tra:</span>
+          <div class="month-selector-group">
+            <button class="month-pill-btn" data-month="thang_1">T1</button>
+            <button class="month-pill-btn" data-month="thang_2">T2</button>
+            <button class="month-pill-btn" data-month="thang_3">T3</button>
+            <button class="month-pill-btn" data-month="thang_5">T5</button>
+            <button class="month-pill-btn" data-month="thang_6">T6</button>
+            <button class="month-pill-btn" data-month="thang_7">T7</button>
+            <button class="month-pill-btn active" data-month="thang_8">T8</button>
+            <button class="month-pill-btn" data-month="thang_9">T9</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Stat Cards Grid (Interactive: Bấm trực tiếp để lọc bảng) -->
+      <div class="kpi-grid">
+        <div class="stat-card clickable active-filter" id="statCardTotal" onclick="window.AppController.setDashboardStatusFilter('all')" title="Bấm để hiển thị tất cả các trạm công cộng">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Tổng Trạm Công Cộng</span>
+            <div class="stat-icon-wrapper" style="background: #e2e8f0; color: #475569;">🏢</div>
+          </div>
+          <div class="stat-value" id="statTotalStations">0</div>
+          <div class="stat-desc">Trạm công cộng Công ty ĐL Vũng Tàu quản lý</div>
+          <div class="stat-card-hint">👉 Bấm để xem tất cả</div>
+        </div>
+
+        <div class="stat-card negative-loss clickable" id="statCardNegative" onclick="window.AppController.setDashboardStatusFilter('negative')" title="Bấm để lọc các trạm có tổn thất âm (< 0%)">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Trạm TTĐN &lt; 0% (Báo Động Đỏ)</span>
+            <div class="stat-icon-wrapper">⚠️</div>
+          </div>
+          <div class="stat-value" id="statNegativeLoss">0</div>
+          <div class="stat-desc">Thương phẩm &gt; Đầu nguồn (Ưu tiên đi kiểm tra trước)</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm âm</div>
+        </div>
+
+        <div class="stat-card high-loss clickable" id="statCardHigh" onclick="window.AppController.setDashboardStatusFilter('high')" title="Bấm để lọc các trạm có tổn thất cao (> 2,35%)">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Trạm TTĐN Cao (&gt; 2,35%)</span>
+            <div class="stat-icon-wrapper">📈</div>
+          </div>
+          <div class="stat-value" id="statHighLoss">0</div>
+          <div class="stat-desc">Vượt ngưỡng quy chuẩn kỹ thuật EVN</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm cao</div>
+        </div>
+
+        <div class="stat-card normal-loss clickable" id="statCardGood" onclick="window.AppController.setDashboardStatusFilter('good')" title="Bấm để lọc các trạm tổn thất bình thường (0 - 2,35%)">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Trạm Bình Thường (0 - 2,35%)</span>
+            <div class="stat-icon-wrapper">✅</div>
+          </div>
+          <div class="stat-value" id="statGoodLoss">0</div>
+          <div class="stat-desc">Tổn thất trong ngưỡng kỹ thuật cho phép</div>
+          <div class="stat-card-hint">👉 Bấm để lọc trạm tốt</div>
+        </div>
+
+        <div class="stat-card error-loss clickable" id="statCardError" onclick="window.AppController.setDashboardStatusFilter('error')" title="Bấm để lọc các trạm mất điện nhận đầu nguồn (#DIV/0!)">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Mất Đầu Nguồn (#DIV/0!)</span>
+            <div class="stat-icon-wrapper">⚡</div>
+          </div>
+          <div class="stat-value" id="statErrorLoss">0</div>
+          <div class="stat-desc">Mất điện nhận công tơ tổng / Sai đo đếm</div>
+          <div class="stat-card-hint">👉 Bấm để lọc mất ĐN</div>
+        </div>
+
+        <div class="stat-card queue-stat clickable" onclick="switchTab('tab-queue')" title="Bấm để chuyển sang Tab Hàng Chờ">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Hàng Chờ Hiện Trường</span>
+            <div class="stat-icon-wrapper">📋</div>
+          </div>
+          <div class="stat-value queue-badge-count" id="statQueueCount">0</div>
+          <div class="stat-desc">Trạm đã lập kế hoạch kiểm tra</div>
+          <div class="stat-card-hint">👉 Xem hàng chờ</div>
+        </div>
+      </div>
+
+      <!-- Professional Operational Callout Banner -->
+      <div class="alert-banner-callout">
+        <div class="alert-banner-icon">🚨</div>
+        <div class="alert-banner-content">
+          <h4>Nguyên Lý Nghiệp Vụ EVN: Vì Sao Trạm Có Tổn Thất Điện Năng &lt; 0% Phải Ưu Tiên Kiểm Tra Trước?</h4>
+          <p>
+            Tổn thất âm ($TTĐN &lt; 0\%$) phát sinh do <strong>Thương phẩm đo đếm tại các hộ tiêu thụ lớn hơn Điện năng đầu nguồn công tơ tổng</strong>. 
+            Các nguyên nhân trọng điểm cần rà soát tại hiện trường: 
+            (1) <em>Tráo dây/nhầm dây công tơ tổng giữa các trạm liền kề</em>; 
+            (2) <em>Khách hàng sai ranh trạm (đang câu từ trạm A nhưng ghi nhận danh số ở trạm B)</em>; 
+            (3) <em>Phát sinh nguồn Điện mặt trời mái nhà (NLMT) tự phát hòa lưới hạ thế sau trạm</em>; 
+            (4) <em>Hư hỏng tỷ số biến dòng đo đếm (TI) hoặc sai số thiết bị đo tổng</em>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Station Table -->
+      <div class="card-table-container">
+        <!-- Status Filter Pills Bar (Dựa theo Sheet Chú Thích EVN) -->
+        <div class="dashboard-status-pills-bar" id="dashboardStatusPillsBar">
+          <button class="status-pill-btn active" data-status="all" onclick="window.AppController.setDashboardStatusFilter('all')" title="Tất cả các trạm công cộng do công ty quản lý">
+            <span class="pill-icon">🏢</span>
+            <span class="pill-text">Tất Cả Trạm</span>
+            <span class="pill-count" id="pillCountAll">0</span>
+          </button>
+          <button class="status-pill-btn pill-abnormal" data-status="abnormal" onclick="window.AppController.setDashboardStatusFilter('abnormal')" title="Lọc các trạm tổn thất bất thường (gồm Âm và Mất điện nhận)">
+            <span class="pill-icon">🚨</span>
+            <span class="pill-text">Tổn Thất Bất Thường</span>
+            <span class="pill-count" id="pillCountAbnormal">0</span>
+          </button>
+          <button class="status-pill-btn pill-negative" data-status="negative" onclick="window.AppController.setDashboardStatusFilter('negative')" title="STT 3 Chú Thích: Tổn thất âm (< 0%)">
+            <span class="pill-icon">⚠️</span>
+            <span class="pill-text">TTĐN Âm (&lt; 0%)</span>
+            <span class="pill-count" id="pillCountNegative">0</span>
+          </button>
+          <button class="status-pill-btn pill-high" data-status="high" onclick="window.AppController.setDashboardStatusFilter('high')" title="STT 2 Chú Thích: Tổn thất > 2,35%">
+            <span class="pill-icon">📈</span>
+            <span class="pill-text">Tổn Thất Cao (&gt; 2,35%)</span>
+            <span class="pill-count" id="pillCountHigh">0</span>
+          </button>
+          <button class="status-pill-btn pill-good" data-status="good" onclick="window.AppController.setDashboardStatusFilter('good')" title="STT 1 Chú Thích: Từ 0 đến 2,35%">
+            <span class="pill-icon">✅</span>
+            <span class="pill-text">Tốt / Bình Thường (0 - 2,35%)</span>
+            <span class="pill-count" id="pillCountGood">0</span>
+          </button>
+          <button class="status-pill-btn pill-error" data-status="error" onclick="window.AppController.setDashboardStatusFilter('error')" title="STT 4 Chú Thích: #DIV/0! do mất điện nhận đầu nguồn">
+            <span class="pill-icon">⚡</span>
+            <span class="pill-text">Mất Đầu Nguồn (#DIV/0!)</span>
+            <span class="pill-count" id="pillCountError">0</span>
+          </button>
+        </div>
+
+        <div class="table-filter-bar">
+          <div class="filter-left-group">
+            <select class="filter-select" id="dashboardAreaFilter" onchange="state.areaFilter = this.value; window.AppController.onDashboardFilterChange();">
+              <option value="all">Tất cả trạm công cộng 3 khu vực (Phú Mỹ, Vũng Tàu, Bà Rịa)</option>
+              <option value="Phú Mỹ">Khu vực Phú Mỹ (Trạm công cộng)</option>
+              <option value="Vũng Tàu">Khu vực Vũng Tàu (Trạm công cộng)</option>
+              <option value="Bà Rịa">Khu vực Bà Rịa (Trạm công cộng)</option>
+            </select>
+
+            <select class="filter-select" id="dashboardStatusSelect" onchange="window.AppController.onDashboardStatusSelect(this.value)">
+              <option value="all">🔍 Tất cả trạng thái tổn thất (Theo Chú Thích)</option>
+              <option value="abnormal">🚨 Tổn thất bất thường (Gồm Âm &amp; Mất ĐN)</option>
+              <option value="negative">⚠️ Tổn thất âm (&lt; 0%)</option>
+              <option value="high">📈 Tổn thất cao (&gt; 2,35%)</option>
+              <option value="good">✅ Tốt / Bình thường (0 - 2,35%)</option>
+              <option value="error">⚡ Mất điện nhận đầu nguồn (#DIV/0!)</option>
+            </select>
+
+            <input type="text" class="filter-search-input" id="dashboardSearchInput" 
+              placeholder="Tìm nhanh mã trạm, tên trạm công cộng..." 
+              oninput="window.AppController.onDashboardSearchInput(this.value)">
+          </div>
+
+          <div class="filter-right-group">
+            <span class="table-counter-badge" id="dashboardTableCounter" style="font-size: 12px; font-weight: 600; color: #475569; background: #f1f5f9; padding: 5px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+              Hiển thị: 0 trạm
+            </span>
+            <button class="btn-custom btn-outline" onclick="window.AppController.printQueue()">
+              🖨️ In Phiếu
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper dashboard-table-scroll" id="dashboardTableWrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">STT</th>
+                <th style="width: 100px;">ID Trạm</th>
+                <th>Tên Trạm Biến Áp</th>
+                <th>Khu Vực</th>
+                <th>Số Công Tơ Tổng</th>
+                <th>Số KH</th>
+                <th>Tỉ Lệ TTĐN Thực</th>
+                <th>Phân Loại (Theo Chú Thích)</th>
+                <th style="width: 220px;">Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTableBody">
+              <!-- Loaded via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 2: NGHIỆP VỤ HIỆN TRƯỜNG & ĐỀ XUẤT CHUYỂN TRẠM
+         ======================================================================== -->
+    <section class="tab-content-panel" id="tab-dinhky">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>🔍</span> Nghiệp Vụ Hiện Trường: Danh Sách Trạm Tổn Thất Bất Thường &amp; Chuyển Đổi Khách Hàng
+          </h1>
+          <p class="page-subtitle">
+            Danh sách các trạm có tổn thất điện năng bất thường (âm, cao, mất ĐN) đề xuất kiểm tra của tháng. Tick chọn trạm để hiển thị danh sách khách hàng trong trạm, chọn khách hàng cần chuyển về đúng trạm, nhập hiện trạng &amp; đề xuất rồi lưu vào hàng chờ.
+          </p>
+        </div>
+
+        <div class="page-toolbar">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Kỳ kiểm tra:</span>
+          <div class="month-selector-group">
+            <button class="month-pill-btn" data-month="thang_1">T1</button>
+            <button class="month-pill-btn" data-month="thang_2">T2</button>
+            <button class="month-pill-btn" data-month="thang_3">T3</button>
+            <button class="month-pill-btn" data-month="thang_5">T5</button>
+            <button class="month-pill-btn" data-month="thang_6">T6</button>
+            <button class="month-pill-btn" data-month="thang_7">T7</button>
+            <button class="month-pill-btn active" data-month="thang_8">T8</button>
+            <button class="month-pill-btn" data-month="thang_9">T9</button>
+          </div>
+          <button class="btn-custom btn-primary" onclick="switchTab('tab-queue')">
+            📋 Xem Hàng Chờ Chuyển Trạm (<span class="queue-badge-count">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <div class="card-table-container">
+        <div class="table-filter-bar">
+          <div class="filter-left-group">
+            <span style="font-size: 13.5px; font-weight: 700; color: var(--evn-navy);">
+              🏢 Danh Sách Trạm Tổn Thất Bất Thường <span id="dinhKyMonthBadge" style="color: var(--color-danger);">Tháng 8</span>
+            </span>
+          </div>
+          <div class="filter-right-group">
+            <span style="font-size: 12px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 6px;">
+              👉 Tick chọn vào trạm để mở danh sách khách hàng cần chuyển về đúng trạm
+            </span>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper" style="max-height: 420px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 55px; text-align: center;">Tick Chọn</th>
+                <th style="width: 45px;">STT</th>
+                <th style="width: 100px;">ID Trạm</th>
+                <th>Tên Trạm Biến Áp</th>
+                <th>Khu Vực</th>
+                <th>Số KH</th>
+                <th>Tỉ Lệ TTĐN</th>
+                <th>Phân Loại Đề Xuất</th>
+                <th style="width: 140px; text-align: center;">Xem Khách Hàng</th>
+              </tr>
+            </thead>
+            <tbody id="dinhKyTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Khung hiển thị khách hàng trong trạm đã tick chọn để chuyển đổi về đúng trạm -->
+      <div id="stationCustomerTransferContainer" style="display: none; margin-top: 24px;"></div>
+    </section>
+
+    <!-- ========================================================================
+         SANG TẢI CHUYỂN LƯỚI & MÔ PHỎNG TỔN THẤT
+         ======================================================================== -->
+    <section class="tab-content-panel" id="tab-sangtai">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>⚡</span> Nghiệp Vụ Sang Tải Chuyển Lưới: Danh Sách Trạm STCL - XDM &amp; Điều Chuyển Khách Hàng
+          </h1>
+          <p class="page-subtitle">
+            Tất cả các trạm sang tải chuyển lưới (STCL) và trạm xây dựng mới (XDM) tiếp nhận phụ tải của tháng. Tick chọn trạm để hiển thị danh sách khách hàng trong trạm, chọn khách hàng cần san tải sang trạm đích, nhập hiện trạng &amp; đề xuất rồi lưu vào hàng chờ hoặc nạp sang công cụ mô phỏng TTĐN.
+          </p>
+        </div>
+
+        <div class="page-toolbar">
+          <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Kỳ kiểm tra:</span>
+          <div class="month-selector-group">
+            <button class="month-pill-btn" data-month="thang_1">T1</button>
+            <button class="month-pill-btn" data-month="thang_2">T2</button>
+            <button class="month-pill-btn" data-month="thang_3">T3</button>
+            <button class="month-pill-btn" data-month="thang_5">T5</button>
+            <button class="month-pill-btn" data-month="thang_6">T6</button>
+            <button class="month-pill-btn" data-month="thang_7">T7</button>
+            <button class="month-pill-btn active" data-month="thang_8">T8</button>
+            <button class="month-pill-btn" data-month="thang_9">T9</button>
+          </div>
+          <button class="btn-custom btn-primary" onclick="switchTab('tab-queue')">
+            📋 Xem Hàng Chờ Chuyển Trạm (<span class="queue-badge-count">0</span>)
+          </button>
+          <button class="btn-custom btn-warning" onclick="document.getElementById('simComparisonBanner').scrollIntoView({behavior: 'smooth'})">
+            ⚡ Công Cụ Mô Phỏng TTĐN
+          </button>
+        </div>
+      </div>
+
+      <!-- Bảng Danh Sách Trạm Sang Tải Chuyển Lưới (STCL - XDM) -->
+      <div class="card-table-container">
+        <div class="table-filter-bar">
+          <div class="filter-left-group">
+            <span style="font-size: 13.5px; font-weight: 700; color: var(--evn-navy);">
+              ⚡ Danh Sách Trạm Sang Tải Chuyển Lưới (STCL - XDM) <span id="sangTaiMonthBadge" style="color: #d97706;">Tháng 8</span>
+            </span>
+          </div>
+          <div class="filter-right-group">
+            <span style="font-size: 12px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 4px 10px; border-radius: 6px;">
+              👉 Tick chọn vào trạm để mở danh sách khách hàng cần san tải / chuyển ranh
+            </span>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper" style="max-height: 420px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 55px; text-align: center;">Tick Chọn</th>
+                <th style="width: 45px;">STT</th>
+                <th style="width: 100px;">ID Trạm</th>
+                <th>Tên Trạm Biến Áp</th>
+                <th>Khu Vực</th>
+                <th>Số KH</th>
+                <th>Tỉ Lệ TTĐN / Sản Lượng</th>
+                <th>Phân Loại Nghiệp Vụ</th>
+                <th style="width: 140px; text-align: center;">Xem Khách Hàng</th>
+              </tr>
+            </thead>
+            <tbody id="sangTaiTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Khung hiển thị khách hàng trong trạm STCL đã tick chọn để chuyển đổi về đúng trạm -->
+      <div id="stclCustomerTransferContainer" style="display: none; margin-top: 24px;"></div>
+
+      <!-- Simulator Comparison Banner -->
+      <div class="sim-comparison-banner" id="simComparisonBanner" style="margin-top: 32px;">
+        <div class="sim-banner-info">
+          <div class="sim-banner-title">⚡ Mô Phỏng Tính Toán Lại Tổn Thất Điện Năng Sau Sang Tải</div>
+          <div class="sim-banner-subtitle">
+            Chọn Trạm Nguồn, Trạm Đích và tích chọn các khách hàng cần chuyển để hệ thống tự động tính toán lại tỷ lệ tổn thất cho cả hai trạm.
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulator Controls Grid -->
+      <div class="simulator-layout">
+        <!-- Box Trạm Nguồn -->
+        <div class="sim-box source-box">
+          <div class="sim-box-title">
+            <span>🔴 1. Trạm Nguồn (Trạm Cần Giảm Tải / Sửa Ranh / Tổn Thất Âm)</span>
+          </div>
+
+          <div class="sim-field-group">
+            <label class="sim-field-label">Chọn Trạm Nguồn:</label>
+            <select class="sim-select" id="simSourceStationSelect"></select>
+          </div>
+
+          <!-- Bảng chọn khách hàng thuộc trạm nguồn -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; margin-bottom: 8px;">
+            <label class="sim-field-label" style="margin-bottom: 0;">
+              Danh Sách Khách Hàng (Tích chọn để chuyển tải):
+            </label>
+            <input type="text" id="simKhSearchInput" placeholder="Lọc mã KH, tên, địa chỉ, sổ GCS..." 
+              class="form-control" style="width: 220px; font-size: 11.5px; padding: 4px 8px;">
+          </div>
+
+          <div class="table-responsive-wrapper" style="max-height: 280px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 36px; text-align: center;">Chuyển</th>
+                  <th style="width: 30px;">STT</th>
+                  <th>Mã KH</th>
+                  <th>Tên Khách Hàng</th>
+                  <th>Địa Chỉ</th>
+                  <th>Mã Sổ GCS</th>
+                  <th>Lộ Trình</th>
+                  <th>Mã KV</th>
+                  <th>Pha</th>
+                  <th>Sản Lượng T8</th>
+                </tr>
+              </thead>
+              <tbody id="simKhTableBody">
+                <tr>
+                  <td colspan="10" style="text-align: center; padding: 24px; color: #94a3b8;">
+                    Vui lòng chọn Trạm Nguồn ở trên để hiển thị danh sách khách hàng.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Box Trạm Đích -->
+        <div class="sim-box target-box">
+          <div class="sim-box-title">
+            <span>🟢 2. Trạm Đích (Trạm Nhận Khách Hàng Chuyển Tới)</span>
+          </div>
+
+          <div class="sim-field-group">
+            <label class="sim-field-label">Chọn Trạm Đích Lân Cận:</label>
+            <select class="sim-select" id="simTargetStationSelect"></select>
+          </div>
+
+          <div style="background: #f8fafc; padding: 14px 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px;">
+            <div style="font-weight: 700; color: var(--evn-navy); font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>💡</span> Nguyên tắc tính toán sang tải nhanh:
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #334155;">
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <span style="color: #0d6efd; font-weight: bold;">•</span>
+                <span><strong>Lấy sản lượng:</strong> Tự động tính tổng sản lượng tháng 8 của các khách hàng được tích chọn.</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <span style="color: #dc2626; font-weight: bold;">•</span>
+                <span><strong>Trạm Nguồn:</strong> Trừ bớt sản lượng chuyển đi ➔ Giảm phụ tải, đưa trạm tổn thất âm trở về vùng dương an toàn.</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <span style="color: #059669; font-weight: bold;">•</span>
+                <span><strong>Trạm Đích:</strong> Cộng thêm sản lượng nhận về theo đúng ranh cấp điện thực tế.</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <span style="color: #7c3aed; font-weight: bold;">•</span>
+                <span><strong>Kết quả tức thì:</strong> Tự động tính toán lại tỷ lệ tổn thất (TTĐN) mới của cả hai trạm hiển thị trực quan ở khung trên.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 4: HÀNG CHỜ KHÁCH HÀNG ĐỀ XUẤT CHUYỂN TRẠM
+         ======================================================================== -->
+    <section class="tab-content-panel" id="tab-queue">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>📋</span> Hàng Chờ Khách Hàng Đề Xuất Chuyển Trạm Về Đúng Hiện Trạng
+          </h1>
+          <p class="page-subtitle">
+            Danh sách khách hàng đề xuất chuyển về đúng trạm cấp điện thực tế. Ghi nhận hiện trạng, đề xuất xử lý và tự động chuyển tiếp các trường hợp chưa hoàn thành sang kỳ tiếp theo.
+          </p>
+        </div>
+
+        <div class="page-toolbar">
+          <button class="btn-rollover" id="btnRolloverQueue" title="Chuyển các khách hàng chưa hoàn tất sang tháng sau để tiếp tục theo dõi">
+            <span>🔄</span> Chuyển Khách Hàng Chưa Xong Sang Tháng Sau
+          </button>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           THANH THÊM NHANH THEO TRẠM TRONG HÀNG CHỜ
+           ==================================================================== -->
+      <div class="queue-insert-station-bar">
+        <div class="insert-bar-header">
+          <div class="insert-bar-title">
+            <span>⚡</span> <strong>Thanh Thêm Nhanh Theo Trạm Vào Hàng Chờ:</strong>
+            <span style="font-weight: normal; font-size: 12px; color: #64748b;">(Chọn trạm để chèn nhanh danh bạ/phụ tải vào hàng chờ theo dõi &amp; xuất sang Google Sheet)</span>
+          </div>
+          <div class="insert-bar-quick-stats" id="insertBarStationPreview" style="font-size: 12.5px; color: #0284c7; font-weight: 600;">
+            <!-- Dynamic station preview stats -->
+          </div>
+        </div>
+
+        <div class="insert-bar-form-grid">
+          <!-- 1. Trạm Nguồn -->
+          <div class="insert-form-group">
+            <label for="insertQueueSourceStation">🏢 1. Chọn Trạm Nguồn (Trạm cần chuyển):</label>
+            <select id="insertQueueSourceStation" class="form-control" onchange="window.AppController.onInsertSourceStationChange(this.value)">
+              <option value="">-- Đang nạp danh sách 4.947 trạm... --</option>
+            </select>
+          </div>
+
+          <!-- 2. Trạm Đích (Tìm kiếm theo ID hoặc Tên trạm) -->
+          <div class="insert-form-group target-station-search-wrapper">
+            <label for="insertQueueTargetSearchInput">🎯 2. Chọn Trạm Đích (Tìm theo ID hoặc Tên trạm):</label>
+            <div class="custom-search-select-box">
+              <input type="text" id="insertQueueTargetSearchInput" class="form-control"
+                placeholder="🔍 Gõ mã ID hoặc tên trạm đích..." autocomplete="off">
+              <button type="button" class="btn-clear-target" id="btnClearTargetStation" style="display: none;" title="Xóa chọn trạm đích">✕</button>
+            </div>
+            <!-- Dropdown kết quả tìm kiếm theo ID hoặc Tên trạm -->
+            <div class="target-station-dropdown-menu" id="targetStationDropdownMenu">
+              <!-- Loaded dynamically via JS -->
+            </div>
+            <!-- Hidden select để đồng bộ dữ liệu trạm đích -->
+            <select id="insertQueueTargetStation" style="display: none;">
+              <option value="">-- Chưa chọn trạm biến áp đích --</option>
+            </select>
+          </div>
+
+          <!-- 3. Hiện trạng -->
+          <div class="insert-form-group">
+            <label for="insertQueueHienTrang">📝 3. Hiện Trạng Lưới Điện:</label>
+            <input type="text" id="insertQueueHienTrang" class="form-control" placeholder="Hiện trạng câu nối, nhánh rẽ, công tơ...">
+          </div>
+
+          <!-- 4. Đề xuất -->
+          <div class="insert-form-group">
+            <label for="insertQueueDeXuat">💡 4. Đề Xuất Kỹ Thuật:</label>
+            <input type="text" id="insertQueueDeXuat" class="form-control" placeholder="Đề xuất chuyển ranh, tách cáp, chỉnh GCS...">
+          </div>
+
+          <!-- 5. Chế độ chèn -->
+          <div class="insert-form-group" style="min-width: 175px;">
+            <label for="insertQueueModeSelect">⚙️ 5. Chế Độ Thêm:</label>
+            <select id="insertQueueModeSelect" class="form-control">
+              <option value="all_customers">👥 Chèn toàn bộ KH của trạm</option>
+              <option value="station_summary">🏢 Chèn 1 dòng đại diện trạm</option>
+              <option value="pick_customers">🔍 Mở bảng chọn từng KH</option>
+            </select>
+          </div>
+
+          <!-- 6. Nút Thực Hiện Thêm -->
+          <div class="insert-form-group" style="align-self: flex-end;">
+            <button class="btn-custom btn-primary insert-btn" onclick="window.AppController.insertStationToQueue()" id="btnExecuteInsertStation" title="Thêm trạm này vào hàng chờ">
+              <span>➕</span> Thêm Vào Hàng Chờ
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue Control Bar -->
+      <div class="queue-control-header">
+        <div>
+          <div class="queue-summary-text" id="queueSummaryText">
+            Đang tải dữ liệu hàng chờ...
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px; flex-wrap: wrap;">
+            <input type="text" id="queueFilterInput" placeholder="🔍 Tìm kiếm nhanh theo trạm hoặc mã KH..."
+              class="form-control" style="width: 300px; font-size: 12.5px; padding: 5px 12px; height: 34px;"
+              oninput="window.AppController.filterQueueTable(this.value)">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <button class="btn-custom btn-outline" onclick="window.AppController.syncQueueWithGoogleSheet()" title="Tải dữ liệu mới nhất từ Google Sheet Hàng Chờ (gid=71925172)">
+            🔄 Đồng Bộ Từ Sheet
+          </button>
+          <button class="btn-custom btn-success" onclick="window.AppController.triggerSaveToGoogleSheet()" title="Ghi dữ liệu hàng chờ vào Google Sheet (gid: 71925172)">
+            📊 Ghi Vào Google Sheet (gid: 71925172)
+          </button>
+          <button class="btn-custom btn-outline" onclick="window.AppController.openQueueGoogleSheet()" title="Mở trực tiếp link Google Sheet hàng chờ trên tab mới">
+            ↗ Mở Sheet
+          </button>
+          <button class="btn-custom btn-outline" onclick="window.AppController.printQueue()">
+            🖨️ In Phiếu Giao Việc
+          </button>
+          <button class="btn-custom btn-primary" onclick="window.AppController.exportQueueToCSV()">
+            📥 Xuất File Excel/CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Queue Table -->
+      <div class="card-table-container">
+        <div class="table-responsive-wrapper" style="max-height: 520px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 45px; text-align: center;">Xóa</th>
+                <th style="width: 45px; text-align: center;">STT</th>
+                <th style="width: 110px;">Mã KH</th>
+                <th>Tên Khách Hàng</th>
+                <th>Địa Chỉ</th>
+                <th style="width: 100px;">Sản Lượng</th>
+                <th>Trạm Nguồn (Hiện tại)</th>
+                <th>Trạm Đích (Đúng ranh)</th>
+                <th style="min-width: 180px;">Hiện trạng lưới điện</th>
+                <th style="min-width: 180px;">Đề xuất xử lý</th>
+              </tr>
+            </thead>
+            <tbody id="queueTableBody">
+              <!-- Loaded via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 5: TRA CỨU NHANH TRẠM & KHÁCH HÀNG
+         ======================================================================== -->
+    <section class="tab-content-panel" id="tab-lookup">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>🔎</span> Tra Cứu Thông Tin Trạm & Khách Hàng Phục Vụ Kiểm Tra Hiện Trường
+          </h1>
+          <p class="page-subtitle">
+            Tìm kiếm theo Mã trạm, Tên trạm, Mã khách hàng, Tên khách hàng hoặc Địa chỉ.
+          </p>
+        </div>
+      </div>
+
+      <div class="card-table-container" style="padding: 20px; margin-bottom: 20px;">
+        <div class="search-box-wrapper" style="max-width: 700px;">
+          <input type="text" class="search-input" id="lookupSearchInput"
+            placeholder="Nhập Mã Trạm (ví dụ: 105063), Tên Trạm, Mã Khách Hàng (ví dụ: PB1501...), Tên KH..." style="height: 46px; font-size: 14px;">
+        </div>
+      </div>
+
+      <div id="lookupResultsContainer">
+        <div style="text-align: center; padding: 40px; color: #94a3b8;">
+          Nhập từ khóa tìm kiếm ở ô trên để tra cứu danh mục trạm và danh sách khách hàng tương ứng.
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         TAB 6: CẤU HÌNH & KẾT NỐI GOOGLE SHEETS
+         ======================================================================== -->
+    <section class="tab-content-panel" id="tab-settings">
+      <div class="page-title-bar">
+        <div class="page-title-wrapper">
+          <h1 class="page-main-title">
+            <span>⚙️</span> Cấu Hình Kết Nối Google Sheets & Quy Chuẩn Kỹ Thuật
+          </h1>
+          <p class="page-subtitle">
+            Quản lý liên kết nguồn dữ liệu Google Sheets trực tuyến của Điện lực Vũng Tàu và bảng phân loại tổn thất.
+          </p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 24px;">
+        <!-- Card Google Sheet 1 -->
+        <div class="stat-card" style="border-left: 4px solid var(--evn-blue);">
+          <h3 style="font-size: 15px; color: var(--evn-navy); margin-bottom: 8px;">
+            📄 Google Sheet 1: Dữ Liệu Các Tháng & Master Trạm
+          </h3>
+          <p style="font-size: 12.5px; color: #64748b; margin-bottom: 12px;">
+            Bao gồm các sheet Tháng 1 đến Tháng 9, Sheet Chú thích và Danh sách trạm cũ/mới.
+          </p>
+          <div style="font-family: monospace; font-size: 11.5px; background: #f1f5f9; padding: 8px; border-radius: 6px; word-break: break-all; margin-bottom: 12px;">
+            https://docs.google.com/spreadsheets/d/1LOCwMLQJj5VkCz7uvxnPSbExVd359_FkzlcLEZM57lU
+          </div>
+          <a href="https://docs.google.com/spreadsheets/d/1LOCwMLQJj5VkCz7uvxnPSbExVd359_FkzlcLEZM57lU/edit" 
+             target="_blank" class="btn-custom btn-sm btn-outline" style="width: fit-content;">
+            Mở Sheet 1 Trên Google Drive ↗
+          </a>
+        </div>
+
+        <!-- Card Google Sheet 2 -->
+        <div class="stat-card" style="border-left: 4px solid var(--evn-navy);">
+          <h3 style="font-size: 15px; color: var(--evn-navy); margin-bottom: 8px;">
+            📄 Google Sheet 2: Khách Hàng Quản Lý & Kết Quả T8
+          </h3>
+          <p style="font-size: 12.5px; color: #64748b; margin-bottom: 12px;">
+            Bao gồm hơn 250.000 khách hàng và bảng kết quả tính toán điện thương phẩm/NLMT Tháng 8.
+          </p>
+          <div style="font-family: monospace; font-size: 11.5px; background: #f1f5f9; padding: 8px; border-radius: 6px; word-break: break-all; margin-bottom: 12px;">
+            https://docs.google.com/spreadsheets/d/1gU5fAfSH6OIN8UGVy91SjgW7DlmvQdvjgZta07TE2do
+          </div>
+          <a href="https://docs.google.com/spreadsheets/d/1gU5fAfSH6OIN8UGVy91SjgW7DlmvQdvjgZta07TE2do/edit" 
+             target="_blank" class="btn-custom btn-sm btn-outline" style="width: fit-content;">
+            Mở Sheet 2 Trên Google Drive ↗
+          </a>
+        </div>
+
+        <!-- Card Google Sheet 3: Hàng Chờ Kiểm Tra (gid: 71925172) -->
+        <div class="stat-card" style="border-left: 4px solid var(--color-success); background: #f0fdf4;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="font-size: 15px; color: var(--evn-navy); margin: 0;">
+              📋 Google Sheet: Hàng Chờ & Đề Xuất (gid: 71925172)
+            </h3>
+            <span class="badge-status good" style="font-size: 11px;">Đang kết nối</span>
+          </div>
+          <p style="font-size: 12.5px; color: #334155; margin-bottom: 12px;">
+            Lưu trữ danh sách khách hàng đề xuất chuyển trạm trực tuyến để người dùng trên các thiết bị khác (điện thoại, máy tính bàn) đều xem và phối hợp xử lý.
+          </p>
+          <div style="font-family: monospace; font-size: 11px; background: #ffffff; padding: 8px; border-radius: 6px; word-break: break-all; margin-bottom: 12px; border: 1px solid #bbf7d0;">
+            https://docs.google.com/spreadsheets/d/1LOCwMLQJj5VkCz7uvxnPSbExVd359_FkzlcLEZM57lU/edit?gid=71925172#gid=71925172
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn-custom btn-sm btn-outline" onclick="window.AppController.openQueueGoogleSheet()">
+              Mở Sheet Hàng Chờ ↗
+            </button>
+            <button class="btn-custom btn-sm btn-success" onclick="window.AppController.copyQueueForGoogleSheet()" title="Sao chép toàn bộ bảng hàng chờ để dán vào ô A1 của Sheet">
+              📊 Sao Chép & Dán Vào Sheet
+            </button>
+            <button class="btn-custom btn-sm btn-primary" onclick="window.AppController.syncQueueWithGoogleSheet()" title="Đồng bộ lại từ Google Sheet để nạp các dòng mới nhất">
+              🔄 Tải Lại Từ Sheet
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hướng dẫn đồng bộ tự động đa thiết bị -->
+      <div class="stat-card" style="margin-bottom: 24px; border-left: 4px solid var(--color-warning);">
+        <h3 style="font-size: 15px; color: var(--evn-navy); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+          <span>⚡</span> Hướng Dẫn Đồng Bộ Đa Thiết Bị (Mobile &amp; PC) Qua Google Sheet Hàng Chờ
+        </h3>
+        <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+          <p style="margin-bottom: 8px;">
+            <strong>Cách 1 (Nhanh nhất - Không cần cài đặt):</strong> Nhấn nút <code>📊 Lưu Lên Google Sheet</code> tại tab <em>Hàng Chờ</em>. Hệ thống sẽ tự động sao chép toàn bộ dữ liệu có đầy đủ tiêu đề cột và mở link Google Sheet; bạn chỉ cần nhấn <strong>Ctrl + V</strong> tại ô <strong>A1</strong>. Bất kỳ đồng nghiệp nào mở trang web trên thiết bị khác cũng sẽ tự động thấy dữ liệu mới.
+          </p>
+          <p style="margin-bottom: 12px;">
+            <strong>Cách 2 (Tự động real-time qua Webhook):</strong> Nếu muốn mỗi khi nhấn Lưu trong app, dữ liệu lập tức tự động đẩy thẳng lên Google Sheet mà không cần dán, bạn có thể dán URL Webhook Google Apps Script vào ô dưới đây:
+          </p>
+          <div style="display: flex; gap: 10px; max-width: 650px; margin-bottom: 8px;">
+            <input type="url" id="settingsWebhookUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/.../exec"
+              style="font-size: 12.5px; padding: 7px 12px; flex: 1;">
+            <button class="btn-custom btn-primary" onclick="window.AppController.saveWebhookUrl(document.getElementById('settingsWebhookUrlInput').value)">
+              Lưu Webhook URL
+            </button>
+          </div>
+          <div style="font-size: 11.5px; color: #64748b;">
+            💡 Đảm bảo bạn đã cấp quyền <strong>"Bất kỳ ai có liên kết"</strong> có quyền <strong>Người xem</strong> hoặc <strong>Người chỉnh sửa</strong> cho Google Sheet trên để các thiết bị khác đọc và ghi được dữ liệu.
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng Quy chuẩn kỹ thuật Sheet Chú Thích -->
+      <div class="card-table-container">
+        <div class="table-filter-bar">
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--evn-navy);">
+            Bảng Tiêu Chuẩn Đánh Giá Tổn Thất Điện Năng (Từ Sheet "Chú Thích")
+          </h3>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">STT</th>
+              <th style="width: 180px;">Dải Tỷ Lệ Tổn Thất</th>
+              <th style="width: 160px;">Đánh Giá Hiện Trạng</th>
+              <th>Ý Nghĩa Kỹ Thuật & Hướng Dẫn Xử Lý Hiện Trường</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>Từ 0 đến 2,35%</strong></td>
+              <td><span class="badge-status good">Tốt</span></td>
+              <td>Tổn thất trong ngưỡng kỹ thuật cho phép của Tổng công ty Điện lực TP.HCM.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>Tổn thất &gt; 2,35%</strong></td>
+              <td><span class="badge-status high">Tổn thất cao</span></td>
+              <td>Vượt định mức kỹ thuật. Cần kiểm tra bán kính cấp điện, cân pha phụ tải hoặc nâng tiết diện dây dẫn.</td>
+            </tr>
+            <tr class="row-danger">
+              <td>3</td>
+              <td><strong>Tổn thất âm (&lt; 0%)</strong></td>
+              <td><span class="badge-status negative">Tổn thất bất thường</span></td>
+              <td><strong>Báo động đỏ (Ưu tiên số 1):</strong> Thương phẩm &gt; Điện năng đầu nguồn. Cần kiểm tra tráo dây công tơ tổng, nhầm ranh trạm hoặc phát hiện câu trộm điện/nguồn NLMT không kiểm soát.</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>#DIV/0!</strong></td>
+              <td><span class="badge-status error">Tổn thất bất thường</span></td>
+              <td>Mất điện nhận đầu nguồn hoặc sự cố mất tín hiệu đo đếm công tơ tổng.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL: CHI TIẾT TRẠM & KHÁCH HÀNG THUỘC TRẠM
+       ========================================================================== -->
+  <div class="modal-backdrop" id="stationDetailModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalStationTitle">Chi Tiết Trạm</h3>
+        <button class="modal-close-btn" onclick="window.AppController.closeModal('stationDetailModal')">✕</button>
+      </div>
+      <div class="modal-body" id="modalStationBody">
+        <!-- Content dynamically injected -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-custom btn-outline" onclick="window.AppController.closeModal('stationDetailModal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: CẢNH BÁO CHỌN TRÙNG TRẠM ĐÃ KIỂM TRA CÁC THÁNG TRƯỚC
+       ========================================================================== -->
+  <div class="modal-backdrop" id="stationReinspectModal">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%); color: #fff;">
+        <h3 class="modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span> Cảnh Báo: Trạm Đã Từng Được Kiểm Tra
+        </h3>
+        <button class="modal-close-btn" style="color: #fff;" onclick="window.AppController.cancelReinspectModal()">✕</button>
+      </div>
+      <div class="modal-body" id="stationReinspectModalBody" style="padding: 20px;">
+        <!-- Injected dynamically: Station Info, Inspection History Table, Warning Callout -->
+      </div>
+      <div class="modal-footer" style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <button class="btn-custom btn-outline" onclick="window.AppController.cancelReinspectModal()">
+          ✕ Hủy / Bỏ Chọn
+        </button>
+        <button class="btn-custom btn-primary" id="btnConfirmReinspectContinue" onclick="window.AppController.proceedReinspectContinue()" style="background: #dc2626; border-color: #dc2626; color: #fff; font-weight: 700; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);">
+          ➡️ Tiếp Tục Kiểm Tra Lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: LƯU & ĐỒNG BỘ DỮ LIỆU HÀNG CHỜ LÊN GOOGLE SHEETS
+       ========================================================================== -->
+  <div class="modal-backdrop" id="googleSheetsSyncModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--evn-navy) 0%, var(--evn-blue) 100%); color: #fff;">
+        <h3 class="modal-title" style="color: #fff; display: flex; align-items: center; gap: 8px;">
+          <span>📊</span> Hướng Dẫn Ghi Dữ Liệu Vào Sheet Hàng Chờ (gid: 71925172)
+        </h3>
+        <button class="modal-close-btn" style="color: #fff;" onclick="window.AppController.closeModal('googleSheetsSyncModal')">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px;">
+          <div style="font-weight: 700; color: #166534; font-size: 13.5px; margin-bottom: 4px;">
+            🔗 Bảng Tính Google Sheets Đích:
+          </div>
+          <div style="font-family: monospace; font-size: 12px; color: #15803d; word-break: break-all;">
+            https://docs.google.com/spreadsheets/d/1LOCwMLQJj5VkCz7uvxnPSbExVd359_FkzlcLEZM57lU/edit?gid=71925172#gid=71925172
+          </div>
+          <div style="font-size: 12px; color: #4b5563; margin-top: 5px;">
+            Sheet: <strong>Hàng chờ</strong> • Đang có <strong id="modalQueueItemCount" style="color: #dc2626;">0</strong> khách hàng đề xuất sẵn sàng ghi vào sheet.
+          </div>
+        </div>
+
+        <!-- 2 Phương án ghi dữ liệu -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+          <!-- Cách 1: Dán nhanh Ctrl + V -->
+          <div style="background: #ffffff; border: 2px solid var(--evn-blue); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 800; color: var(--evn-navy); font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>📋</span> CÁCH 1: DÁN NHANH BẰNG PHÍM (Ctrl + V)
+              </div>
+              <p style="font-size: 12.5px; color: #475569; margin-bottom: 10px; line-height: 1.5;">
+                Thực hiện ngay trong 5 giây, không cần cài đặt gì. Bấm nút màu xanh dưới đây để hệ thống tự động copy toàn bộ bảng và mở Sheet, sau đó:
+              </p>
+              <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; font-size: 12px; margin-bottom: 14px;">
+                <ol style="padding-left: 18px; margin: 0; line-height: 1.6; color: #334155;">
+                  <li>Click chuột vào ô <strong>A1</strong> (ô đầu tiên trên cùng bên trái của sheet).</li>
+                  <li>Nhấn tổ hợp phím <strong>Ctrl + V</strong>.</li>
+                  <li>Toàn bộ tiêu đề cột và danh sách khách hàng sẽ xuất hiện chuẩn xác!</li>
+                </ol>
+              </div>
+            </div>
+            <button class="btn-custom btn-success" style="width: 100%; justify-content: center; padding: 10px; font-size: 13.5px; font-weight: 700; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);"
+              onclick="window.AppController.executeCopyAndOpenSheet()">
+              📋 Sao Chép & Mở Sheet Để Dán (Ctrl+V)
+            </button>
+          </div>
+
+          <!-- Cách 2: Cài Webhook tự động ghi -->
+          <div style="background: #ffffff; border: 2px solid #f59e0b; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-weight: 800; color: #92400e; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>⚡</span> CÁCH 2: TỰ ĐỘNG GHI (Cài 1 lần dùng mãi mãi)
+              </div>
+              <p style="font-size: 12.5px; color: #475569; margin-bottom: 10px; line-height: 1.5;">
+                Cài đoạn mã Google Apps Script vào sheet. Từ đó về sau, mỗi khi bấm Lưu trong ứng dụng, dữ liệu tự động ghi thẳng vào sheet theo thời gian thực:
+              </p>
+              <div style="background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 6px; padding: 10px; font-size: 11.5px; margin-bottom: 10px;">
+                <ol style="padding-left: 18px; margin: 0; line-height: 1.5; color: #78350f;">
+                  <li>Mở sheet, bấm menu <strong>Tiện ích mở rộng ➔ Apps Script</strong>.</li>
+                  <li>Dán mã script (bấm nút sao chép bên dưới).</li>
+                  <li>Bấm <strong>Triển khai ➔ Triển khai mới ➔ Ứng dụng web</strong> ➔ Ai có quyền: <strong>Bất kỳ ai (Anyone)</strong>.</li>
+                  <li>Copy link Web App và dán vào ô dưới:</li>
+                </ol>
+              </div>
+              <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+                <button class="btn-custom btn-sm btn-outline" style="font-size: 11.5px;" onclick="window.AppController.copyAppsScriptCode()">
+                  📄 Sao Chép Mã Apps Script
+                </button>
+                <button class="btn-custom btn-sm btn-outline" style="font-size: 11.5px;" onclick="window.AppController.openQueueGoogleSheet()">
+                  ↗ Mở Sheet Để Cài
+                </button>
+              </div>
+              <input type="url" id="modalWebhookUrlInput" class="form-control" placeholder="Dán link https://script.google.com/.../exec vào đây"
+                style="font-size: 12px; padding: 6px 10px; width: 100%; margin-bottom: 10px;">
+            </div>
+            <button class="btn-custom btn-primary" style="width: 100%; justify-content: center; padding: 10px; font-size: 13.5px; font-weight: 700;"
+              onclick="window.AppController.saveAndPushWebhook(document.getElementById('modalWebhookUrlInput').value)">
+              🚀 Lưu Webhook & Ghi Ngay Vào Sheet
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 12px 20px;">
+        <button class="btn-custom btn-outline" onclick="window.AppController.closeModal('googleSheetsSyncModal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MOBILE BOTTOM FUNCTION BAR (Thanh Chức Năng Nhanh Trên Mobile)
+       ========================================================================== -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button type="button" class="mobile-nav-item active" data-tab="tab-dashboard" title="Tổng quan">
+      <span class="mobile-nav-icon">📊</span>
+      <span class="mobile-nav-label">Tổng Quan</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="tab-dinhky" title="Kiểm tra trạm bất thường">
+      <span class="mobile-nav-icon">🔍</span>
+      <span class="mobile-nav-label">Bất Thường</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="tab-sangtai" title="Mô phỏng sang tải">
+      <span class="mobile-nav-icon">⚡</span>
+      <span class="mobile-nav-label">Sang Tải</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="tab-queue" title="Hàng chờ kiểm tra">
+      <span class="mobile-nav-icon">📋</span>
+      <span class="mobile-nav-label">Hàng Chờ</span>
+      <span class="mobile-nav-badge queue-badge-count">0</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="tab-lookup" title="Tra cứu">
+      <span class="mobile-nav-icon">🔎</span>
+      <span class="mobile-nav-label">Tra Cứu</span>
+    </button>
+  </nav>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Data and Scripts -->
+  <script src="js/app_data.js"></script>
+  <script src="js/calc_engine.js"></script>
+  <script src="js/google_sheets_sync.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@
 __pycache__/
 *.csv
 !data/**/*.csv
+*kienthoan_sheet.csv
 sample_*.csv
 data_csv/
 *.txt

@@ -1,0 +1,10190 @@
+{
+  "102325": {
+    "id": "102325",
+    "name": "Phước Tân 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 34
+  },
+  "104068": {
+    "id": "104068",
+    "name": "Phan Đăng Lưu 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 67
+  },
+  "104069": {
+    "id": "104069",
+    "name": "Trường Phúc Phan",
+    "khu_vuc": "Bà Rịa",
+    "count": 145
+  },
+  "104071": {
+    "id": "104071",
+    "name": "Phan Đăng Lưu",
+    "khu_vuc": "Bà Rịa",
+    "count": 187
+  },
+  "104072": {
+    "id": "104072",
+    "name": "Long Hương",
+    "khu_vuc": "Bà Rịa",
+    "count": 165
+  },
+  "104073": {
+    "id": "104073",
+    "name": "Long Hương 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 120
+  },
+  "104075": {
+    "id": "104075",
+    "name": "Võ Ngọc Chấn",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104076": {
+    "id": "104076",
+    "name": "Võ Ngọc Chấn 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 16
+  },
+  "104077": {
+    "id": "104077",
+    "name": "Trương Định",
+    "khu_vuc": "Bà Rịa",
+    "count": 485
+  },
+  "104078": {
+    "id": "104078",
+    "name": "Điện lực Bà Rịa",
+    "khu_vuc": "Bà Rịa",
+    "count": 186
+  },
+  "104081": {
+    "id": "104081",
+    "name": "Nguyễn Thanh Đằng",
+    "khu_vuc": "Bà Rịa",
+    "count": 369
+  },
+  "104082": {
+    "id": "104082",
+    "name": "Nguyễn Thanh Đằng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 184
+  },
+  "104084": {
+    "id": "104084",
+    "name": "Cách Mạng Tháng Tám",
+    "khu_vuc": "Bà Rịa",
+    "count": 171
+  },
+  "104085": {
+    "id": "104085",
+    "name": "Phước Hiệp",
+    "khu_vuc": "Bà Rịa",
+    "count": 225
+  },
+  "104086": {
+    "id": "104086",
+    "name": "Nguyễn Văn Linh",
+    "khu_vuc": "Bà Rịa",
+    "count": 395
+  },
+  "104087": {
+    "id": "104087",
+    "name": "Lê Duẩn",
+    "khu_vuc": "Bà Rịa",
+    "count": 485
+  },
+  "104089": {
+    "id": "104089",
+    "name": "Cách Mạng Tháng Tám 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 205
+  },
+  "104090": {
+    "id": "104090",
+    "name": "Nguyễn Bính",
+    "khu_vuc": "Bà Rịa",
+    "count": 256
+  },
+  "104091": {
+    "id": "104091",
+    "name": "Phạm Văn Đồng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 205
+  },
+  "104093": {
+    "id": "104093",
+    "name": "Cách Mạng Tháng Tám 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 368
+  },
+  "104095": {
+    "id": "104095",
+    "name": "Hà Huy Tập",
+    "khu_vuc": "Bà Rịa",
+    "count": 51
+  },
+  "104111": {
+    "id": "104111",
+    "name": "Ủy Ban Phước Trung",
+    "khu_vuc": "Bà Rịa",
+    "count": 262
+  },
+  "104127": {
+    "id": "104127",
+    "name": "Khu Địa Lợi",
+    "khu_vuc": "Bà Rịa",
+    "count": 27
+  },
+  "104134": {
+    "id": "104134",
+    "name": "KDC H20",
+    "khu_vuc": "Bà Rịa",
+    "count": 490
+  },
+  "104136": {
+    "id": "104136",
+    "name": "Đường 2742",
+    "khu_vuc": "Bà Rịa",
+    "count": 207
+  },
+  "104139": {
+    "id": "104139",
+    "name": "Đường 2743",
+    "khu_vuc": "Bà Rịa",
+    "count": 128
+  },
+  "104141": {
+    "id": "104141",
+    "name": "Công viên Lê Thanh Duy",
+    "khu_vuc": "Bà Rịa",
+    "count": 284
+  },
+  "104142": {
+    "id": "104142",
+    "name": "Bạch Đằng",
+    "khu_vuc": "Bà Rịa",
+    "count": 532
+  },
+  "104143": {
+    "id": "104143",
+    "name": "Đình Phước Lễ",
+    "khu_vuc": "Bà Rịa",
+    "count": 281
+  },
+  "104145": {
+    "id": "104145",
+    "name": "Trung tâm thương mại 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 151
+  },
+  "104147": {
+    "id": "104147",
+    "name": "Agribank Bà Rịa",
+    "khu_vuc": "Bà Rịa",
+    "count": 80
+  },
+  "104148": {
+    "id": "104148",
+    "name": "Huỳnh Tịnh Của",
+    "khu_vuc": "Bà Rịa",
+    "count": 112
+  },
+  "104151": {
+    "id": "104151",
+    "name": "Chợ mới 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 112
+  },
+  "104159": {
+    "id": "104159",
+    "name": "Cư xá nhà máy điện 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 150
+  },
+  "104163": {
+    "id": "104163",
+    "name": "TĐC Đồng mắt mèo",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104166": {
+    "id": "104166",
+    "name": "KDC nam QL51",
+    "khu_vuc": "Bà Rịa",
+    "count": 229
+  },
+  "104167": {
+    "id": "104167",
+    "name": "Thủy sản Bà Rịa",
+    "khu_vuc": "Bà Rịa",
+    "count": 7
+  },
+  "104168": {
+    "id": "104168",
+    "name": "Thủy sản Bà Rịa 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 1
+  },
+  "104169": {
+    "id": "104169",
+    "name": "Thủy sản Bà Rịa 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 1
+  },
+  "104172": {
+    "id": "104172",
+    "name": "Cư xá nhà máy điện 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 55
+  },
+  "104173": {
+    "id": "104173",
+    "name": "Xóm đồng",
+    "khu_vuc": "Bà Rịa",
+    "count": 39
+  },
+  "104174": {
+    "id": "104174",
+    "name": "Xóm đồng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 41
+  },
+  "104175": {
+    "id": "104175",
+    "name": "Quyết Thắng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 92
+  },
+  "104176": {
+    "id": "104176",
+    "name": "Quyết Thắng",
+    "khu_vuc": "Bà Rịa",
+    "count": 45
+  },
+  "104179": {
+    "id": "104179",
+    "name": "Ngã 3 Vũng tàu",
+    "khu_vuc": "Bà Rịa",
+    "count": 60
+  },
+  "104185": {
+    "id": "104185",
+    "name": "Cầu Ba Cô",
+    "khu_vuc": "Bà Rịa",
+    "count": 167
+  },
+  "104189": {
+    "id": "104189",
+    "name": "Cầu Ba Cô 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 81
+  },
+  "104192": {
+    "id": "104192",
+    "name": "Bến Súc 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 293
+  },
+  "104193": {
+    "id": "104193",
+    "name": "Bến Súc",
+    "khu_vuc": "Bà Rịa",
+    "count": 51
+  },
+  "104195": {
+    "id": "104195",
+    "name": "Cầu Long Hương",
+    "khu_vuc": "Bà Rịa",
+    "count": 347
+  },
+  "104197": {
+    "id": "104197",
+    "name": "Nguyễn An Ninh 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 217
+  },
+  "104199": {
+    "id": "104199",
+    "name": "Nguyễn An Ninh 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 130
+  },
+  "104201": {
+    "id": "104201",
+    "name": "Nguyễn An Ninh 12",
+    "khu_vuc": "Bà Rịa",
+    "count": 130
+  },
+  "104202": {
+    "id": "104202",
+    "name": "Cách Mạng Tháng Tám 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 445
+  },
+  "104203": {
+    "id": "104203",
+    "name": "Nguyễn Hữu Cảnh 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 99
+  },
+  "104206": {
+    "id": "104206",
+    "name": "Hải Dinh 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 219
+  },
+  "104213": {
+    "id": "104213",
+    "name": "Cách Mạng Tháng Tám 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 204
+  },
+  "104214": {
+    "id": "104214",
+    "name": "Núi Dinh",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104215": {
+    "id": "104215",
+    "name": "Núi Dinh 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 410
+  },
+  "104216": {
+    "id": "104216",
+    "name": "Núi Dinh 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 31
+  },
+  "104219": {
+    "id": "104219",
+    "name": "Hải Dinh",
+    "khu_vuc": "Bà Rịa",
+    "count": 97
+  },
+  "104220": {
+    "id": "104220",
+    "name": "Núi Dinh 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 312
+  },
+  "104223": {
+    "id": "104223",
+    "name": "Hồ RMK",
+    "khu_vuc": "Bà Rịa",
+    "count": 53
+  },
+  "104225": {
+    "id": "104225",
+    "name": "Hồ RMK 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 103
+  },
+  "104234": {
+    "id": "104234",
+    "name": "Núi Dinh 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 89
+  },
+  "104237": {
+    "id": "104237",
+    "name": "KDC Đồng Nhân",
+    "khu_vuc": "Bà Rịa",
+    "count": 15
+  },
+  "104241": {
+    "id": "104241",
+    "name": "Núi Dinh 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 68
+  },
+  "104243": {
+    "id": "104243",
+    "name": "Xóm lao động",
+    "khu_vuc": "Bà Rịa",
+    "count": 90
+  },
+  "104248": {
+    "id": "104248",
+    "name": "Trương Công Quyền",
+    "khu_vuc": "Bà Rịa",
+    "count": 124
+  },
+  "104249": {
+    "id": "104249",
+    "name": "Trương Công Quyền 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 142
+  },
+  "104251": {
+    "id": "104251",
+    "name": "Kim Dinh 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 232
+  },
+  "104253": {
+    "id": "104253",
+    "name": "Kim Dinh",
+    "khu_vuc": "Bà Rịa",
+    "count": 189
+  },
+  "104254": {
+    "id": "104254",
+    "name": "Kim Dinh 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 90
+  },
+  "104255": {
+    "id": "104255",
+    "name": "Kim Dinh 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 129
+  },
+  "104256": {
+    "id": "104256",
+    "name": "Ủy Ban Kim Dinh",
+    "khu_vuc": "Bà Rịa",
+    "count": 42
+  },
+  "104260": {
+    "id": "104260",
+    "name": "Trương Công Quyền 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 24
+  },
+  "104261": {
+    "id": "104261",
+    "name": "Trương Công Quyền 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 19
+  },
+  "104264": {
+    "id": "104264",
+    "name": "Kim Hải",
+    "khu_vuc": "Bà Rịa",
+    "count": 279
+  },
+  "104265": {
+    "id": "104265",
+    "name": "Kim Hải 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 288
+  },
+  "104266": {
+    "id": "104266",
+    "name": "Kim Hải 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 94
+  },
+  "104268": {
+    "id": "104268",
+    "name": "Kim Hải 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 49
+  },
+  "104275": {
+    "id": "104275",
+    "name": "Kim Hải 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 158
+  },
+  "104277": {
+    "id": "104277",
+    "name": "Kim Hải 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 329
+  },
+  "104278": {
+    "id": "104278",
+    "name": "Kim Hải 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 85
+  },
+  "104282": {
+    "id": "104282",
+    "name": "Lê Trọng Tấn 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 66
+  },
+  "104283": {
+    "id": "104283",
+    "name": "Hoàng Diệu 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 25
+  },
+  "104286": {
+    "id": "104286",
+    "name": "Đập Sông Dinh 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 59
+  },
+  "104287": {
+    "id": "104287",
+    "name": "Đập Sông Dinh",
+    "khu_vuc": "Bà Rịa",
+    "count": 41
+  },
+  "104289": {
+    "id": "104289",
+    "name": "Hoàng Diệu",
+    "khu_vuc": "Bà Rịa",
+    "count": 65
+  },
+  "104290": {
+    "id": "104290",
+    "name": "Đèn đường QL566",
+    "khu_vuc": "Bà Rịa",
+    "count": 29
+  },
+  "104291": {
+    "id": "104291",
+    "name": "Nguyễn Tất Thành 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 259
+  },
+  "104292": {
+    "id": "104292",
+    "name": "KDC Hùng Vương",
+    "khu_vuc": "Bà Rịa",
+    "count": 234
+  },
+  "104296": {
+    "id": "104296",
+    "name": "Bệnh viện mắt",
+    "khu_vuc": "Bà Rịa",
+    "count": 123
+  },
+  "104300": {
+    "id": "104300",
+    "name": "Đường 274",
+    "khu_vuc": "Bà Rịa",
+    "count": 192
+  },
+  "104301": {
+    "id": "104301",
+    "name": "TĐC H20",
+    "khu_vuc": "Bà Rịa",
+    "count": 180
+  },
+  "104302": {
+    "id": "104302",
+    "name": "Hùng Vương 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 236
+  },
+  "104306": {
+    "id": "104306",
+    "name": "Điện Biên Phủ",
+    "khu_vuc": "Bà Rịa",
+    "count": 70
+  },
+  "104307": {
+    "id": "104307",
+    "name": "Điện Biên Phủ 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 109
+  },
+  "104308": {
+    "id": "104308",
+    "name": "Nguyễn Tất Thành 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 45
+  },
+  "104311": {
+    "id": "104311",
+    "name": "Điện Biên Phủ 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 419
+  },
+  "104313": {
+    "id": "104313",
+    "name": "Điện Biên Phủ 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 318
+  },
+  "104317": {
+    "id": "104317",
+    "name": "Trần Hưng Đạo",
+    "khu_vuc": "Bà Rịa",
+    "count": 409
+  },
+  "104319": {
+    "id": "104319",
+    "name": "Nguyễn Tất Thành",
+    "khu_vuc": "Bà Rịa",
+    "count": 105
+  },
+  "104322": {
+    "id": "104322",
+    "name": "TĐC Đông QL56",
+    "khu_vuc": "Bà Rịa",
+    "count": 63
+  },
+  "104323": {
+    "id": "104323",
+    "name": "TĐC Đông QL562",
+    "khu_vuc": "Bà Rịa",
+    "count": 54
+  },
+  "104326": {
+    "id": "104326",
+    "name": "Trần Hưng Đạo 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 278
+  },
+  "104327": {
+    "id": "104327",
+    "name": "Trương Hán Siêu",
+    "khu_vuc": "Bà Rịa",
+    "count": 296
+  },
+  "104329": {
+    "id": "104329",
+    "name": "Võ Thị Sáu 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 404
+  },
+  "104330": {
+    "id": "104330",
+    "name": "Nguyễn Văn Cừ",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104331": {
+    "id": "104331",
+    "name": "Long Tâm 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 62
+  },
+  "104333": {
+    "id": "104333",
+    "name": "Nguyễn Văn Cừ 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 47
+  },
+  "104335": {
+    "id": "104335",
+    "name": "Long Tâm 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 40
+  },
+  "104336": {
+    "id": "104336",
+    "name": "Long Tâm 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 96
+  },
+  "104337": {
+    "id": "104337",
+    "name": "Bàu Tràm",
+    "khu_vuc": "Bà Rịa",
+    "count": 22
+  },
+  "104341": {
+    "id": "104341",
+    "name": "Bàu Tràm 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 67
+  },
+  "104342": {
+    "id": "104342",
+    "name": "Bàu Tràm 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 51
+  },
+  "104343": {
+    "id": "104343",
+    "name": "Bàu Tràm 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 16
+  },
+  "104346": {
+    "id": "104346",
+    "name": "Long Tâm 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104347": {
+    "id": "104347",
+    "name": "Long Tâm",
+    "khu_vuc": "Bà Rịa",
+    "count": 110
+  },
+  "104348": {
+    "id": "104348",
+    "name": "Long Tâm 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 231
+  },
+  "104349": {
+    "id": "104349",
+    "name": "Nguyễn Văn Cừ 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 187
+  },
+  "104351": {
+    "id": "104351",
+    "name": "Nguyễn Văn Cừ 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 164
+  },
+  "104353": {
+    "id": "104353",
+    "name": "Nguyễn Văn Cừ 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 571
+  },
+  "104355": {
+    "id": "104355",
+    "name": "Điện Biên Phủ 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 232
+  },
+  "104357": {
+    "id": "104357",
+    "name": "Nguyễn Văn Cừ 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 161
+  },
+  "104358": {
+    "id": "104358",
+    "name": "Phạm Hùng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 240
+  },
+  "104360": {
+    "id": "104360",
+    "name": "Cầu Thủ Lựu",
+    "khu_vuc": "Bà Rịa",
+    "count": 367
+  },
+  "104361": {
+    "id": "104361",
+    "name": "KDC Rạch Thủ Lựu",
+    "khu_vuc": "Bà Rịa",
+    "count": 132
+  },
+  "104365": {
+    "id": "104365",
+    "name": "Long An 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 39
+  },
+  "104366": {
+    "id": "104366",
+    "name": "Long An 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 23
+  },
+  "104367": {
+    "id": "104367",
+    "name": "Long An 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 28
+  },
+  "104369": {
+    "id": "104369",
+    "name": "Long An 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 25
+  },
+  "104370": {
+    "id": "104370",
+    "name": "Long An 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 33
+  },
+  "104374": {
+    "id": "104374",
+    "name": "Long Toàn 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 152
+  },
+  "104378": {
+    "id": "104378",
+    "name": "Long An",
+    "khu_vuc": "Bà Rịa",
+    "count": 106
+  },
+  "104379": {
+    "id": "104379",
+    "name": "Long An 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 14
+  },
+  "104380": {
+    "id": "104380",
+    "name": "Võ Thị Sáu 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 191
+  },
+  "104382": {
+    "id": "104382",
+    "name": "Võ Thị Sáu 12",
+    "khu_vuc": "Bà Rịa",
+    "count": 191
+  },
+  "104386": {
+    "id": "104386",
+    "name": "Trại chăn nuôi 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 44
+  },
+  "104387": {
+    "id": "104387",
+    "name": "TĐC Phước Hưng",
+    "khu_vuc": "Bà Rịa",
+    "count": 25
+  },
+  "104388": {
+    "id": "104388",
+    "name": "Trại chăn nuôi",
+    "khu_vuc": "Bà Rịa",
+    "count": 152
+  },
+  "104389": {
+    "id": "104389",
+    "name": "KDC Hoàn Cầu",
+    "khu_vuc": "Bà Rịa",
+    "count": 88
+  },
+  "104391": {
+    "id": "104391",
+    "name": "Hoàng Hoa Thám 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 119
+  },
+  "104393": {
+    "id": "104393",
+    "name": "Nguyễn Văn Hưởng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 154
+  },
+  "104395": {
+    "id": "104395",
+    "name": "Nguyễn Văn Hưởng",
+    "khu_vuc": "Bà Rịa",
+    "count": 197
+  },
+  "104397": {
+    "id": "104397",
+    "name": "Nguyễn Văn Hưởng 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 194
+  },
+  "104399": {
+    "id": "104399",
+    "name": "Cao Triều Phát",
+    "khu_vuc": "Bà Rịa",
+    "count": 318
+  },
+  "104401": {
+    "id": "104401",
+    "name": "Phan Bội Châu",
+    "khu_vuc": "Bà Rịa",
+    "count": 226
+  },
+  "104403": {
+    "id": "104403",
+    "name": "Lê Hữu Trác",
+    "khu_vuc": "Bà Rịa",
+    "count": 24
+  },
+  "104405": {
+    "id": "104405",
+    "name": "KDC Nam Á",
+    "khu_vuc": "Bà Rịa",
+    "count": 50
+  },
+  "104406": {
+    "id": "104406",
+    "name": "Bệnh Xá Quân sự",
+    "khu_vuc": "Bà Rịa",
+    "count": 68
+  },
+  "104408": {
+    "id": "104408",
+    "name": "Trại chăn nuôi 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 140
+  },
+  "104412": {
+    "id": "104412",
+    "name": "Mô Xoài 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 166
+  },
+  "104415": {
+    "id": "104415",
+    "name": "Mô Xoài 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 8
+  },
+  "104416": {
+    "id": "104416",
+    "name": "Ba Tháng Hai",
+    "khu_vuc": "Bà Rịa",
+    "count": 21
+  },
+  "104417": {
+    "id": "104417",
+    "name": "KDC Hưng Việt",
+    "khu_vuc": "Bà Rịa",
+    "count": 103
+  },
+  "104418": {
+    "id": "104418",
+    "name": "KDC Hưng Việt 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 15
+  },
+  "104419": {
+    "id": "104419",
+    "name": "Gò Cát 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104421": {
+    "id": "104421",
+    "name": "Thanh Sơn 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 3
+  },
+  "104423": {
+    "id": "104423",
+    "name": "Nước nhĩ",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104427": {
+    "id": "104427",
+    "name": "Nước nhĩ 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 117
+  },
+  "104430": {
+    "id": "104430",
+    "name": "Trần Phú 15",
+    "khu_vuc": "Bà Rịa",
+    "count": 44
+  },
+  "104434": {
+    "id": "104434",
+    "name": "KDC Võ Văn Kiệt",
+    "khu_vuc": "Bà Rịa",
+    "count": 13
+  },
+  "104435": {
+    "id": "104435",
+    "name": "KDC Võ Văn Kiệt 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 22
+  },
+  "104436": {
+    "id": "104436",
+    "name": "Trần Phú 19",
+    "khu_vuc": "Bà Rịa",
+    "count": 35
+  },
+  "104439": {
+    "id": "104439",
+    "name": "TĐC Hòa Long",
+    "khu_vuc": "Bà Rịa",
+    "count": 10
+  },
+  "104440": {
+    "id": "104440",
+    "name": "TĐC Hòa Long 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 5
+  },
+  "104441": {
+    "id": "104441",
+    "name": "TĐC Hòa Long 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 13
+  },
+  "104444": {
+    "id": "104444",
+    "name": "Hòa Long 25",
+    "khu_vuc": "Bà Rịa",
+    "count": 109
+  },
+  "104445": {
+    "id": "104445",
+    "name": "KDC Thu Thảo",
+    "khu_vuc": "Bà Rịa",
+    "count": 55
+  },
+  "104446": {
+    "id": "104446",
+    "name": "Y Tế Hòa Long",
+    "khu_vuc": "Bà Rịa",
+    "count": 587
+  },
+  "104449": {
+    "id": "104449",
+    "name": "Giếng Mạch",
+    "khu_vuc": "Bà Rịa",
+    "count": 109
+  },
+  "104450": {
+    "id": "104450",
+    "name": "Giếng Mạch 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 91
+  },
+  "104452": {
+    "id": "104452",
+    "name": "Hòa Long 21",
+    "khu_vuc": "Bà Rịa",
+    "count": 117
+  },
+  "104454": {
+    "id": "104454",
+    "name": "Hòa Long 22",
+    "khu_vuc": "Bà Rịa",
+    "count": 54
+  },
+  "104455": {
+    "id": "104455",
+    "name": "Lan Anh",
+    "khu_vuc": "Bà Rịa",
+    "count": 187
+  },
+  "104456": {
+    "id": "104456",
+    "name": "Hòa Long 23",
+    "khu_vuc": "Bà Rịa",
+    "count": 422
+  },
+  "104458": {
+    "id": "104458",
+    "name": "Lan Anh 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 250
+  },
+  "104459": {
+    "id": "104459",
+    "name": "Lan Anh 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 29
+  },
+  "104460": {
+    "id": "104460",
+    "name": "KDC Gia Phát",
+    "khu_vuc": "Bà Rịa",
+    "count": 110
+  },
+  "104461": {
+    "id": "104461",
+    "name": "KDC Phạm Thị Hồng",
+    "khu_vuc": "Bà Rịa",
+    "count": 33
+  },
+  "104462": {
+    "id": "104462",
+    "name": "Hòa Long 24",
+    "khu_vuc": "Bà Rịa",
+    "count": 16
+  },
+  "104464": {
+    "id": "104464",
+    "name": "Hòa Long 31",
+    "khu_vuc": "Bà Rịa",
+    "count": 99
+  },
+  "104467": {
+    "id": "104467",
+    "name": "Hòa Long 32",
+    "khu_vuc": "Bà Rịa",
+    "count": 115
+  },
+  "104469": {
+    "id": "104469",
+    "name": "Hòa Long 33",
+    "khu_vuc": "Bà Rịa",
+    "count": 265
+  },
+  "104471": {
+    "id": "104471",
+    "name": "Hòa Long 34",
+    "khu_vuc": "Bà Rịa",
+    "count": 157
+  },
+  "104472": {
+    "id": "104472",
+    "name": "Hòa Long 35",
+    "khu_vuc": "Bà Rịa",
+    "count": 105
+  },
+  "104475": {
+    "id": "104475",
+    "name": "Hòa Long 30",
+    "khu_vuc": "Bà Rịa",
+    "count": 178
+  },
+  "104476": {
+    "id": "104476",
+    "name": "Hòa Long 29",
+    "khu_vuc": "Bà Rịa",
+    "count": 128
+  },
+  "104478": {
+    "id": "104478",
+    "name": "Hòa Long 28",
+    "khu_vuc": "Bà Rịa",
+    "count": 74
+  },
+  "104479": {
+    "id": "104479",
+    "name": "Hòa Long 27",
+    "khu_vuc": "Bà Rịa",
+    "count": 314
+  },
+  "104480": {
+    "id": "104480",
+    "name": "Hòa Long 26",
+    "khu_vuc": "Bà Rịa",
+    "count": 33
+  },
+  "104482": {
+    "id": "104482",
+    "name": "Hòa Long 20",
+    "khu_vuc": "Bà Rịa",
+    "count": 138
+  },
+  "104483": {
+    "id": "104483",
+    "name": "KDC Hạnh Phúc",
+    "khu_vuc": "Bà Rịa",
+    "count": 35
+  },
+  "104485": {
+    "id": "104485",
+    "name": "Hòa Long 19",
+    "khu_vuc": "Bà Rịa",
+    "count": 69
+  },
+  "104486": {
+    "id": "104486",
+    "name": "Hòa Long 18",
+    "khu_vuc": "Bà Rịa",
+    "count": 92
+  },
+  "104487": {
+    "id": "104487",
+    "name": "Hòa Long 17",
+    "khu_vuc": "Bà Rịa",
+    "count": 43
+  },
+  "104489": {
+    "id": "104489",
+    "name": "Phong Phú",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104491": {
+    "id": "104491",
+    "name": "Phong Phú 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 47
+  },
+  "104492": {
+    "id": "104492",
+    "name": "Phong Phú 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 36
+  },
+  "104494": {
+    "id": "104494",
+    "name": "Tỉnh lộ 52",
+    "khu_vuc": "Bà Rịa",
+    "count": 76
+  },
+  "104498": {
+    "id": "104498",
+    "name": "Tỉnh lộ 522",
+    "khu_vuc": "Bà Rịa",
+    "count": 54
+  },
+  "104499": {
+    "id": "104499",
+    "name": "Hòa Long 16",
+    "khu_vuc": "Bà Rịa",
+    "count": 116
+  },
+  "104500": {
+    "id": "104500",
+    "name": "Hòa Long 15",
+    "khu_vuc": "Bà Rịa",
+    "count": 54
+  },
+  "104501": {
+    "id": "104501",
+    "name": "Hòa Long 14",
+    "khu_vuc": "Bà Rịa",
+    "count": 76
+  },
+  "104502": {
+    "id": "104502",
+    "name": "Hòa Long 13",
+    "khu_vuc": "Bà Rịa",
+    "count": 52
+  },
+  "104503": {
+    "id": "104503",
+    "name": "Hòa Long 12",
+    "khu_vuc": "Bà Rịa",
+    "count": 30
+  },
+  "104504": {
+    "id": "104504",
+    "name": "Hòa Long 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 84
+  },
+  "104507": {
+    "id": "104507",
+    "name": "Tỉnh lộ 523",
+    "khu_vuc": "Bà Rịa",
+    "count": 256
+  },
+  "104508": {
+    "id": "104508",
+    "name": "Tỉnh lộ 524",
+    "khu_vuc": "Bà Rịa",
+    "count": 82
+  },
+  "104509": {
+    "id": "104509",
+    "name": "Năm Tranh",
+    "khu_vuc": "Bà Rịa",
+    "count": 155
+  },
+  "104514": {
+    "id": "104514",
+    "name": "Phước Hữu",
+    "khu_vuc": "Bà Rịa",
+    "count": 213
+  },
+  "104515": {
+    "id": "104515",
+    "name": "Phước Hữu 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 42
+  },
+  "104517": {
+    "id": "104517",
+    "name": "Phước Hữu 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 43
+  },
+  "104518": {
+    "id": "104518",
+    "name": "Phước Hữu 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 93
+  },
+  "104520": {
+    "id": "104520",
+    "name": "Cống sở 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 86
+  },
+  "104521": {
+    "id": "104521",
+    "name": "Cống sở",
+    "khu_vuc": "Bà Rịa",
+    "count": 22
+  },
+  "104522": {
+    "id": "104522",
+    "name": "Cống sở 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 14
+  },
+  "104523": {
+    "id": "104523",
+    "name": "Cống sở 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 79
+  },
+  "104524": {
+    "id": "104524",
+    "name": "Hương Lộ 84",
+    "khu_vuc": "Bà Rịa",
+    "count": 80
+  },
+  "104525": {
+    "id": "104525",
+    "name": "Hương Lộ 85",
+    "khu_vuc": "Bà Rịa",
+    "count": 68
+  },
+  "104526": {
+    "id": "104526",
+    "name": "Hương Lộ 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 109
+  },
+  "104527": {
+    "id": "104527",
+    "name": "Hương Lộ 82",
+    "khu_vuc": "Bà Rịa",
+    "count": 46
+  },
+  "104528": {
+    "id": "104528",
+    "name": "Hương Lộ 83",
+    "khu_vuc": "Bà Rịa",
+    "count": 90
+  },
+  "104529": {
+    "id": "104529",
+    "name": "Cống sở 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 46
+  },
+  "104533": {
+    "id": "104533",
+    "name": "Cống sở 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 27
+  },
+  "104534": {
+    "id": "104534",
+    "name": "Cống sở 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 48
+  },
+  "104535": {
+    "id": "104535",
+    "name": "Tỉnh lộ 525",
+    "khu_vuc": "Bà Rịa",
+    "count": 268
+  },
+  "104538": {
+    "id": "104538",
+    "name": "Long Phước",
+    "khu_vuc": "Bà Rịa",
+    "count": 60
+  },
+  "104539": {
+    "id": "104539",
+    "name": "Long Phước 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 82
+  },
+  "104540": {
+    "id": "104540",
+    "name": "Long Phước 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 62
+  },
+  "104541": {
+    "id": "104541",
+    "name": "Long Phước 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 48
+  },
+  "104542": {
+    "id": "104542",
+    "name": "Long Phước 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 41
+  },
+  "104543": {
+    "id": "104543",
+    "name": "Long Phước 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 51
+  },
+  "104544": {
+    "id": "104544",
+    "name": "Long Phước 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 37
+  },
+  "104547": {
+    "id": "104547",
+    "name": "Long Phước 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 78
+  },
+  "104548": {
+    "id": "104548",
+    "name": "Long Phước 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 26
+  },
+  "104549": {
+    "id": "104549",
+    "name": "Long Phước 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 32
+  },
+  "104551": {
+    "id": "104551",
+    "name": "Suối chùa 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 60
+  },
+  "104552": {
+    "id": "104552",
+    "name": "Suối chùa 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 86
+  },
+  "104554": {
+    "id": "104554",
+    "name": "Suối chùa 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 121
+  },
+  "104555": {
+    "id": "104555",
+    "name": "Suối chùa 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 77
+  },
+  "104556": {
+    "id": "104556",
+    "name": "Suối chùa 12",
+    "khu_vuc": "Bà Rịa",
+    "count": 62
+  },
+  "104557": {
+    "id": "104557",
+    "name": "Thương mại Long Phước",
+    "khu_vuc": "Bà Rịa",
+    "count": 12
+  },
+  "104558": {
+    "id": "104558",
+    "name": "Suối Chùa",
+    "khu_vuc": "Bà Rịa",
+    "count": 117
+  },
+  "104559": {
+    "id": "104559",
+    "name": "Suối Chùa 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 84
+  },
+  "104562": {
+    "id": "104562",
+    "name": "Suối Chùa 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 32
+  },
+  "104563": {
+    "id": "104563",
+    "name": "Suối Chùa 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 96
+  },
+  "104564": {
+    "id": "104564",
+    "name": "Suối Chùa 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 23
+  },
+  "104568": {
+    "id": "104568",
+    "name": "Suối Chùa 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 47
+  },
+  "104569": {
+    "id": "104569",
+    "name": "Suối Chùa 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 41
+  },
+  "104573": {
+    "id": "104573",
+    "name": "Tỉnh lộ 526",
+    "khu_vuc": "Bà Rịa",
+    "count": 180
+  },
+  "104574": {
+    "id": "104574",
+    "name": "Chùa Báo Ân 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 58
+  },
+  "104575": {
+    "id": "104575",
+    "name": "Chùa Báo Ân",
+    "khu_vuc": "Bà Rịa",
+    "count": 53
+  },
+  "104576": {
+    "id": "104576",
+    "name": "Tỉnh lộ 527",
+    "khu_vuc": "Bà Rịa",
+    "count": 289
+  },
+  "104577": {
+    "id": "104577",
+    "name": "Đập Bà",
+    "khu_vuc": "Bà Rịa",
+    "count": 106
+  },
+  "104578": {
+    "id": "104578",
+    "name": "Đập Bà 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 50
+  },
+  "104579": {
+    "id": "104579",
+    "name": "Đâp Bà 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 90
+  },
+  "104581": {
+    "id": "104581",
+    "name": "Đập Bà 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 19
+  },
+  "104582": {
+    "id": "104582",
+    "name": "Đập Bà 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 22
+  },
+  "104584": {
+    "id": "104584",
+    "name": "Tỉnh lộ 528",
+    "khu_vuc": "Bà Rịa",
+    "count": 203
+  },
+  "104585": {
+    "id": "104585",
+    "name": "Tỉnh lộ 529",
+    "khu_vuc": "Bà Rịa",
+    "count": 29
+  },
+  "104586": {
+    "id": "104586",
+    "name": "Cổ tre 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 67
+  },
+  "104588": {
+    "id": "104588",
+    "name": "Cổ tre",
+    "khu_vuc": "Bà Rịa",
+    "count": 72
+  },
+  "104589": {
+    "id": "104589",
+    "name": "Cổ tre 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 65
+  },
+  "104590": {
+    "id": "104590",
+    "name": "Cổ tre 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 34
+  },
+  "104591": {
+    "id": "104591",
+    "name": "Tỉnh lộ 5210",
+    "khu_vuc": "Bà Rịa",
+    "count": 56
+  },
+  "104592": {
+    "id": "104592",
+    "name": "Tỉnh lộ 5211",
+    "khu_vuc": "Bà Rịa",
+    "count": 61
+  },
+  "104593": {
+    "id": "104593",
+    "name": "Long Phước 12",
+    "khu_vuc": "Bà Rịa",
+    "count": 35
+  },
+  "104594": {
+    "id": "104594",
+    "name": "Long Phước 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 31
+  },
+  "104596": {
+    "id": "104596",
+    "name": "Nguyễn Minh Đào",
+    "khu_vuc": "Bà Rịa",
+    "count": 111
+  },
+  "104597": {
+    "id": "104597",
+    "name": "Nguyễn Minh Đào 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 40
+  },
+  "104598": {
+    "id": "104598",
+    "name": "Lộ 56",
+    "khu_vuc": "Bà Rịa",
+    "count": 121
+  },
+  "104599": {
+    "id": "104599",
+    "name": "Hòa Long",
+    "khu_vuc": "Bà Rịa",
+    "count": 47
+  },
+  "104600": {
+    "id": "104600",
+    "name": "Hòa Long 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 179
+  },
+  "104602": {
+    "id": "104602",
+    "name": "Lộ 566",
+    "khu_vuc": "Bà Rịa",
+    "count": 50
+  },
+  "104604": {
+    "id": "104604",
+    "name": "Đồng Xoài 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 117
+  },
+  "104606": {
+    "id": "104606",
+    "name": "Đồng Xoài",
+    "khu_vuc": "Bà Rịa",
+    "count": 107
+  },
+  "104608": {
+    "id": "104608",
+    "name": "Lan Anh 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 76
+  },
+  "104610": {
+    "id": "104610",
+    "name": "Đồng Xoài 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 32
+  },
+  "104611": {
+    "id": "104611",
+    "name": "KDC Ngọc Hải",
+    "khu_vuc": "Bà Rịa",
+    "count": 10
+  },
+  "104614": {
+    "id": "104614",
+    "name": "Đồng Xoài 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 74
+  },
+  "104616": {
+    "id": "104616",
+    "name": "Đồng Xoài 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 22
+  },
+  "104617": {
+    "id": "104617",
+    "name": "Đồng Xoài 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 12
+  },
+  "104618": {
+    "id": "104618",
+    "name": "Đồng Xoài 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 59
+  },
+  "104619": {
+    "id": "104619",
+    "name": "Lộ 562",
+    "khu_vuc": "Bà Rịa",
+    "count": 36
+  },
+  "104621": {
+    "id": "104621",
+    "name": "Hòa Long 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 177
+  },
+  "104622": {
+    "id": "104622",
+    "name": "Hòa Long 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 88
+  },
+  "104624": {
+    "id": "104624",
+    "name": "Lộ 568",
+    "khu_vuc": "Bà Rịa",
+    "count": 71
+  },
+  "104625": {
+    "id": "104625",
+    "name": "Đồng Xoài 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 77
+  },
+  "104629": {
+    "id": "104629",
+    "name": "Lộ 569",
+    "khu_vuc": "Bà Rịa",
+    "count": 210
+  },
+  "104630": {
+    "id": "104630",
+    "name": "KDC Trần Ngọc Thành",
+    "khu_vuc": "Bà Rịa",
+    "count": 29
+  },
+  "104631": {
+    "id": "104631",
+    "name": "Suối sỏi",
+    "khu_vuc": "Bà Rịa",
+    "count": 91
+  },
+  "104632": {
+    "id": "104632",
+    "name": "KDC Tiến Hùng",
+    "khu_vuc": "Bà Rịa",
+    "count": 2
+  },
+  "104633": {
+    "id": "104633",
+    "name": "Hòa Long 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 75
+  },
+  "104634": {
+    "id": "104634",
+    "name": "Hòa Long 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 123
+  },
+  "104637": {
+    "id": "104637",
+    "name": "Hòa Long 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 79
+  },
+  "104638": {
+    "id": "104638",
+    "name": "Lộ 563",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104640": {
+    "id": "104640",
+    "name": "Đình Long Xuyên",
+    "khu_vuc": "Bà Rịa",
+    "count": 120
+  },
+  "104645": {
+    "id": "104645",
+    "name": "Hòa Long 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 12
+  },
+  "104650": {
+    "id": "104650",
+    "name": "Hòa Long 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 40
+  },
+  "104651": {
+    "id": "104651",
+    "name": "Lộ 564",
+    "khu_vuc": "Bà Rịa",
+    "count": 159
+  },
+  "104654": {
+    "id": "104654",
+    "name": "Lan Anh 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 105
+  },
+  "104655": {
+    "id": "104655",
+    "name": "Lan Anh 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 1
+  },
+  "104656": {
+    "id": "104656",
+    "name": "Lan Anh 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 4
+  },
+  "104658": {
+    "id": "104658",
+    "name": "KDC Mã Minh Nhân",
+    "khu_vuc": "Bà Rịa",
+    "count": 4
+  },
+  "104659": {
+    "id": "104659",
+    "name": "Gò Rùa 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 72
+  },
+  "104660": {
+    "id": "104660",
+    "name": "Gò Rùa",
+    "khu_vuc": "Bà Rịa",
+    "count": 26
+  },
+  "104661": {
+    "id": "104661",
+    "name": "Gò Rùa 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 4
+  },
+  "104662": {
+    "id": "104662",
+    "name": "Gò Rùa 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 36
+  },
+  "104669": {
+    "id": "104669",
+    "name": "Hòa Long 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 111
+  },
+  "104670": {
+    "id": "104670",
+    "name": "Lan Anh 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 4
+  },
+  "104673": {
+    "id": "104673",
+    "name": "Lộ 567",
+    "khu_vuc": "Bà Rịa",
+    "count": 27
+  },
+  "104674": {
+    "id": "104674",
+    "name": "Lộ 565",
+    "khu_vuc": "Bà Rịa",
+    "count": 23
+  },
+  "104676": {
+    "id": "104676",
+    "name": "Nguyễn Hữu Cảnh 17",
+    "khu_vuc": "Bà Rịa",
+    "count": 29
+  },
+  "104678": {
+    "id": "104678",
+    "name": "Nguyễn Hữu Cảnh 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 214
+  },
+  "104681": {
+    "id": "104681",
+    "name": "Lê Trọng Tấn",
+    "khu_vuc": "Bà Rịa",
+    "count": 25
+  },
+  "104682": {
+    "id": "104682",
+    "name": "Tân Hưng 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 36
+  },
+  "104683": {
+    "id": "104683",
+    "name": "Tân Hưng 11",
+    "khu_vuc": "Bà Rịa",
+    "count": 91
+  },
+  "104684": {
+    "id": "104684",
+    "name": "Tân Hưng 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 106
+  },
+  "104686": {
+    "id": "104686",
+    "name": "Tân Hưng",
+    "khu_vuc": "Bà Rịa",
+    "count": 67
+  },
+  "104687": {
+    "id": "104687",
+    "name": "Tân Hưng 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 108
+  },
+  "104688": {
+    "id": "104688",
+    "name": "Tân Hưng 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 63
+  },
+  "104690": {
+    "id": "104690",
+    "name": "Tân Hưng 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 86
+  },
+  "104691": {
+    "id": "104691",
+    "name": "Lê Trọng Tấn 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 97
+  },
+  "104692": {
+    "id": "104692",
+    "name": "Lê Trọng Tấn 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 65
+  },
+  "104693": {
+    "id": "104693",
+    "name": "Lê Trọng Tấn 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 154
+  },
+  "104696": {
+    "id": "104696",
+    "name": "Tân Hưng 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 35
+  },
+  "104697": {
+    "id": "104697",
+    "name": "Tân Hưng 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 69
+  },
+  "104698": {
+    "id": "104698",
+    "name": "Tân Hưng 10",
+    "khu_vuc": "Bà Rịa",
+    "count": 28
+  },
+  "104699": {
+    "id": "104699",
+    "name": "Tân Hưng 5",
+    "khu_vuc": "Bà Rịa",
+    "count": 15
+  },
+  "104703": {
+    "id": "104703",
+    "name": "Lê Trọng Tấn 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 236
+  },
+  "104705": {
+    "id": "104705",
+    "name": "Lê Trọng Tấn 7",
+    "khu_vuc": "Bà Rịa",
+    "count": 73
+  },
+  "104706": {
+    "id": "104706",
+    "name": "Lê Trọng Tấn 8",
+    "khu_vuc": "Bà Rịa",
+    "count": 50
+  },
+  "104707": {
+    "id": "104707",
+    "name": "Lê Trọng Tấn 9",
+    "khu_vuc": "Bà Rịa",
+    "count": 105
+  },
+  "104710": {
+    "id": "104710",
+    "name": "Võ Thị Sáu 14",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104711": {
+    "id": "104711",
+    "name": "Gò Cát 4",
+    "khu_vuc": "Bà Rịa",
+    "count": 122
+  },
+  "104712": {
+    "id": "104712",
+    "name": "Gò Cát 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 86
+  },
+  "104713": {
+    "id": "104713",
+    "name": "Gò Cát 3",
+    "khu_vuc": "Bà Rịa",
+    "count": 97
+  },
+  "104715": {
+    "id": "104715",
+    "name": "TĐC Công viên 34",
+    "khu_vuc": "Bà Rịa",
+    "count": 116
+  },
+  "104717": {
+    "id": "104717",
+    "name": "TĐC Công viên 343",
+    "khu_vuc": "Bà Rịa",
+    "count": 171
+  },
+  "106147": {
+    "id": "106147",
+    "name": "Đèn đường QL567",
+    "khu_vuc": "Bà Rịa",
+    "count": 147
+  },
+  "106149": {
+    "id": "106149",
+    "name": "Mô Xoài",
+    "khu_vuc": "Bà Rịa",
+    "count": 78
+  },
+  "106157": {
+    "id": "106157",
+    "name": "Cống sở 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 99
+  },
+  "106160": {
+    "id": "106160",
+    "name": "Đồng Xoài 6",
+    "khu_vuc": "Bà Rịa",
+    "count": 21
+  },
+  "130476": {
+    "id": "130476",
+    "name": "Trần Hưng Đạo 2",
+    "khu_vuc": "Bà Rịa",
+    "count": 370
+  },
+  "130483": {
+    "id": "130483",
+    "name": "Võ Thị Sáu 13",
+    "khu_vuc": "Bà Rịa",
+    "count": 221
+  },
+  "150254590": {
+    "id": "150254590",
+    "name": "Long Tâm 4: 73BR-89",
+    "khu_vuc": "Bà Rịa",
+    "count": 326
+  },
+  "104726": {
+    "id": "104726",
+    "name": "Biên Phòng Bến Đầm",
+    "khu_vuc": "Côn Đảo",
+    "count": 8
+  },
+  "104745": {
+    "id": "104745",
+    "name": "Cỏ Ống",
+    "khu_vuc": "Côn Đảo",
+    "count": 85
+  },
+  "104727": {
+    "id": "104727",
+    "name": "BQL Bến Đầm",
+    "khu_vuc": "Côn Đảo",
+    "count": 53
+  },
+  "104795": {
+    "id": "104795",
+    "name": "Nước đá Côn Sơn",
+    "khu_vuc": "Côn Đảo",
+    "count": 71
+  },
+  "104767": {
+    "id": "104767",
+    "name": "Thư Viện Côn Đảo",
+    "khu_vuc": "Côn Đảo",
+    "count": 51
+  },
+  "104762": {
+    "id": "104762",
+    "name": "Nguyễn Đức Thuận 2",
+    "khu_vuc": "Côn Đảo",
+    "count": 85
+  },
+  "106184": {
+    "id": "106184",
+    "name": "Sân vận động 2",
+    "khu_vuc": "Côn Đảo",
+    "count": 75
+  },
+  "104759": {
+    "id": "104759",
+    "name": "Bảo Tàng",
+    "khu_vuc": "Côn Đảo",
+    "count": 94
+  },
+  "104744": {
+    "id": "104744",
+    "name": "Tiểu Đoàn 792",
+    "khu_vuc": "Côn Đảo",
+    "count": 18
+  },
+  "130489": {
+    "id": "130489",
+    "name": "Võ Thị Sáu 16",
+    "khu_vuc": "Côn Đảo",
+    "count": 87
+  },
+  "104729": {
+    "id": "104729",
+    "name": "Nước đá Bột Cá",
+    "khu_vuc": "Côn Đảo",
+    "count": 15
+  },
+  "106199": {
+    "id": "106199",
+    "name": "Phạm Văn Đồng",
+    "khu_vuc": "Côn Đảo",
+    "count": 85
+  },
+  "104776": {
+    "id": "104776",
+    "name": "Chùa Núi Một",
+    "khu_vuc": "Côn Đảo",
+    "count": 4
+  },
+  "104769": {
+    "id": "104769",
+    "name": "Võ Thị Sáu 15",
+    "khu_vuc": "Côn Đảo",
+    "count": 69
+  },
+  "106197": {
+    "id": "106197",
+    "name": "Nước đá Thái Bình",
+    "khu_vuc": "Côn Đảo",
+    "count": 89
+  },
+  "104798": {
+    "id": "104798",
+    "name": "Phan Chu Trinh 2",
+    "khu_vuc": "Côn Đảo",
+    "count": 112
+  },
+  "104790": {
+    "id": "104790",
+    "name": "Nguyễn Văn Linh 2",
+    "khu_vuc": "Côn Đảo",
+    "count": 53
+  },
+  "104789": {
+    "id": "104789",
+    "name": "Nguyễn Văn Linh 4",
+    "khu_vuc": "Côn Đảo",
+    "count": 25
+  },
+  "106205": {
+    "id": "106205",
+    "name": "Trường MN Tuổi Thơ",
+    "khu_vuc": "Côn Đảo",
+    "count": 61
+  },
+  "150812620": {
+    "id": "150812620",
+    "name": "Nguyễn Duy Trinh",
+    "khu_vuc": "Côn Đảo",
+    "count": 54
+  },
+  "150832000": {
+    "id": "150832000",
+    "name": "AN HỘI",
+    "khu_vuc": "Côn Đảo",
+    "count": 11
+  },
+  "104791": {
+    "id": "104791",
+    "name": "Nguyễn Văn Linh 3",
+    "khu_vuc": "Côn Đảo",
+    "count": 64
+  },
+  "104780": {
+    "id": "104780",
+    "name": "Huỳnh Thúc Kháng 2",
+    "khu_vuc": "Côn Đảo",
+    "count": 90
+  },
+  "104750": {
+    "id": "104750",
+    "name": "Mũi Lò Vôi",
+    "khu_vuc": "Côn Đảo",
+    "count": 105
+  },
+  "150814250": {
+    "id": "150814250",
+    "name": "Huỳnh Thúc Kháng 4",
+    "khu_vuc": "Côn Đảo",
+    "count": 71
+  },
+  "104761": {
+    "id": "104761",
+    "name": "Nguyễn Đức Thuận",
+    "khu_vuc": "Côn Đảo",
+    "count": 14
+  },
+  "150812000": {
+    "id": "150812000",
+    "name": "Hồ Văn Mịch",
+    "khu_vuc": "Côn Đảo",
+    "count": 6
+  },
+  "150817400": {
+    "id": "150817400",
+    "name": "Nghĩa Trang Hàng Dương CĐ",
+    "khu_vuc": "Côn Đảo",
+    "count": 11
+  },
+  "104797": {
+    "id": "104797",
+    "name": "Phan Chu Trinh",
+    "khu_vuc": "Côn Đảo",
+    "count": 86
+  },
+  "104799": {
+    "id": "104799",
+    "name": "Phan Chu Trinh 3",
+    "khu_vuc": "Côn Đảo",
+    "count": 110
+  },
+  "130490": {
+    "id": "130490",
+    "name": "Võ Thị Sáu 17",
+    "khu_vuc": "Côn Đảo",
+    "count": 89
+  },
+  "104779": {
+    "id": "104779",
+    "name": "Huỳnh Thúc Kháng",
+    "khu_vuc": "Côn Đảo",
+    "count": 82
+  },
+  "104781": {
+    "id": "104781",
+    "name": "Huỳnh Thúc Kháng 3",
+    "khu_vuc": "Côn Đảo",
+    "count": 72
+  },
+  "101467": {
+    "id": "101467",
+    "name": "Phước Bình 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 159
+  },
+  "101470": {
+    "id": "101470",
+    "name": "Phước Bình",
+    "khu_vuc": "Phú Mỹ",
+    "count": 195
+  },
+  "101471": {
+    "id": "101471",
+    "name": "Phước Bình 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "101472": {
+    "id": "101472",
+    "name": "Phước Bình 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 69
+  },
+  "101475": {
+    "id": "101475",
+    "name": "Phước Bình 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 132
+  },
+  "101476": {
+    "id": "101476",
+    "name": "Phước Bình 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 118
+  },
+  "101477": {
+    "id": "101477",
+    "name": "Phước Bình Sông Xoài 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "101478": {
+    "id": "101478",
+    "name": "Phước Bình 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 273
+  },
+  "101480": {
+    "id": "101480",
+    "name": "Phú Hà",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "101485": {
+    "id": "101485",
+    "name": "Phước Lập 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 141
+  },
+  "101488": {
+    "id": "101488",
+    "name": "Phước Lập 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "101490": {
+    "id": "101490",
+    "name": "Phước Lập 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "101491": {
+    "id": "101491",
+    "name": "Phước Hưng 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 85
+  },
+  "101492": {
+    "id": "101492",
+    "name": "Phước Hưng",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "101493": {
+    "id": "101493",
+    "name": "Phước Hưng 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "101496": {
+    "id": "101496",
+    "name": "Phước Lập 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 104
+  },
+  "101499": {
+    "id": "101499",
+    "name": "Phước Lập 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "101501": {
+    "id": "101501",
+    "name": "Phước Lập 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "101503": {
+    "id": "101503",
+    "name": "Phước Lập",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "101505": {
+    "id": "101505",
+    "name": "Phước Lập 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "101510": {
+    "id": "101510",
+    "name": "Phú Hà 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "101516": {
+    "id": "101516",
+    "name": "Phú Hà 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 133
+  },
+  "101523": {
+    "id": "101523",
+    "name": "Mỹ Xuân",
+    "khu_vuc": "Phú Mỹ",
+    "count": 137
+  },
+  "101531": {
+    "id": "101531",
+    "name": "Chợ Mỹ Xuân 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 440
+  },
+  "101536": {
+    "id": "101536",
+    "name": "Phước Thạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 126
+  },
+  "101540": {
+    "id": "101540",
+    "name": "Mỹ Xuân 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 85
+  },
+  "101542": {
+    "id": "101542",
+    "name": "Kênh mương đào",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "101544": {
+    "id": "101544",
+    "name": "Kênh mương đào 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "101545": {
+    "id": "101545",
+    "name": "Phước Thạnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "101551": {
+    "id": "101551",
+    "name": "Mỹ Xuân 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "101552": {
+    "id": "101552",
+    "name": "Quảng Phú 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "101554": {
+    "id": "101554",
+    "name": "Quảng Phú 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 5
+  },
+  "101558": {
+    "id": "101558",
+    "name": "Quảng Phú 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "101562": {
+    "id": "101562",
+    "name": "Ngã 3 Phú Mỹ",
+    "khu_vuc": "Phú Mỹ",
+    "count": 86
+  },
+  "101564": {
+    "id": "101564",
+    "name": "Ngã 3 Phú Mỹ 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 149
+  },
+  "101565": {
+    "id": "101565",
+    "name": "Quảng Phú 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 112
+  },
+  "101567": {
+    "id": "101567",
+    "name": "Ngô Gia Tự",
+    "khu_vuc": "Phú Mỹ",
+    "count": 108
+  },
+  "101572": {
+    "id": "101572",
+    "name": "Ngọc Hà 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "101580": {
+    "id": "101580",
+    "name": "Phú Mỹ C5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "101583": {
+    "id": "101583",
+    "name": "Dân cư Hải quan",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "101585": {
+    "id": "101585",
+    "name": "Dân cư Hải quan 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 88
+  },
+  "101586": {
+    "id": "101586",
+    "name": "Dân cư Hải quan 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 53
+  },
+  "101592": {
+    "id": "101592",
+    "name": "Dân cư Hải quan 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "101602": {
+    "id": "101602",
+    "name": "Vạn Hạnh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "101605": {
+    "id": "101605",
+    "name": "Tổ 25 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "101610": {
+    "id": "101610",
+    "name": "Ông Trịnh 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "101612": {
+    "id": "101612",
+    "name": "Ông Trịnh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 231
+  },
+  "101616": {
+    "id": "101616",
+    "name": "Ông Trịnh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "101617": {
+    "id": "101617",
+    "name": "Song Vĩnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "101621": {
+    "id": "101621",
+    "name": "Ông Trịnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "101622": {
+    "id": "101622",
+    "name": "Song Vĩnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "101623": {
+    "id": "101623",
+    "name": "CHINFON 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "101627": {
+    "id": "101627",
+    "name": "CHINFON",
+    "khu_vuc": "Phú Mỹ",
+    "count": 132
+  },
+  "101632": {
+    "id": "101632",
+    "name": "Nhà ở dầu khí 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 24
+  },
+  "101637": {
+    "id": "101637",
+    "name": "Đường Tôn Đức Thắng",
+    "khu_vuc": "Phú Mỹ",
+    "count": 162
+  },
+  "101638": {
+    "id": "101638",
+    "name": "TTTM Tân Thành",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "101640": {
+    "id": "101640",
+    "name": "Đường 46",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "101646": {
+    "id": "101646",
+    "name": "Vạn Hạnh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "101649": {
+    "id": "101649",
+    "name": "Phú Mỹ C11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "101661": {
+    "id": "101661",
+    "name": "Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "101663": {
+    "id": "101663",
+    "name": "Đô thị mới Phú Mỹ",
+    "khu_vuc": "Phú Mỹ",
+    "count": 146
+  },
+  "101664": {
+    "id": "101664",
+    "name": "ATA 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "101665": {
+    "id": "101665",
+    "name": "ATA 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 34
+  },
+  "101666": {
+    "id": "101666",
+    "name": "ATA 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "101669": {
+    "id": "101669",
+    "name": "Chợ Việt Kiều 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 214
+  },
+  "101670": {
+    "id": "101670",
+    "name": "Tân Ngọc",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "101672": {
+    "id": "101672",
+    "name": "Tân Ngọc 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "101677": {
+    "id": "101677",
+    "name": "Phú Mỹ C18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "101679": {
+    "id": "101679",
+    "name": "Quảng Phú 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 96
+  },
+  "101681": {
+    "id": "101681",
+    "name": "CC đường 81",
+    "khu_vuc": "Phú Mỹ",
+    "count": 351
+  },
+  "101683": {
+    "id": "101683",
+    "name": "ATA",
+    "khu_vuc": "Phú Mỹ",
+    "count": 102
+  },
+  "101686": {
+    "id": "101686",
+    "name": "Quảng Phú",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "101693": {
+    "id": "101693",
+    "name": "Vạn Hạnh 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "101694": {
+    "id": "101694",
+    "name": "Đường 80",
+    "khu_vuc": "Phú Mỹ",
+    "count": 19
+  },
+  "101696": {
+    "id": "101696",
+    "name": "Phú Mỹ C20",
+    "khu_vuc": "Phú Mỹ",
+    "count": 94
+  },
+  "101697": {
+    "id": "101697",
+    "name": "Quảng Phú 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 151
+  },
+  "101700": {
+    "id": "101700",
+    "name": "Phú Mỹ C22",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "101701": {
+    "id": "101701",
+    "name": "Phú Mỹ C23",
+    "khu_vuc": "Phú Mỹ",
+    "count": 6
+  },
+  "101703": {
+    "id": "101703",
+    "name": "Vạn Hạnh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 162
+  },
+  "101704": {
+    "id": "101704",
+    "name": "Phú Mỹ C24",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "101705": {
+    "id": "101705",
+    "name": "Quảng Phú 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 179
+  },
+  "101706": {
+    "id": "101706",
+    "name": "TĐC 44HA",
+    "khu_vuc": "Phú Mỹ",
+    "count": 286
+  },
+  "101707": {
+    "id": "101707",
+    "name": "TĐC 44HA 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 368
+  },
+  "101708": {
+    "id": "101708",
+    "name": "Phú Mỹ C25",
+    "khu_vuc": "Phú Mỹ",
+    "count": 173
+  },
+  "101715": {
+    "id": "101715",
+    "name": "Võ Thị Sáu 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 9
+  },
+  "101727": {
+    "id": "101727",
+    "name": "Mỹ Thạnh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 27
+  },
+  "101728": {
+    "id": "101728",
+    "name": "Mỹ Thạnh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 95
+  },
+  "101729": {
+    "id": "101729",
+    "name": "Mỹ Thạnh 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "101732": {
+    "id": "101732",
+    "name": "Tổ 13 Phú Thạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 88
+  },
+  "101733": {
+    "id": "101733",
+    "name": "Mỹ Thạnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "101735": {
+    "id": "101735",
+    "name": "Tóc Tiên 28",
+    "khu_vuc": "Phú Mỹ",
+    "count": 143
+  },
+  "101738": {
+    "id": "101738",
+    "name": "Tóc Tiên",
+    "khu_vuc": "Phú Mỹ",
+    "count": 43
+  },
+  "101740": {
+    "id": "101740",
+    "name": "Tóc Tiên 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "101748": {
+    "id": "101748",
+    "name": "Tóc Tiên 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "101749": {
+    "id": "101749",
+    "name": "Tóc Tiên 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "101750": {
+    "id": "101750",
+    "name": "Tóc Tiên 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "101751": {
+    "id": "101751",
+    "name": "Tóc Tiên 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "101752": {
+    "id": "101752",
+    "name": "Đường 813",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "101763": {
+    "id": "101763",
+    "name": "Đường 812",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "101769": {
+    "id": "101769",
+    "name": "Tóc Tiên 67",
+    "khu_vuc": "Phú Mỹ",
+    "count": 24
+  },
+  "101780": {
+    "id": "101780",
+    "name": "Tóc Tiên 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "101783": {
+    "id": "101783",
+    "name": "Đường 81",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "101805": {
+    "id": "101805",
+    "name": "Phước Lập 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 51
+  },
+  "101806": {
+    "id": "101806",
+    "name": "Phước Lập 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "101808": {
+    "id": "101808",
+    "name": "Phước Lập 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 159
+  },
+  "101819": {
+    "id": "101819",
+    "name": "Phước Lập 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "101825": {
+    "id": "101825",
+    "name": "Cư Xá An Thành",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "101830": {
+    "id": "101830",
+    "name": "Trảng Cát 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "101831": {
+    "id": "101831",
+    "name": "Trảng Cát 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 105
+  },
+  "101877": {
+    "id": "101877",
+    "name": "Tân Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 69
+  },
+  "101882": {
+    "id": "101882",
+    "name": "Vạn Hạnh 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 20
+  },
+  "101885": {
+    "id": "101885",
+    "name": "Vạn Hạnh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "101886": {
+    "id": "101886",
+    "name": "Phú Mỹ C29",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "101888": {
+    "id": "101888",
+    "name": "Phú Mỹ C26",
+    "khu_vuc": "Phú Mỹ",
+    "count": 167
+  },
+  "101889": {
+    "id": "101889",
+    "name": "Vạn Hạnh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "101890": {
+    "id": "101890",
+    "name": "Vạn Hạnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "101891": {
+    "id": "101891",
+    "name": "Phú Mỹ C31",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "101892": {
+    "id": "101892",
+    "name": "Đường 462",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "101893": {
+    "id": "101893",
+    "name": "Tân Hạnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "101894": {
+    "id": "101894",
+    "name": "TĐC 25HA 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "101895": {
+    "id": "101895",
+    "name": "TĐC 15HA",
+    "khu_vuc": "Phú Mỹ",
+    "count": 143
+  },
+  "101896": {
+    "id": "101896",
+    "name": "TĐC 15HA 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 174
+  },
+  "101897": {
+    "id": "101897",
+    "name": "TĐC 15HA 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 167
+  },
+  "101899": {
+    "id": "101899",
+    "name": "TĐC 25HA 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 16
+  },
+  "101901": {
+    "id": "101901",
+    "name": "TĐC 25HA 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "101902": {
+    "id": "101902",
+    "name": "TĐC 25HA 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 13
+  },
+  "101903": {
+    "id": "101903",
+    "name": "TĐC 25HA 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "101904": {
+    "id": "101904",
+    "name": "TĐC 25HA 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "101905": {
+    "id": "101905",
+    "name": "TĐC 25HA 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "101909": {
+    "id": "101909",
+    "name": "Tân Hạnh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "101910": {
+    "id": "101910",
+    "name": "Tân Hạnh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "101912": {
+    "id": "101912",
+    "name": "Phú Mỹ C16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "101913": {
+    "id": "101913",
+    "name": "Phú Mỹ C19",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "101914": {
+    "id": "101914",
+    "name": "Phú Mỹ C15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 134
+  },
+  "101915": {
+    "id": "101915",
+    "name": "Phú Mỹ C14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 90
+  },
+  "101916": {
+    "id": "101916",
+    "name": "Tân Hạnh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "101917": {
+    "id": "101917",
+    "name": "Vạn Hạnh 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "101918": {
+    "id": "101918",
+    "name": "Tổ 11 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 121
+  },
+  "101919": {
+    "id": "101919",
+    "name": "Phú Mỹ C13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "101920": {
+    "id": "101920",
+    "name": "Vạn Hạnh 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 117
+  },
+  "101921": {
+    "id": "101921",
+    "name": "Tân Hạnh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 136
+  },
+  "101922": {
+    "id": "101922",
+    "name": "Tân Hạnh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "101923": {
+    "id": "101923",
+    "name": "Tân Hạnh 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "101924": {
+    "id": "101924",
+    "name": "Vạn Hạnh 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "101927": {
+    "id": "101927",
+    "name": "Vạn Hạnh 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 152
+  },
+  "101928": {
+    "id": "101928",
+    "name": "Tân Hạnh 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 99
+  },
+  "101929": {
+    "id": "101929",
+    "name": "Vạn Hạnh 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 114
+  },
+  "101930": {
+    "id": "101930",
+    "name": "Vạn Hạnh 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 34
+  },
+  "101931": {
+    "id": "101931",
+    "name": "Vạn Hạnh 19",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "101932": {
+    "id": "101932",
+    "name": "Tổ 16 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 90
+  },
+  "101934": {
+    "id": "101934",
+    "name": "Vạn Hạnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 148
+  },
+  "101935": {
+    "id": "101935",
+    "name": "Tổ 24 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 81
+  },
+  "101938": {
+    "id": "101938",
+    "name": "Tổ 15 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 156
+  },
+  "101940": {
+    "id": "101940",
+    "name": "Vạn Hạnh 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 29
+  },
+  "102087": {
+    "id": "102087",
+    "name": "Cầu Cháy 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "102106": {
+    "id": "102106",
+    "name": "Cầu Cháy 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "102109": {
+    "id": "102109",
+    "name": "Cầu Cháy",
+    "khu_vuc": "Phú Mỹ",
+    "count": 18
+  },
+  "102112": {
+    "id": "102112",
+    "name": "Mỹ Tân 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "102113": {
+    "id": "102113",
+    "name": "Mỹ Tân 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "102114": {
+    "id": "102114",
+    "name": "Mỹ Tân 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102116": {
+    "id": "102116",
+    "name": "Mỹ Tân 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 71
+  },
+  "102117": {
+    "id": "102117",
+    "name": "Mỹ Tân 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 279
+  },
+  "102121": {
+    "id": "102121",
+    "name": "Mỹ Xuân 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 27
+  },
+  "102122": {
+    "id": "102122",
+    "name": "Mỹ Xuân 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "102126": {
+    "id": "102126",
+    "name": "Chợ Mỹ Xuân 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 173
+  },
+  "102128": {
+    "id": "102128",
+    "name": "Thị Vải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 127
+  },
+  "102129": {
+    "id": "102129",
+    "name": "Mỏ Sét 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "102130": {
+    "id": "102130",
+    "name": "Mỏ Sét 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "102131": {
+    "id": "102131",
+    "name": "Phước Hội",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "102132": {
+    "id": "102132",
+    "name": "Phước Hội 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "102136": {
+    "id": "102136",
+    "name": "Tổ 7 Phú Thạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "102137": {
+    "id": "102137",
+    "name": "Mỹ Thạnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 91
+  },
+  "102138": {
+    "id": "102138",
+    "name": "Mỹ Thạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 118
+  },
+  "102139": {
+    "id": "102139",
+    "name": "Mỹ Thạnh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "102140": {
+    "id": "102140",
+    "name": "Mỹ Thạnh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "102141": {
+    "id": "102141",
+    "name": "Phước Hội 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102142": {
+    "id": "102142",
+    "name": "Tổ 13 Phú Thạnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 123
+  },
+  "102143": {
+    "id": "102143",
+    "name": "Mỹ Xuân 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 122
+  },
+  "102144": {
+    "id": "102144",
+    "name": "Mỹ Xuân 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102145": {
+    "id": "102145",
+    "name": "Mỹ Xuân 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 147
+  },
+  "102146": {
+    "id": "102146",
+    "name": "Mỹ Thạnh 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 139
+  },
+  "102147": {
+    "id": "102147",
+    "name": "Mỹ Thạnh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102148": {
+    "id": "102148",
+    "name": "Chợ Việt Kiều",
+    "khu_vuc": "Phú Mỹ",
+    "count": 141
+  },
+  "102151": {
+    "id": "102151",
+    "name": "Thanh Phong 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "102152": {
+    "id": "102152",
+    "name": "Thanh Phong 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 140
+  },
+  "102154": {
+    "id": "102154",
+    "name": "Mỹ Thạnh 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 117
+  },
+  "102156": {
+    "id": "102156",
+    "name": "Thanh Phong",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102157": {
+    "id": "102157",
+    "name": "Thanh Phong 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 168
+  },
+  "102158": {
+    "id": "102158",
+    "name": "Mỹ Thạnh 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 181
+  },
+  "102160": {
+    "id": "102160",
+    "name": "Mỹ Thạnh 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "102161": {
+    "id": "102161",
+    "name": "Thanh Phong 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 113
+  },
+  "102162": {
+    "id": "102162",
+    "name": "Mỹ Thạnh 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "102163": {
+    "id": "102163",
+    "name": "Mỹ Thạnh 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 18
+  },
+  "102164": {
+    "id": "102164",
+    "name": "Thanh Phong 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 193
+  },
+  "102165": {
+    "id": "102165",
+    "name": "Mỏ Sét",
+    "khu_vuc": "Phú Mỹ",
+    "count": 152
+  },
+  "102166": {
+    "id": "102166",
+    "name": "Mỹ Thạnh 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 269
+  },
+  "102167": {
+    "id": "102167",
+    "name": "Mỹ Thạnh 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "102168": {
+    "id": "102168",
+    "name": "Mỹ Xuân 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 137
+  },
+  "102170": {
+    "id": "102170",
+    "name": "Suối lội 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "102171": {
+    "id": "102171",
+    "name": "Suối lội 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 105
+  },
+  "102172": {
+    "id": "102172",
+    "name": "Suối lội",
+    "khu_vuc": "Phú Mỹ",
+    "count": 96
+  },
+  "102173": {
+    "id": "102173",
+    "name": "Suối lội 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "102186": {
+    "id": "102186",
+    "name": "Tóc Tiên 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "102192": {
+    "id": "102192",
+    "name": "Tóc Tiên 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "102194": {
+    "id": "102194",
+    "name": "Tóc Tiên 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "102195": {
+    "id": "102195",
+    "name": "Tóc Tiên 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102196": {
+    "id": "102196",
+    "name": "Tóc Tiên 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 20
+  },
+  "102197": {
+    "id": "102197",
+    "name": "Tóc Tiên 19",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "102198": {
+    "id": "102198",
+    "name": "Tóc Tiên 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "102200": {
+    "id": "102200",
+    "name": "Tóc Tiên 20",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102201": {
+    "id": "102201",
+    "name": "Tóc Tiên 21",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102202": {
+    "id": "102202",
+    "name": "Tóc Tiên 22",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "102204": {
+    "id": "102204",
+    "name": "Tóc Tiên 23",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "102206": {
+    "id": "102206",
+    "name": "Tóc Tiên 24",
+    "khu_vuc": "Phú Mỹ",
+    "count": 72
+  },
+  "102207": {
+    "id": "102207",
+    "name": "Tóc Tiên 25",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102209": {
+    "id": "102209",
+    "name": "Chợ Tóc Tiên",
+    "khu_vuc": "Phú Mỹ",
+    "count": 43
+  },
+  "102210": {
+    "id": "102210",
+    "name": "Tóc Tiên 26",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "102211": {
+    "id": "102211",
+    "name": "Tóc Tiên 27",
+    "khu_vuc": "Phú Mỹ",
+    "count": 7
+  },
+  "102212": {
+    "id": "102212",
+    "name": "Tân Tiến 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 80
+  },
+  "102215": {
+    "id": "102215",
+    "name": "Tóc Tiên 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102220": {
+    "id": "102220",
+    "name": "Tóc Tiên 29",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "102221": {
+    "id": "102221",
+    "name": "Tóc Tiên 30",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102222": {
+    "id": "102222",
+    "name": "Tóc Tiên 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 93
+  },
+  "102225": {
+    "id": "102225",
+    "name": "Tân Ninh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "102229": {
+    "id": "102229",
+    "name": "Suối Tre 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102233": {
+    "id": "102233",
+    "name": "Tân Ro 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102234": {
+    "id": "102234",
+    "name": "Tân Tiến",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102236": {
+    "id": "102236",
+    "name": "Tân Ninh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 136
+  },
+  "102237": {
+    "id": "102237",
+    "name": "Tân Ninh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "102238": {
+    "id": "102238",
+    "name": "Tóc Tiên 33",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102240": {
+    "id": "102240",
+    "name": "Tân Ninh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 95
+  },
+  "102243": {
+    "id": "102243",
+    "name": "Tóc Tiên 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 94
+  },
+  "102246": {
+    "id": "102246",
+    "name": "Tân Ninh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102248": {
+    "id": "102248",
+    "name": "Tân Ninh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 230
+  },
+  "102249": {
+    "id": "102249",
+    "name": "Tân Ninh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "102250": {
+    "id": "102250",
+    "name": "Tân Ninh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "102251": {
+    "id": "102251",
+    "name": "Tân Long",
+    "khu_vuc": "Phú Mỹ",
+    "count": 101
+  },
+  "102252": {
+    "id": "102252",
+    "name": "Tân Long 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "102253": {
+    "id": "102253",
+    "name": "Chợ Châu Pha",
+    "khu_vuc": "Phú Mỹ",
+    "count": 661
+  },
+  "102258": {
+    "id": "102258",
+    "name": "Tân Lễ 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 117
+  },
+  "102259": {
+    "id": "102259",
+    "name": "Tân Lễ 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "102260": {
+    "id": "102260",
+    "name": "Tân Lễ 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "102262": {
+    "id": "102262",
+    "name": "Suối Tre 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "102263": {
+    "id": "102263",
+    "name": "Suối Tre",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102264": {
+    "id": "102264",
+    "name": "Suối Tre 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "102266": {
+    "id": "102266",
+    "name": "Tổ 1 Vân Thành",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "102267": {
+    "id": "102267",
+    "name": "Châu Pha 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "102272": {
+    "id": "102272",
+    "name": "Suối Tre 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 34
+  },
+  "102274": {
+    "id": "102274",
+    "name": "Tân Lễ 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 60
+  },
+  "102275": {
+    "id": "102275",
+    "name": "Tân Lễ 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "102276": {
+    "id": "102276",
+    "name": "Tân Lễ 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102277": {
+    "id": "102277",
+    "name": "Tân Lễ 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 107
+  },
+  "102278": {
+    "id": "102278",
+    "name": "Tân Sơn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 81
+  },
+  "102280": {
+    "id": "102280",
+    "name": "Ủy Ban Châu Pha",
+    "khu_vuc": "Phú Mỹ",
+    "count": 230
+  },
+  "102282": {
+    "id": "102282",
+    "name": "Tân Lễ 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 91
+  },
+  "102283": {
+    "id": "102283",
+    "name": "Phước Tân 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "102284": {
+    "id": "102284",
+    "name": "Chùa Vạn Phước",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "102285": {
+    "id": "102285",
+    "name": "Tân Sơn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102286": {
+    "id": "102286",
+    "name": "Tân Sơn 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102290": {
+    "id": "102290",
+    "name": "Tân Lễ 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "102291": {
+    "id": "102291",
+    "name": "Tân Lễ 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 180
+  },
+  "102294": {
+    "id": "102294",
+    "name": "Tân Trung",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "102295": {
+    "id": "102295",
+    "name": "Tân Trung 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 123
+  },
+  "102296": {
+    "id": "102296",
+    "name": "Tân Trung 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 99
+  },
+  "102297": {
+    "id": "102297",
+    "name": "Tân Trung 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102298": {
+    "id": "102298",
+    "name": "Tân Sơn 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102304": {
+    "id": "102304",
+    "name": "Tân Châu",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102307": {
+    "id": "102307",
+    "name": "Tân Trung 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102324": {
+    "id": "102324",
+    "name": "Tân Châu 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 122
+  },
+  "102330": {
+    "id": "102330",
+    "name": "Tân Châu 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 110
+  },
+  "102335": {
+    "id": "102335",
+    "name": "Phước Tân",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "102338": {
+    "id": "102338",
+    "name": "Phước Tân 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 69
+  },
+  "102339": {
+    "id": "102339",
+    "name": "Phước Tân 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102343": {
+    "id": "102343",
+    "name": "Phước Tân 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 148
+  },
+  "102345": {
+    "id": "102345",
+    "name": "Tóc Tiên 34",
+    "khu_vuc": "Phú Mỹ",
+    "count": 112
+  },
+  "102346": {
+    "id": "102346",
+    "name": "Tóc Tiên 66",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102366": {
+    "id": "102366",
+    "name": "Tóc Tiên 35",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102371": {
+    "id": "102371",
+    "name": "Tóc Tiên 36",
+    "khu_vuc": "Phú Mỹ",
+    "count": 49
+  },
+  "102372": {
+    "id": "102372",
+    "name": "Tóc Tiên 37",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102376": {
+    "id": "102376",
+    "name": "Tóc Tiên 39",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "102381": {
+    "id": "102381",
+    "name": "Châu Ro",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102382": {
+    "id": "102382",
+    "name": "Tóc Tiên 40",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102384": {
+    "id": "102384",
+    "name": "Châu Ro 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "102385": {
+    "id": "102385",
+    "name": "Tóc Tiên 42",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102453": {
+    "id": "102453",
+    "name": "Phước Lập 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 108
+  },
+  "102458": {
+    "id": "102458",
+    "name": "Ngọc Đức",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "102459": {
+    "id": "102459",
+    "name": "Ngọc Đức 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 24
+  },
+  "102460": {
+    "id": "102460",
+    "name": "Ngọc Đức 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "102463": {
+    "id": "102463",
+    "name": "Mỹ Tân 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 210
+  },
+  "102467": {
+    "id": "102467",
+    "name": "Mỹ Tân 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "102468": {
+    "id": "102468",
+    "name": "Mỹ Tân 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "102474": {
+    "id": "102474",
+    "name": "Phước Lập 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "102475": {
+    "id": "102475",
+    "name": "Phước Lập 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 165
+  },
+  "102477": {
+    "id": "102477",
+    "name": "Mỹ Xuân 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 11
+  },
+  "102489": {
+    "id": "102489",
+    "name": "Thị Vải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 140
+  },
+  "102494": {
+    "id": "102494",
+    "name": "Thị Vải 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102507": {
+    "id": "102507",
+    "name": "Trảng Cát 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 204
+  },
+  "102508": {
+    "id": "102508",
+    "name": "Trảng Cát 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "102517": {
+    "id": "102517",
+    "name": "Trảng Cát 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 121
+  },
+  "102518": {
+    "id": "102518",
+    "name": "Trảng Cát 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102522": {
+    "id": "102522",
+    "name": "Trảng Cát 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 13
+  },
+  "102526": {
+    "id": "102526",
+    "name": "Ngọc Đức 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 3
+  },
+  "102536": {
+    "id": "102536",
+    "name": "Chợ Tạm Mỹ Xuân",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "102537": {
+    "id": "102537",
+    "name": "TĐC 26,5HA 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102542": {
+    "id": "102542",
+    "name": "TĐC 26,5HA",
+    "khu_vuc": "Phú Mỹ",
+    "count": 370
+  },
+  "102543": {
+    "id": "102543",
+    "name": "TĐC 26,5HA 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 346
+  },
+  "102544": {
+    "id": "102544",
+    "name": "Phước Lập 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "102558": {
+    "id": "102558",
+    "name": "Thị Vải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "102559": {
+    "id": "102559",
+    "name": "Thị Vải 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102560": {
+    "id": "102560",
+    "name": "Thị Vải 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 68
+  },
+  "102561": {
+    "id": "102561",
+    "name": "Thị Vải 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 94
+  },
+  "102562": {
+    "id": "102562",
+    "name": "Mỹ Xuân 20",
+    "khu_vuc": "Phú Mỹ",
+    "count": 19
+  },
+  "102565": {
+    "id": "102565",
+    "name": "Mỹ Xuân 21",
+    "khu_vuc": "Phú Mỹ",
+    "count": 146
+  },
+  "102566": {
+    "id": "102566",
+    "name": "Thị Vải 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 88
+  },
+  "102567": {
+    "id": "102567",
+    "name": "Thị Vải 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 114
+  },
+  "102568": {
+    "id": "102568",
+    "name": "Mỹ Xuân 22",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102571": {
+    "id": "102571",
+    "name": "Mỹ Xuân 23",
+    "khu_vuc": "Phú Mỹ",
+    "count": 49
+  },
+  "102572": {
+    "id": "102572",
+    "name": "Mỹ Xuân 24",
+    "khu_vuc": "Phú Mỹ",
+    "count": 232
+  },
+  "102573": {
+    "id": "102573",
+    "name": "Mỹ Xuân 25",
+    "khu_vuc": "Phú Mỹ",
+    "count": 85
+  },
+  "102576": {
+    "id": "102576",
+    "name": "Thị Vải 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 131
+  },
+  "102577": {
+    "id": "102577",
+    "name": "Thị Vải 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 168
+  },
+  "102578": {
+    "id": "102578",
+    "name": "Mỹ Xuân 26",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102580": {
+    "id": "102580",
+    "name": "Mỹ Xuân 28",
+    "khu_vuc": "Phú Mỹ",
+    "count": 91
+  },
+  "102585": {
+    "id": "102585",
+    "name": "Mỹ Xuân 29",
+    "khu_vuc": "Phú Mỹ",
+    "count": 32
+  },
+  "102586": {
+    "id": "102586",
+    "name": "Mỹ Xuân 30",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102587": {
+    "id": "102587",
+    "name": "Trảng Cát",
+    "khu_vuc": "Phú Mỹ",
+    "count": 2
+  },
+  "102588": {
+    "id": "102588",
+    "name": "Trảng Cát 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "102589": {
+    "id": "102589",
+    "name": "Hắc Dịch",
+    "khu_vuc": "Phú Mỹ",
+    "count": 100
+  },
+  "102590": {
+    "id": "102590",
+    "name": "Suối Nhum",
+    "khu_vuc": "Phú Mỹ",
+    "count": 25
+  },
+  "102592": {
+    "id": "102592",
+    "name": "Hắc Dịch 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 13
+  },
+  "102594": {
+    "id": "102594",
+    "name": "Suối Nhum 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 139
+  },
+  "102598": {
+    "id": "102598",
+    "name": "Suối Nhum 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 139
+  },
+  "102601": {
+    "id": "102601",
+    "name": "Suối Nhum 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "102602": {
+    "id": "102602",
+    "name": "Hắc Dịch 60",
+    "khu_vuc": "Phú Mỹ",
+    "count": 81
+  },
+  "102603": {
+    "id": "102603",
+    "name": "Hắc Dịch 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "102605": {
+    "id": "102605",
+    "name": "Hắc Dịch 21",
+    "khu_vuc": "Phú Mỹ",
+    "count": 101
+  },
+  "102606": {
+    "id": "102606",
+    "name": "Hắc Dịch 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "102607": {
+    "id": "102607",
+    "name": "Trảng Cát 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "102608": {
+    "id": "102608",
+    "name": "Hắc Dịch 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 297
+  },
+  "102610": {
+    "id": "102610",
+    "name": "Suối Nhum 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "102611": {
+    "id": "102611",
+    "name": "Suối Nhum 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "102612": {
+    "id": "102612",
+    "name": "Suối Nhum 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 80
+  },
+  "102613": {
+    "id": "102613",
+    "name": "Suối Nhum 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 96
+  },
+  "102614": {
+    "id": "102614",
+    "name": "Hắc Dịch 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "102616": {
+    "id": "102616",
+    "name": "Hắc Dịch 72",
+    "khu_vuc": "Phú Mỹ",
+    "count": 93
+  },
+  "102620": {
+    "id": "102620",
+    "name": "Suối Nhum 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "102621": {
+    "id": "102621",
+    "name": "Trảng Cát 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "102623": {
+    "id": "102623",
+    "name": "Trảng Cát 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "102626": {
+    "id": "102626",
+    "name": "Hắc Dịch 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "102627": {
+    "id": "102627",
+    "name": "Tổ 4 Trảng Lớn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "102628": {
+    "id": "102628",
+    "name": "Trảng Cát 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102630": {
+    "id": "102630",
+    "name": "Suối Nhum 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 107
+  },
+  "102631": {
+    "id": "102631",
+    "name": "Trảng Cát 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 210
+  },
+  "102633": {
+    "id": "102633",
+    "name": "Hắc Dịch 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102634": {
+    "id": "102634",
+    "name": "Hắc Dịch 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102635": {
+    "id": "102635",
+    "name": "Hắc Dịch 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "102636": {
+    "id": "102636",
+    "name": "Hắc Dịch 75",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102637": {
+    "id": "102637",
+    "name": "Trảng Cát 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102638": {
+    "id": "102638",
+    "name": "Hắc Dịch 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "102642": {
+    "id": "102642",
+    "name": "Hắc Dịch 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "102643": {
+    "id": "102643",
+    "name": "Hắc Dịch 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "102645": {
+    "id": "102645",
+    "name": "Hắc Dịch 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102647": {
+    "id": "102647",
+    "name": "Hắc Dịch 19",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "102648": {
+    "id": "102648",
+    "name": "Hắc Dịch 20",
+    "khu_vuc": "Phú Mỹ",
+    "count": 53
+  },
+  "102649": {
+    "id": "102649",
+    "name": "Hắc Dịch 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "102653": {
+    "id": "102653",
+    "name": "Tổ 13 Trảng Lớn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 98
+  },
+  "102654": {
+    "id": "102654",
+    "name": "Hắc Dịch 22",
+    "khu_vuc": "Phú Mỹ",
+    "count": 70
+  },
+  "102655": {
+    "id": "102655",
+    "name": "Hắc Dịch 23",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "102662": {
+    "id": "102662",
+    "name": "Hắc Dịch 24",
+    "khu_vuc": "Phú Mỹ",
+    "count": 286
+  },
+  "102665": {
+    "id": "102665",
+    "name": "Hắc Dịch 25",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "102666": {
+    "id": "102666",
+    "name": "Đèn đường Ngãi Giao 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 1
+  },
+  "102668": {
+    "id": "102668",
+    "name": "Tổ 6 Trảng Lớn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "102673": {
+    "id": "102673",
+    "name": "Hắc Dịch 27",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "102675": {
+    "id": "102675",
+    "name": "Hắc Dịch 28",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102677": {
+    "id": "102677",
+    "name": "Hắc Dịch 79",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102683": {
+    "id": "102683",
+    "name": "Hắc Dịch 80",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102687": {
+    "id": "102687",
+    "name": "Hắc Dịch 81",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "102689": {
+    "id": "102689",
+    "name": "Hắc Dịch 29",
+    "khu_vuc": "Phú Mỹ",
+    "count": 14
+  },
+  "102690": {
+    "id": "102690",
+    "name": "Trảng Lớn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 25
+  },
+  "102691": {
+    "id": "102691",
+    "name": "Hắc Dịch 30",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "102692": {
+    "id": "102692",
+    "name": "Bàu Phượng 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 199
+  },
+  "102694": {
+    "id": "102694",
+    "name": "Bàu Phượng 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "102695": {
+    "id": "102695",
+    "name": "Cầu mới",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "102696": {
+    "id": "102696",
+    "name": "Bàu Phượng 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 24
+  },
+  "102697": {
+    "id": "102697",
+    "name": "Cầu mới 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "102698": {
+    "id": "102698",
+    "name": "Cầu mới 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102699": {
+    "id": "102699",
+    "name": "Cầu Ri",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "102700": {
+    "id": "102700",
+    "name": "Cầu Ri 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "102701": {
+    "id": "102701",
+    "name": "Sông Xoài",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "102704": {
+    "id": "102704",
+    "name": "Sông Xoài 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102705": {
+    "id": "102705",
+    "name": "Sông Xoài 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102709": {
+    "id": "102709",
+    "name": "Sông Xoài 50",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102715": {
+    "id": "102715",
+    "name": "Cầu mới 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 126
+  },
+  "102717": {
+    "id": "102717",
+    "name": "Cầu mới 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 16
+  },
+  "102720": {
+    "id": "102720",
+    "name": "Bàu Phượng 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 51
+  },
+  "102721": {
+    "id": "102721",
+    "name": "Cầu mới 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "102722": {
+    "id": "102722",
+    "name": "Cầu mới 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 18
+  },
+  "102723": {
+    "id": "102723",
+    "name": "Cầu mới 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102724": {
+    "id": "102724",
+    "name": "Cầu mới 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102725": {
+    "id": "102725",
+    "name": "Bàu Phượng",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "102726": {
+    "id": "102726",
+    "name": "Bàu Phượng 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "102727": {
+    "id": "102727",
+    "name": "Bàu Phượng 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "102729": {
+    "id": "102729",
+    "name": "Bàu Phượng 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 119
+  },
+  "102731": {
+    "id": "102731",
+    "name": "Bàu Phượng 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "102732": {
+    "id": "102732",
+    "name": "Tổ 2 Tân Hà",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "102733": {
+    "id": "102733",
+    "name": "Tân Ro 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "102735": {
+    "id": "102735",
+    "name": "Tân Ro",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102736": {
+    "id": "102736",
+    "name": "Tân Ro 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "102737": {
+    "id": "102737",
+    "name": "Tân Ro 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "102738": {
+    "id": "102738",
+    "name": "Bàu Phượng 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102742": {
+    "id": "102742",
+    "name": "Tân Ro 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "102743": {
+    "id": "102743",
+    "name": "Tân Ro 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 163
+  },
+  "102745": {
+    "id": "102745",
+    "name": "Tân Ro 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "102746": {
+    "id": "102746",
+    "name": "Tân Ro 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 14
+  },
+  "102749": {
+    "id": "102749",
+    "name": "Sông Xoài 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 173
+  },
+  "102752": {
+    "id": "102752",
+    "name": "Sông Xoài 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102753": {
+    "id": "102753",
+    "name": "Sông Xoài 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102754": {
+    "id": "102754",
+    "name": "Châu Ro 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102757": {
+    "id": "102757",
+    "name": "Sông Xoài 19",
+    "khu_vuc": "Phú Mỹ",
+    "count": 96
+  },
+  "102758": {
+    "id": "102758",
+    "name": "Sông Xoài 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "102761": {
+    "id": "102761",
+    "name": "Sông Xoài 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "102762": {
+    "id": "102762",
+    "name": "Sông Xoài 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "102763": {
+    "id": "102763",
+    "name": "Sông Xoài 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "102764": {
+    "id": "102764",
+    "name": "Sông Xoài 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102766": {
+    "id": "102766",
+    "name": "Sông Xoài 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102775": {
+    "id": "102775",
+    "name": "Sông Xoài 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "102776": {
+    "id": "102776",
+    "name": "Sông Xoài 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102777": {
+    "id": "102777",
+    "name": "Sông Xoài 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102778": {
+    "id": "102778",
+    "name": "Cầu Ri 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102780": {
+    "id": "102780",
+    "name": "Sông Xoài 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "102781": {
+    "id": "102781",
+    "name": "Cầu Ri 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 27
+  },
+  "102783": {
+    "id": "102783",
+    "name": "Cầu Ri 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102785": {
+    "id": "102785",
+    "name": "Sông Xoài 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 39
+  },
+  "102789": {
+    "id": "102789",
+    "name": "Cầu Ri 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 11
+  },
+  "102791": {
+    "id": "102791",
+    "name": "Cầu Ri 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102793": {
+    "id": "102793",
+    "name": "Cầu Ri 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102794": {
+    "id": "102794",
+    "name": "Cầu Ri 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102797": {
+    "id": "102797",
+    "name": "Cù Bị",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102798": {
+    "id": "102798",
+    "name": "Sông Xoài 20",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "102800": {
+    "id": "102800",
+    "name": "Sông Xoài 21",
+    "khu_vuc": "Phú Mỹ",
+    "count": 6
+  },
+  "102803": {
+    "id": "102803",
+    "name": "Cù Bị 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "102805": {
+    "id": "102805",
+    "name": "Sông Xoài 22",
+    "khu_vuc": "Phú Mỹ",
+    "count": 10
+  },
+  "102807": {
+    "id": "102807",
+    "name": "Sông Xoài 23",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "102811": {
+    "id": "102811",
+    "name": "Sông Xoài 24",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102812": {
+    "id": "102812",
+    "name": "Sông Xoài 52",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102813": {
+    "id": "102813",
+    "name": "Cù Bị 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "102815": {
+    "id": "102815",
+    "name": "Sông Xoài 25",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "102816": {
+    "id": "102816",
+    "name": "Sông Xoài 26",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "102817": {
+    "id": "102817",
+    "name": "Sông Xoài 27",
+    "khu_vuc": "Phú Mỹ",
+    "count": 19
+  },
+  "102820": {
+    "id": "102820",
+    "name": "Cù Bị 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102821": {
+    "id": "102821",
+    "name": "Sông Xoài 28",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102822": {
+    "id": "102822",
+    "name": "Sông Xoài 29",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "102824": {
+    "id": "102824",
+    "name": "Cù Bị 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "102827": {
+    "id": "102827",
+    "name": "Sông Xoài 30",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102828": {
+    "id": "102828",
+    "name": "Sông Xoài 31",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "102832": {
+    "id": "102832",
+    "name": "Cù Bị 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102835": {
+    "id": "102835",
+    "name": "Sông Xoài 32",
+    "khu_vuc": "Phú Mỹ",
+    "count": 29
+  },
+  "102838": {
+    "id": "102838",
+    "name": "Sông Xoài 33",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102839": {
+    "id": "102839",
+    "name": "Sông Xoài 34",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102840": {
+    "id": "102840",
+    "name": "Sông Xoài 35",
+    "khu_vuc": "Phú Mỹ",
+    "count": 20
+  },
+  "102843": {
+    "id": "102843",
+    "name": "Sông Xoài 36",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102845": {
+    "id": "102845",
+    "name": "Sông Xoài 53",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102846": {
+    "id": "102846",
+    "name": "Sông Xoài 37",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "102847": {
+    "id": "102847",
+    "name": "Sông Xoài 38",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102848": {
+    "id": "102848",
+    "name": "Sông Xoài 39",
+    "khu_vuc": "Phú Mỹ",
+    "count": 29
+  },
+  "102851": {
+    "id": "102851",
+    "name": "Sông Xoài 40",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102853": {
+    "id": "102853",
+    "name": "Sông Xoài 41",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "102855": {
+    "id": "102855",
+    "name": "Sông Xoài 42",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "102857": {
+    "id": "102857",
+    "name": "Tóc Tiên 46",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "102858": {
+    "id": "102858",
+    "name": "Tóc Tiên 47",
+    "khu_vuc": "Phú Mỹ",
+    "count": 72
+  },
+  "102859": {
+    "id": "102859",
+    "name": "Tóc Tiên 48",
+    "khu_vuc": "Phú Mỹ",
+    "count": 11
+  },
+  "102860": {
+    "id": "102860",
+    "name": "Tóc Tiên 49",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102861": {
+    "id": "102861",
+    "name": "Tóc Tiên 50",
+    "khu_vuc": "Phú Mỹ",
+    "count": 21
+  },
+  "102862": {
+    "id": "102862",
+    "name": "Tóc Tiên 51",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "102863": {
+    "id": "102863",
+    "name": "Tóc Tiên 52",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102865": {
+    "id": "102865",
+    "name": "Tóc Tiên 53",
+    "khu_vuc": "Phú Mỹ",
+    "count": 23
+  },
+  "102866": {
+    "id": "102866",
+    "name": "Tóc Tiên 54",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102867": {
+    "id": "102867",
+    "name": "Suối Nhum 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102868": {
+    "id": "102868",
+    "name": "Suối Nhum 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "102869": {
+    "id": "102869",
+    "name": "Hắc Dịch 31",
+    "khu_vuc": "Phú Mỹ",
+    "count": 34
+  },
+  "102870": {
+    "id": "102870",
+    "name": "Suối Nhum 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102875": {
+    "id": "102875",
+    "name": "Suối Nhum 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102881": {
+    "id": "102881",
+    "name": "Suối Nhum 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102888": {
+    "id": "102888",
+    "name": "Suối Nhum 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 20
+  },
+  "102889": {
+    "id": "102889",
+    "name": "Tóc Tiên 55",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "102890": {
+    "id": "102890",
+    "name": "Tóc Tiên 56",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "102891": {
+    "id": "102891",
+    "name": "Mỹ Thạnh 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102892": {
+    "id": "102892",
+    "name": "Tóc Tiên 57",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102893": {
+    "id": "102893",
+    "name": "Suối Nhum 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "102898": {
+    "id": "102898",
+    "name": "Tóc Tiên 59",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "102901": {
+    "id": "102901",
+    "name": "Tóc Tiên 60",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "102904": {
+    "id": "102904",
+    "name": "Tóc Tiên 61",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "102905": {
+    "id": "102905",
+    "name": "Tóc Tiên 62",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102906": {
+    "id": "102906",
+    "name": "Tóc Tiên 63",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "102909": {
+    "id": "102909",
+    "name": "Hắc Dịch 82",
+    "khu_vuc": "Phú Mỹ",
+    "count": 85
+  },
+  "102910": {
+    "id": "102910",
+    "name": "Hắc Dịch 32",
+    "khu_vuc": "Phú Mỹ",
+    "count": 200
+  },
+  "102912": {
+    "id": "102912",
+    "name": "Hắc Dịch 83",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "102913": {
+    "id": "102913",
+    "name": "Hắc Dịch 33",
+    "khu_vuc": "Phú Mỹ",
+    "count": 16
+  },
+  "102914": {
+    "id": "102914",
+    "name": "Hắc Dịch 34",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102915": {
+    "id": "102915",
+    "name": "Hắc Dịch 35",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "102917": {
+    "id": "102917",
+    "name": "Hắc Dịch 37",
+    "khu_vuc": "Phú Mỹ",
+    "count": 107
+  },
+  "102918": {
+    "id": "102918",
+    "name": "Hắc Dịch 84",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102923": {
+    "id": "102923",
+    "name": "Hắc Dịch 38",
+    "khu_vuc": "Phú Mỹ",
+    "count": 30
+  },
+  "102924": {
+    "id": "102924",
+    "name": "Hắc Dịch 39",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "102926": {
+    "id": "102926",
+    "name": "Hắc Dịch 40",
+    "khu_vuc": "Phú Mỹ",
+    "count": 68
+  },
+  "102927": {
+    "id": "102927",
+    "name": "Suối Nhum 18",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "102928": {
+    "id": "102928",
+    "name": "Hắc Dịch 41",
+    "khu_vuc": "Phú Mỹ",
+    "count": 72
+  },
+  "102929": {
+    "id": "102929",
+    "name": "Trảng Lớn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 49
+  },
+  "102930": {
+    "id": "102930",
+    "name": "Hắc Dịch 85",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "102931": {
+    "id": "102931",
+    "name": "Hắc Dịch 42",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "102932": {
+    "id": "102932",
+    "name": "Hắc Dịch 43",
+    "khu_vuc": "Phú Mỹ",
+    "count": 88
+  },
+  "102933": {
+    "id": "102933",
+    "name": "Hắc Dịch 44",
+    "khu_vuc": "Phú Mỹ",
+    "count": 132
+  },
+  "102934": {
+    "id": "102934",
+    "name": "Hắc Dịch 45",
+    "khu_vuc": "Phú Mỹ",
+    "count": 4
+  },
+  "102936": {
+    "id": "102936",
+    "name": "Hắc Dịch 46",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "102937": {
+    "id": "102937",
+    "name": "Hắc Dịch 47",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "102941": {
+    "id": "102941",
+    "name": "Hắc Dịch 49",
+    "khu_vuc": "Phú Mỹ",
+    "count": 53
+  },
+  "102942": {
+    "id": "102942",
+    "name": "Sông Xoài 54",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "102945": {
+    "id": "102945",
+    "name": "Hắc Dịch 50",
+    "khu_vuc": "Phú Mỹ",
+    "count": 138
+  },
+  "102949": {
+    "id": "102949",
+    "name": "Hắc Dịch 51",
+    "khu_vuc": "Phú Mỹ",
+    "count": 104
+  },
+  "102950": {
+    "id": "102950",
+    "name": "Hắc Dịch 52",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "102952": {
+    "id": "102952",
+    "name": "Hắc Dịch 53",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "102953": {
+    "id": "102953",
+    "name": "Hắc Dịch 54",
+    "khu_vuc": "Phú Mỹ",
+    "count": 19
+  },
+  "102954": {
+    "id": "102954",
+    "name": "Hắc Dịch 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "102955": {
+    "id": "102955",
+    "name": "Hắc Dịch 56",
+    "khu_vuc": "Phú Mỹ",
+    "count": 91
+  },
+  "102956": {
+    "id": "102956",
+    "name": "Sông Xoài 57",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "102957": {
+    "id": "102957",
+    "name": "Hắc Dịch 57",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "102962": {
+    "id": "102962",
+    "name": "Tổ 3 Trảng Lớn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 43
+  },
+  "102963": {
+    "id": "102963",
+    "name": "Hắc Dịch 58",
+    "khu_vuc": "Phú Mỹ",
+    "count": 107
+  },
+  "102966": {
+    "id": "102966",
+    "name": "Hắc Dịch 59",
+    "khu_vuc": "Phú Mỹ",
+    "count": 68
+  },
+  "102968": {
+    "id": "102968",
+    "name": "Hắc Dịch 61",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "102969": {
+    "id": "102969",
+    "name": "Hắc Dịch 63",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "102973": {
+    "id": "102973",
+    "name": "Hắc Dịch 64",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102975": {
+    "id": "102975",
+    "name": "Hắc Dịch 65",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "102976": {
+    "id": "102976",
+    "name": "Sông Xoài 43",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "102978": {
+    "id": "102978",
+    "name": "Phước Bình Sông Xoài",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102979": {
+    "id": "102979",
+    "name": "Phước Bình Sông Xoài 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "102981": {
+    "id": "102981",
+    "name": "Phước Bình Sông Xoài 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "102984": {
+    "id": "102984",
+    "name": "Phước Bình Sông Xoài 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 25
+  },
+  "102986": {
+    "id": "102986",
+    "name": "Phước Bình Sông Xoài 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "102988": {
+    "id": "102988",
+    "name": "Phước Bình Sông Xoài 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "102989": {
+    "id": "102989",
+    "name": "Hắc Dịch 66",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "102992": {
+    "id": "102992",
+    "name": "Hắc Dịch 67",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "102993": {
+    "id": "102993",
+    "name": "Hắc Dịch 68",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "102994": {
+    "id": "102994",
+    "name": "Hắc Dịch 89",
+    "khu_vuc": "Phú Mỹ",
+    "count": 18
+  },
+  "102995": {
+    "id": "102995",
+    "name": "Hắc Dịch 69",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "102998": {
+    "id": "102998",
+    "name": "Sông Xoài 44",
+    "khu_vuc": "Phú Mỹ",
+    "count": 93
+  },
+  "102999": {
+    "id": "102999",
+    "name": "Sông Xoài 45",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "103000": {
+    "id": "103000",
+    "name": "Sông Xoài 46",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "103002": {
+    "id": "103002",
+    "name": "Sông Xoài 47",
+    "khu_vuc": "Phú Mỹ",
+    "count": 50
+  },
+  "103005": {
+    "id": "103005",
+    "name": "Sông Xoài 48",
+    "khu_vuc": "Phú Mỹ",
+    "count": 43
+  },
+  "103007": {
+    "id": "103007",
+    "name": "Sông Xoài 49",
+    "khu_vuc": "Phú Mỹ",
+    "count": 32
+  },
+  "103096": {
+    "id": "103096",
+    "name": "Ngọc Hà 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 26
+  },
+  "103098": {
+    "id": "103098",
+    "name": "Ngọc Hà 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 37
+  },
+  "103099": {
+    "id": "103099",
+    "name": "Ngọc Hà 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 71
+  },
+  "103100": {
+    "id": "103100",
+    "name": "Ngọc Hà 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 53
+  },
+  "103101": {
+    "id": "103101",
+    "name": "Ngọc Hà 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 71
+  },
+  "103102": {
+    "id": "103102",
+    "name": "Ngọc Hà 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "103103": {
+    "id": "103103",
+    "name": "Ngọc Hà",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "103105": {
+    "id": "103105",
+    "name": "Ngọc Hà 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 105
+  },
+  "103106": {
+    "id": "103106",
+    "name": "Ngọc Hà 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "103158": {
+    "id": "103158",
+    "name": "Phú Mỹ C9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "103167": {
+    "id": "103167",
+    "name": "Quảng Phú 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "103223": {
+    "id": "103223",
+    "name": "Tổ 19 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 68
+  },
+  "103319": {
+    "id": "103319",
+    "name": "TTHC Phú Mỹ",
+    "khu_vuc": "Phú Mỹ",
+    "count": 20
+  },
+  "103322": {
+    "id": "103322",
+    "name": "Ngọc Hà 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 417
+  },
+  "103328": {
+    "id": "103328",
+    "name": "Ngọc Hà 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 262
+  },
+  "103337": {
+    "id": "103337",
+    "name": "Bến Đình 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "103344": {
+    "id": "103344",
+    "name": "Mỹ Xuân 33",
+    "khu_vuc": "Phú Mỹ",
+    "count": 80
+  },
+  "103350": {
+    "id": "103350",
+    "name": "Mỹ Xuân 32",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "103353": {
+    "id": "103353",
+    "name": "Mỹ Xuân 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 279
+  },
+  "103354": {
+    "id": "103354",
+    "name": "Mỹ Tân",
+    "khu_vuc": "Phú Mỹ",
+    "count": 330
+  },
+  "103504": {
+    "id": "103504",
+    "name": "Tân Phước 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 80
+  },
+  "103507": {
+    "id": "103507",
+    "name": "Ông Trịnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "103532": {
+    "id": "103532",
+    "name": "Khu nhà ở dầu khí 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 29
+  },
+  "103534": {
+    "id": "103534",
+    "name": "Tổ 26 Vạn Hạnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "103535": {
+    "id": "103535",
+    "name": "Tân Hạnh 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "103540": {
+    "id": "103540",
+    "name": "Ông Trịnh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 396
+  },
+  "103542": {
+    "id": "103542",
+    "name": "Ông Trịnh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 121
+  },
+  "103544": {
+    "id": "103544",
+    "name": "Tân Phước 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 149
+  },
+  "103548": {
+    "id": "103548",
+    "name": "Phước Lộc 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 40
+  },
+  "103550": {
+    "id": "103550",
+    "name": "Phước Lộc",
+    "khu_vuc": "Phú Mỹ",
+    "count": 79
+  },
+  "103554": {
+    "id": "103554",
+    "name": "Phước Lộc 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 180
+  },
+  "103560": {
+    "id": "103560",
+    "name": "Phước Lộc 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "103570": {
+    "id": "103570",
+    "name": "Phước Hòa",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "103576": {
+    "id": "103576",
+    "name": "Phước Lộc 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "103577": {
+    "id": "103577",
+    "name": "Phước Hòa 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "103582": {
+    "id": "103582",
+    "name": "Phước Hòa 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "103585": {
+    "id": "103585",
+    "name": "Phước Hòa 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "103586": {
+    "id": "103586",
+    "name": "Phước Hòa 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 98
+  },
+  "103587": {
+    "id": "103587",
+    "name": "Hải Sơn 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 75
+  },
+  "103588": {
+    "id": "103588",
+    "name": "Hải Sơn 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 114
+  },
+  "103592": {
+    "id": "103592",
+    "name": "Phước Hòa 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 90
+  },
+  "103593": {
+    "id": "103593",
+    "name": "Hải Sơn 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 164
+  },
+  "103595": {
+    "id": "103595",
+    "name": "Hải Sơn 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 51
+  },
+  "103596": {
+    "id": "103596",
+    "name": "Hải Sơn 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "103597": {
+    "id": "103597",
+    "name": "Lam Sơn 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "103598": {
+    "id": "103598",
+    "name": "Hải Sơn 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "103599": {
+    "id": "103599",
+    "name": "Hải Sơn 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 34
+  },
+  "103602": {
+    "id": "103602",
+    "name": "Phước Hòa 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "103604": {
+    "id": "103604",
+    "name": "Hải Sơn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "103605": {
+    "id": "103605",
+    "name": "Hải Sơn 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 32
+  },
+  "103606": {
+    "id": "103606",
+    "name": "Hải Sơn 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "103607": {
+    "id": "103607",
+    "name": "Phước Hòa 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 78
+  },
+  "103611": {
+    "id": "103611",
+    "name": "Hải Sơn 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 146
+  },
+  "103614": {
+    "id": "103614",
+    "name": "Lam Sơn 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 81
+  },
+  "103618": {
+    "id": "103618",
+    "name": "Lam Sơn 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "103619": {
+    "id": "103619",
+    "name": "Lam Sơn 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "103623": {
+    "id": "103623",
+    "name": "Chợ Lam Sơn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 107
+  },
+  "103624": {
+    "id": "103624",
+    "name": "Giáo Xứ Lam Sơn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 588
+  },
+  "103629": {
+    "id": "103629",
+    "name": "Lam Sơn 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "103630": {
+    "id": "103630",
+    "name": "Lam Sơn 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 155
+  },
+  "103631": {
+    "id": "103631",
+    "name": "Lam Sơn 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 154
+  },
+  "103632": {
+    "id": "103632",
+    "name": "Lam Sơn 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 115
+  },
+  "103634": {
+    "id": "103634",
+    "name": "Lam Sơn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "103636": {
+    "id": "103636",
+    "name": "Lam Sơn 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "103637": {
+    "id": "103637",
+    "name": "Lam Sơn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 57
+  },
+  "103639": {
+    "id": "103639",
+    "name": "Lam Sơn 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "103640": {
+    "id": "103640",
+    "name": "Lam Sơn 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 112
+  },
+  "103641": {
+    "id": "103641",
+    "name": "Hội Bài",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "103642": {
+    "id": "103642",
+    "name": "Tổ 19 Phước Tấn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "103643": {
+    "id": "103643",
+    "name": "Hội Bài 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "103649": {
+    "id": "103649",
+    "name": "Tân Hòa 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 133
+  },
+  "103651": {
+    "id": "103651",
+    "name": "Hội Bài 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "103652": {
+    "id": "103652",
+    "name": "Hội Bài 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 165
+  },
+  "103653": {
+    "id": "103653",
+    "name": "TĐC Phước Long",
+    "khu_vuc": "Phú Mỹ",
+    "count": 379
+  },
+  "103657": {
+    "id": "103657",
+    "name": "Hội Bài 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 889
+  },
+  "103658": {
+    "id": "103658",
+    "name": "Phước Tấn 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 137
+  },
+  "103661": {
+    "id": "103661",
+    "name": "Tân Hòa 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 7
+  },
+  "103662": {
+    "id": "103662",
+    "name": "Tân Hòa 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 33
+  },
+  "103665": {
+    "id": "103665",
+    "name": "Hội Bài 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 440
+  },
+  "103666": {
+    "id": "103666",
+    "name": "Phước Tấn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 385
+  },
+  "103668": {
+    "id": "103668",
+    "name": "Phước Tấn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 204
+  },
+  "103670": {
+    "id": "103670",
+    "name": "Láng Cát 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 46
+  },
+  "103675": {
+    "id": "103675",
+    "name": "Tân Hải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 109
+  },
+  "103677": {
+    "id": "103677",
+    "name": "Láng Cát 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 95
+  },
+  "103678": {
+    "id": "103678",
+    "name": "Láng Cát",
+    "khu_vuc": "Phú Mỹ",
+    "count": 308
+  },
+  "103679": {
+    "id": "103679",
+    "name": "Tân Hải 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 69
+  },
+  "103681": {
+    "id": "103681",
+    "name": "Tân Hải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 87
+  },
+  "103682": {
+    "id": "103682",
+    "name": "Tân Hải 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 116
+  },
+  "103685": {
+    "id": "103685",
+    "name": "Láng Cát 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "103686": {
+    "id": "103686",
+    "name": "Cát Hải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "103687": {
+    "id": "103687",
+    "name": "Cát Hải 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "103688": {
+    "id": "103688",
+    "name": "Cát Hải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "103689": {
+    "id": "103689",
+    "name": "Chu Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "103692": {
+    "id": "103692",
+    "name": "Cát Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 138
+  },
+  "103695": {
+    "id": "103695",
+    "name": "Phước Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 49
+  },
+  "103697": {
+    "id": "103697",
+    "name": "Phước Hải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 95
+  },
+  "103698": {
+    "id": "103698",
+    "name": "Láng Cát 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "103699": {
+    "id": "103699",
+    "name": "Láng Cát 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 66
+  },
+  "103707": {
+    "id": "103707",
+    "name": "Phước Hải 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 70
+  },
+  "103710": {
+    "id": "103710",
+    "name": "Tân Hải 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 60
+  },
+  "103711": {
+    "id": "103711",
+    "name": "Chu Hải 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 101
+  },
+  "103714": {
+    "id": "103714",
+    "name": "Phước Hải 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 127
+  },
+  "103715": {
+    "id": "103715",
+    "name": "Phước Hải 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "103716": {
+    "id": "103716",
+    "name": "Phước Hải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 259
+  },
+  "103718": {
+    "id": "103718",
+    "name": "Phước Hải 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 228
+  },
+  "103723": {
+    "id": "103723",
+    "name": "Chu Hải 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 64
+  },
+  "103724": {
+    "id": "103724",
+    "name": "Chu Hải 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 94
+  },
+  "103725": {
+    "id": "103725",
+    "name": "Phước Hải 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "103726": {
+    "id": "103726",
+    "name": "Phước Hải 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "103727": {
+    "id": "103727",
+    "name": "Chu Hải 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 169
+  },
+  "103728": {
+    "id": "103728",
+    "name": "Chu Hải 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 96
+  },
+  "103731": {
+    "id": "103731",
+    "name": "Đông Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 217
+  },
+  "103732": {
+    "id": "103732",
+    "name": "Chu Hải 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "103733": {
+    "id": "103733",
+    "name": "Chu Hải 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 1
+  },
+  "103737": {
+    "id": "103737",
+    "name": "Tổ 7 Đông Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 15
+  },
+  "103739": {
+    "id": "103739",
+    "name": "Tân Hải 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 41
+  },
+  "103744": {
+    "id": "103744",
+    "name": "Chu Hải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 439
+  },
+  "103749": {
+    "id": "103749",
+    "name": "Chu Hải 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 493
+  },
+  "103750": {
+    "id": "103750",
+    "name": "Chợ Chu Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "103752": {
+    "id": "103752",
+    "name": "Tân Hải 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "103753": {
+    "id": "103753",
+    "name": "Chu Hải 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 105
+  },
+  "103754": {
+    "id": "103754",
+    "name": "Kim Hải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 143
+  },
+  "103755": {
+    "id": "103755",
+    "name": "Chu Hải 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 72
+  },
+  "103757": {
+    "id": "103757",
+    "name": "Kim Hải 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 138
+  },
+  "103760": {
+    "id": "103760",
+    "name": "Cát Hải 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 10
+  },
+  "103782": {
+    "id": "103782",
+    "name": "Láng Cát 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 115
+  },
+  "103792": {
+    "id": "103792",
+    "name": "Tân Hải 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 10
+  },
+  "103799": {
+    "id": "103799",
+    "name": "Hội Bài 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 70
+  },
+  "103800": {
+    "id": "103800",
+    "name": "Chợ Tân Hòa",
+    "khu_vuc": "Phú Mỹ",
+    "count": 224
+  },
+  "103803": {
+    "id": "103803",
+    "name": "Tân Hòa 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 52
+  },
+  "103804": {
+    "id": "103804",
+    "name": "Tổ 9 Phước Tấn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 153
+  },
+  "103806": {
+    "id": "103806",
+    "name": "Phước Tấn 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 70
+  },
+  "103809": {
+    "id": "103809",
+    "name": "Phước Tấn 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 134
+  },
+  "103810": {
+    "id": "103810",
+    "name": "Phước Thành 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "103813": {
+    "id": "103813",
+    "name": "Phước Thành 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 24
+  },
+  "103814": {
+    "id": "103814",
+    "name": "Tổ 10 Phước Tấn",
+    "khu_vuc": "Phú Mỹ",
+    "count": 119
+  },
+  "103816": {
+    "id": "103816",
+    "name": "Tân Hòa 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "103820": {
+    "id": "103820",
+    "name": "Phước Thành",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "103821": {
+    "id": "103821",
+    "name": "Tân Hòa 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "103823": {
+    "id": "103823",
+    "name": "Tân Hòa 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 110
+  },
+  "103826": {
+    "id": "103826",
+    "name": "Tân Hòa 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 149
+  },
+  "103828": {
+    "id": "103828",
+    "name": "Tân Hòa 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "103837": {
+    "id": "103837",
+    "name": "Phước Thành 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "103838": {
+    "id": "103838",
+    "name": "Tân Hòa 14",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "103840": {
+    "id": "103840",
+    "name": "Hội Bài 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 93
+  },
+  "103841": {
+    "id": "103841",
+    "name": "Tân Hòa 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 82
+  },
+  "103842": {
+    "id": "103842",
+    "name": "Phước Thành 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 28
+  },
+  "103843": {
+    "id": "103843",
+    "name": "Phước Thành 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "103852": {
+    "id": "103852",
+    "name": "Phước Thành 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 118
+  },
+  "103853": {
+    "id": "103853",
+    "name": "Phước Thành 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 11
+  },
+  "103866": {
+    "id": "103866",
+    "name": "Song Vĩnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 32
+  },
+  "103869": {
+    "id": "103869",
+    "name": "Đường QH 32",
+    "khu_vuc": "Phú Mỹ",
+    "count": 381
+  },
+  "103875": {
+    "id": "103875",
+    "name": "Song Vĩnh 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 262
+  },
+  "103878": {
+    "id": "103878",
+    "name": "Song Vĩnh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "103881": {
+    "id": "103881",
+    "name": "Song Vĩnh 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "103885": {
+    "id": "103885",
+    "name": "Song Vĩnh 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "103890": {
+    "id": "103890",
+    "name": "Ông Trịnh 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 36
+  },
+  "103896": {
+    "id": "103896",
+    "name": "Lai Xá",
+    "khu_vuc": "Phú Mỹ",
+    "count": 18
+  },
+  "103898": {
+    "id": "103898",
+    "name": "Song Vĩnh 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 38
+  },
+  "103899": {
+    "id": "103899",
+    "name": "Song Vĩnh 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 54
+  },
+  "103902": {
+    "id": "103902",
+    "name": "Lai Xá 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 12
+  },
+  "103903": {
+    "id": "103903",
+    "name": "Tân Phước 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 69
+  },
+  "103909": {
+    "id": "103909",
+    "name": "Ông Trịnh 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "103912": {
+    "id": "103912",
+    "name": "Song Vĩnh 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 145
+  },
+  "103913": {
+    "id": "103913",
+    "name": "TĐC Tân Phước",
+    "khu_vuc": "Phú Mỹ",
+    "count": 8
+  },
+  "103914": {
+    "id": "103914",
+    "name": "TĐC Tân Phước 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 5
+  },
+  "103924": {
+    "id": "103924",
+    "name": "Ông Trịnh 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 61
+  },
+  "103926": {
+    "id": "103926",
+    "name": "Ông Trịnh 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 63
+  },
+  "103927": {
+    "id": "103927",
+    "name": "Ông Trịnh 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 120
+  },
+  "103930": {
+    "id": "103930",
+    "name": "Ông Trịnh 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 67
+  },
+  "103933": {
+    "id": "103933",
+    "name": "Phước Hòa 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 145
+  },
+  "103936": {
+    "id": "103936",
+    "name": "Phước Lộc 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 31
+  },
+  "103937": {
+    "id": "103937",
+    "name": "Phước Lộc 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 111
+  },
+  "103939": {
+    "id": "103939",
+    "name": "Phước Lộc 8",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "103940": {
+    "id": "103940",
+    "name": "Phước Lộc 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 109
+  },
+  "103941": {
+    "id": "103941",
+    "name": "Phước Lộc 11",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "103942": {
+    "id": "103942",
+    "name": "Phước Lộc 9",
+    "khu_vuc": "Phú Mỹ",
+    "count": 114
+  },
+  "103949": {
+    "id": "103949",
+    "name": "Phước Lộc 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "103951": {
+    "id": "103951",
+    "name": "Lò Than",
+    "khu_vuc": "Phú Mỹ",
+    "count": 109
+  },
+  "103954": {
+    "id": "103954",
+    "name": "Lò Than 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "103956": {
+    "id": "103956",
+    "name": "Lò Than 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 55
+  },
+  "103957": {
+    "id": "103957",
+    "name": "Lò Than 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 131
+  },
+  "103961": {
+    "id": "103961",
+    "name": "Ông Trịnh 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 48
+  },
+  "103964": {
+    "id": "103964",
+    "name": "Ông Trịnh 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 93
+  },
+  "103967": {
+    "id": "103967",
+    "name": "Tân Lộc 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 90
+  },
+  "103996": {
+    "id": "103996",
+    "name": "Tân Lộc 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 76
+  },
+  "103997": {
+    "id": "103997",
+    "name": "Phước Lộc 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 97
+  },
+  "103999": {
+    "id": "103999",
+    "name": "Tân Lộc 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 83
+  },
+  "104006": {
+    "id": "104006",
+    "name": "Tân Lộc 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 84
+  },
+  "104007": {
+    "id": "104007",
+    "name": "Tân Lộc 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 214
+  },
+  "104009": {
+    "id": "104009",
+    "name": "Ông Trịnh 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 94
+  },
+  "105947": {
+    "id": "105947",
+    "name": "Phước Bình 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 59
+  },
+  "105948": {
+    "id": "105948",
+    "name": "Phú Hà 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "105953": {
+    "id": "105953",
+    "name": "Đường 802",
+    "khu_vuc": "Phú Mỹ",
+    "count": 124
+  },
+  "105954": {
+    "id": "105954",
+    "name": "OSIMI",
+    "khu_vuc": "Phú Mỹ",
+    "count": 639
+  },
+  "105957": {
+    "id": "105957",
+    "name": "Tóc Tiên 68",
+    "khu_vuc": "Phú Mỹ",
+    "count": 14
+  },
+  "105965": {
+    "id": "105965",
+    "name": "Tân Hạnh 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 104
+  },
+  "105977": {
+    "id": "105977",
+    "name": "Tóc Tiên 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 73
+  },
+  "105982": {
+    "id": "105982",
+    "name": "Suối Tre 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "105983": {
+    "id": "105983",
+    "name": "Tân Lễ",
+    "khu_vuc": "Phú Mỹ",
+    "count": 43
+  },
+  "105991": {
+    "id": "105991",
+    "name": "Châu Pha 7",
+    "khu_vuc": "Phú Mỹ",
+    "count": 77
+  },
+  "106019": {
+    "id": "106019",
+    "name": "Ngọc Đức 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 4
+  },
+  "106021": {
+    "id": "106021",
+    "name": "Mỹ Xuân 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 56
+  },
+  "106026": {
+    "id": "106026",
+    "name": "Trảng Cát 15",
+    "khu_vuc": "Phú Mỹ",
+    "count": 5
+  },
+  "106027": {
+    "id": "106027",
+    "name": "Trảng Cát 17",
+    "khu_vuc": "Phú Mỹ",
+    "count": 62
+  },
+  "106028": {
+    "id": "106028",
+    "name": "TĐC 6,5HA",
+    "khu_vuc": "Phú Mỹ",
+    "count": 7
+  },
+  "106032": {
+    "id": "106032",
+    "name": "Hắc Dịch 3",
+    "khu_vuc": "Phú Mỹ",
+    "count": 44
+  },
+  "106034": {
+    "id": "106034",
+    "name": "Hắc Dịch 55",
+    "khu_vuc": "Phú Mỹ",
+    "count": 42
+  },
+  "106047": {
+    "id": "106047",
+    "name": "Cầu Ri 6",
+    "khu_vuc": "Phú Mỹ",
+    "count": 22
+  },
+  "106048": {
+    "id": "106048",
+    "name": "Cầu Ri 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 100
+  },
+  "106052": {
+    "id": "106052",
+    "name": "Sông Xoài 62",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "106054": {
+    "id": "106054",
+    "name": "Tóc Tiên 65",
+    "khu_vuc": "Phú Mỹ",
+    "count": 53
+  },
+  "106058": {
+    "id": "106058",
+    "name": "Hắc Dịch 48",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "106060": {
+    "id": "106060",
+    "name": "Hắc Dịch 62",
+    "khu_vuc": "Phú Mỹ",
+    "count": 65
+  },
+  "106076": {
+    "id": "106076",
+    "name": "Phú Mỹ C4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 155
+  },
+  "106077": {
+    "id": "106077",
+    "name": "Mỹ Xuân 31",
+    "khu_vuc": "Phú Mỹ",
+    "count": 324
+  },
+  "106078": {
+    "id": "106078",
+    "name": "Thị Vải 13",
+    "khu_vuc": "Phú Mỹ",
+    "count": 103
+  },
+  "106113": {
+    "id": "106113",
+    "name": "Chu Hải 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 220
+  },
+  "106114": {
+    "id": "106114",
+    "name": "Chu Hải 10",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "106116": {
+    "id": "106116",
+    "name": "KDC Đông Hải",
+    "khu_vuc": "Phú Mỹ",
+    "count": 17
+  },
+  "106121": {
+    "id": "106121",
+    "name": "Giáo Xứ Phước Lộc",
+    "khu_vuc": "Phú Mỹ",
+    "count": 215
+  },
+  "106123": {
+    "id": "106123",
+    "name": "Phước Lộc 12",
+    "khu_vuc": "Phú Mỹ",
+    "count": 140
+  },
+  "130053": {
+    "id": "130053",
+    "name": "ECOTWN Phú Mỹ",
+    "khu_vuc": "Phú Mỹ",
+    "count": 45
+  },
+  "130207": {
+    "id": "130207",
+    "name": "Mỹ Xuân 16",
+    "khu_vuc": "Phú Mỹ",
+    "count": 74
+  },
+  "1504L0024": {
+    "id": "1504L0024",
+    "name": "JR-77MX/83/4-T2 Nhà Văn Hóa MỸ Xuân",
+    "khu_vuc": "Phú Mỹ",
+    "count": 89
+  },
+  "1504L0528": {
+    "id": "1504L0528",
+    "name": "54E-482MXB1/196/17-T8 TĐ7 Hắc Dịch",
+    "khu_vuc": "Phú Mỹ",
+    "count": 71
+  },
+  "1504L0530": {
+    "id": "1504L0530",
+    "name": "SX-482MXB1/196/26-Tổ 1,2,3,4 ấp 3, xã Hắc Dịch",
+    "khu_vuc": "Phú Mỹ",
+    "count": 92
+  },
+  "1504L1410": {
+    "id": "1504L1410",
+    "name": "SS-482MXB1/285- Tổ 6, ấp 3 Sông Xoài",
+    "khu_vuc": "Phú Mỹ",
+    "count": 47
+  },
+  "1504L2100": {
+    "id": "1504L2100",
+    "name": "SV-482MXB1/201/39A-T3 H.D - B.Phượng",
+    "khu_vuc": "Phú Mỹ",
+    "count": 127
+  },
+  "1504L2200": {
+    "id": "1504L2200",
+    "name": "KC-482MXB1/201/88-Tổ 4 Bàu Phượng",
+    "khu_vuc": "Phú Mỹ",
+    "count": 117
+  },
+  "1504L3410": {
+    "id": "1504L3410",
+    "name": "RG-482MXB1/192/11-Chợ Mới Hắc Dịch",
+    "khu_vuc": "Phú Mỹ",
+    "count": 122
+  },
+  "1504L4696": {
+    "id": "1504L4696",
+    "name": "YR-477CĐ/261-T2 Phước Tân 5",
+    "khu_vuc": "Phú Mỹ",
+    "count": 2
+  },
+  "1504N0124": {
+    "id": "1504N0124",
+    "name": "BZ-75PM/13/4T-T1 Chợ Quảng Phú",
+    "khu_vuc": "Phú Mỹ",
+    "count": 161
+  },
+  "1504N1018": {
+    "id": "1504N1018",
+    "name": "21C-75PM/183/7/1-T2 Lam Sơn 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 32
+  },
+  "1504N1166": {
+    "id": "1504N1166",
+    "name": "03D-75PM/205/6-Ấp Tân Thành 4",
+    "khu_vuc": "Phú Mỹ",
+    "count": 58
+  },
+  "1504N1740": {
+    "id": "1504N1740",
+    "name": "LX-482BN/480BN/99 -Láng Cát-Long Sơn 1",
+    "khu_vuc": "Phú Mỹ",
+    "count": 134
+  },
+  "1504N2471": {
+    "id": "1504N2471",
+    "name": "09L-81GD/568/1-T2 Chu Hải 2",
+    "khu_vuc": "Phú Mỹ",
+    "count": 35
+  },
+  "1504Q1910": {
+    "id": "1504Q1910",
+    "name": "XJ-81GD/232/4F-T1 PHÚ MỸ 1",
+    "khu_vuc": "Phú Mỹ",
+    "count": 162
+  },
+  "1504Q2791": {
+    "id": "1504Q2791",
+    "name": "45G - Trụ 481TH/57 - UBND Phường Tân Phước",
+    "khu_vuc": "Phú Mỹ",
+    "count": 1
+  },
+  "1504Q2993": {
+    "id": "1504Q2993",
+    "name": "NK-477TV/313/8T-Tổ 7 Ông Trịnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 123
+  },
+  "1504Q3030": {
+    "id": "1504Q3030",
+    "name": "GM-81GD/320/6-Khu 4 Ông Trịnh",
+    "khu_vuc": "Phú Mỹ",
+    "count": 1
+  },
+  "1501T5600": {
+    "id": "1501T5600",
+    "name": "02H-480BN/30/85- Bến Điệp 3A",
+    "khu_vuc": "Vũng Tàu",
+    "count": 157
+  },
+  "1501T0800": {
+    "id": "1501T0800",
+    "name": "480BN/27 - T2 Long Sơn 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 111
+  },
+  "105121": {
+    "id": "105121",
+    "name": "Ba Cu 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 280
+  },
+  "105367": {
+    "id": "105367",
+    "name": "Ba Cu 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 256
+  },
+  "105120": {
+    "id": "105120",
+    "name": "Ba Cu 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 311
+  },
+  "105355": {
+    "id": "105355",
+    "name": "Bà Triệu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 262
+  },
+  "105382": {
+    "id": "105382",
+    "name": "Bà Triệu 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 450
+  },
+  "105361": {
+    "id": "105361",
+    "name": "Bà Triệu 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 315
+  },
+  "105808": {
+    "id": "105808",
+    "name": "Bạch Đằng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 237
+  },
+  "105815": {
+    "id": "105815",
+    "name": "Bạch Đằng 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 210
+  },
+  "105814": {
+    "id": "105814",
+    "name": "Bạch Đằng 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 374
+  },
+  "104984": {
+    "id": "104984",
+    "name": "Bàu Trũng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 459
+  },
+  "104980": {
+    "id": "104980",
+    "name": "Bàu Trũng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 325
+  },
+  "104979": {
+    "id": "104979",
+    "name": "Bàu Trũng 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 170
+  },
+  "105164": {
+    "id": "105164",
+    "name": "Bắc Sơn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 267
+  },
+  "105639": {
+    "id": "105639",
+    "name": "Bến Điệp",
+    "khu_vuc": "Vũng Tàu",
+    "count": 34
+  },
+  "105640": {
+    "id": "105640",
+    "name": "Bến Điệp 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 139
+  },
+  "105642": {
+    "id": "105642",
+    "name": "Bến Điệp 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 213
+  },
+  "105011": {
+    "id": "105011",
+    "name": "Bến Đình",
+    "khu_vuc": "Vũng Tàu",
+    "count": 152
+  },
+  "105926": {
+    "id": "105926",
+    "name": "Bến Nôm",
+    "khu_vuc": "Vũng Tàu",
+    "count": 127
+  },
+  "105631": {
+    "id": "105631",
+    "name": "Bến xe Cầu Bần",
+    "khu_vuc": "Vũng Tàu",
+    "count": 51
+  },
+  "104957": {
+    "id": "104957",
+    "name": "Biên Phòng 518",
+    "khu_vuc": "Vũng Tàu",
+    "count": 21
+  },
+  "105922": {
+    "id": "105922",
+    "name": "Biệt Chính",
+    "khu_vuc": "Vũng Tàu",
+    "count": 327
+  },
+  "105495": {
+    "id": "105495",
+    "name": "Bình Giã",
+    "khu_vuc": "Vũng Tàu",
+    "count": 468
+  },
+  "105498": {
+    "id": "105498",
+    "name": "Bình Giã 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 238
+  },
+  "105499": {
+    "id": "105499",
+    "name": "Bình Giã 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 306
+  },
+  "105291": {
+    "id": "105291",
+    "name": "Bình Giã 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 223
+  },
+  "105287": {
+    "id": "105287",
+    "name": "Bình Giã 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 317
+  },
+  "105288": {
+    "id": "105288",
+    "name": "Bình Giã 14",
+    "khu_vuc": "Vũng Tàu",
+    "count": 205
+  },
+  "105503": {
+    "id": "105503",
+    "name": "Bình Giã 15",
+    "khu_vuc": "Vũng Tàu",
+    "count": 297
+  },
+  "105497": {
+    "id": "105497",
+    "name": "Bình Giã 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 172
+  },
+  "105500": {
+    "id": "105500",
+    "name": "Bình Giã 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 177
+  },
+  "105501": {
+    "id": "105501",
+    "name": "Bình Giã 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 354
+  },
+  "105502": {
+    "id": "105502",
+    "name": "Bình Giã 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 539
+  },
+  "105290": {
+    "id": "105290",
+    "name": "Bình Giã 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 193
+  },
+  "105286": {
+    "id": "105286",
+    "name": "Bình Giã 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 399
+  },
+  "105285": {
+    "id": "105285",
+    "name": "Bình Giã 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 277
+  },
+  "105728": {
+    "id": "105728",
+    "name": "BLUE SAPIER",
+    "khu_vuc": "Vũng Tàu",
+    "count": 131
+  },
+  "105731": {
+    "id": "105731",
+    "name": "BLUE SAPIER 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 147
+  },
+  "105469": {
+    "id": "105469",
+    "name": "Bộ đội Núi Nhỏ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1
+  },
+  "105775": {
+    "id": "105775",
+    "name": "Bờ Kênh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 274
+  },
+  "105780": {
+    "id": "105780",
+    "name": "Bờ Kênh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 454
+  },
+  "105786": {
+    "id": "105786",
+    "name": "Bờ Kênh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 310
+  },
+  "105769": {
+    "id": "105769",
+    "name": "Bờ Kênh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 11
+  },
+  "105567": {
+    "id": "105567",
+    "name": "BT Phương Nam",
+    "khu_vuc": "Vũng Tàu",
+    "count": 120
+  },
+  "106320": {
+    "id": "106320",
+    "name": "BT Phương Nam 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "105715": {
+    "id": "105715",
+    "name": "BT Thanh Bình",
+    "khu_vuc": "Vũng Tàu",
+    "count": 52
+  },
+  "105716": {
+    "id": "105716",
+    "name": "BT Thanh Bình 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 34
+  },
+  "105718": {
+    "id": "105718",
+    "name": "BT Thanh Bình 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 2
+  },
+  "105789": {
+    "id": "105789",
+    "name": "Bùi Thiện Ngộ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 291
+  },
+  "105793": {
+    "id": "105793",
+    "name": "Bùi Thiện Ngộ 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 43
+  },
+  "105767": {
+    "id": "105767",
+    "name": "Bùi Thiện Ngộ 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 297
+  },
+  "105764": {
+    "id": "105764",
+    "name": "Bùi Thiện Ngộ 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 243
+  },
+  "105762": {
+    "id": "105762",
+    "name": "Bùi Thiện Ngộ 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 216
+  },
+  "105765": {
+    "id": "105765",
+    "name": "Bùi Thiện Ngộ 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 408
+  },
+  "105756": {
+    "id": "105756",
+    "name": "Bùi Thiện Ngộ 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 177
+  },
+  "105755": {
+    "id": "105755",
+    "name": "Bùi Thiện Ngộ 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 109
+  },
+  "105842": {
+    "id": "105842",
+    "name": "Cao Ốc Thủy Tiên",
+    "khu_vuc": "Vũng Tàu",
+    "count": 194
+  },
+  "104875": {
+    "id": "104875",
+    "name": "Cầu Rạch Bà",
+    "khu_vuc": "Vũng Tàu",
+    "count": 75
+  },
+  "105368": {
+    "id": "105368",
+    "name": "CC Ba Cu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 85
+  },
+  "105206": {
+    "id": "105206",
+    "name": "CC Bàu Sen",
+    "khu_vuc": "Vũng Tàu",
+    "count": 421
+  },
+  "105213": {
+    "id": "105213",
+    "name": "CC Bàu Sen 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 418
+  },
+  "104961": {
+    "id": "104961",
+    "name": "CC Bàu Trũng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 370
+  },
+  "104963": {
+    "id": "104963",
+    "name": "CC Bàu Trũng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 378
+  },
+  "105763": {
+    "id": "105763",
+    "name": "CC Bình An",
+    "khu_vuc": "Vũng Tàu",
+    "count": 383
+  },
+  "105542": {
+    "id": "105542",
+    "name": "CC DIC",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "105482": {
+    "id": "105482",
+    "name": "CC GOLD SEA",
+    "khu_vuc": "Vũng Tàu",
+    "count": 326
+  },
+  "105552": {
+    "id": "105552",
+    "name": "CC Kim Ngân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 150
+  },
+  "105005": {
+    "id": "105005",
+    "name": "CC LAPEN",
+    "khu_vuc": "Vũng Tàu",
+    "count": 482
+  },
+  "105300": {
+    "id": "105300",
+    "name": "CC Nam Kỳ Khởi Nghĩa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 318
+  },
+  "104819": {
+    "id": "104819",
+    "name": "CC Ngô Đức Kế",
+    "khu_vuc": "Vũng Tàu",
+    "count": 312
+  },
+  "104811": {
+    "id": "104811",
+    "name": "CC Nguyễn Thái Học",
+    "khu_vuc": "Vũng Tàu",
+    "count": 596
+  },
+  "105195": {
+    "id": "105195",
+    "name": "CC OSC",
+    "khu_vuc": "Vũng Tàu",
+    "count": 496
+  },
+  "106246": {
+    "id": "106246",
+    "name": "CC Thắng Tam",
+    "khu_vuc": "Vũng Tàu",
+    "count": 504
+  },
+  "105649": {
+    "id": "105649",
+    "name": "CC Thùy Vân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 217
+  },
+  "104992": {
+    "id": "104992",
+    "name": "CC VIETUBES",
+    "khu_vuc": "Vũng Tàu",
+    "count": 72
+  },
+  "104993": {
+    "id": "104993",
+    "name": "CC VIETUBES 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 108
+  },
+  "105353": {
+    "id": "105353",
+    "name": "CC Vũng Tàu CENTER",
+    "khu_vuc": "Vũng Tàu",
+    "count": 335
+  },
+  "105027": {
+    "id": "105027",
+    "name": "Chi Lăng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 94
+  },
+  "105028": {
+    "id": "105028",
+    "name": "Chi Lăng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 187
+  },
+  "105030": {
+    "id": "105030",
+    "name": "Chi Lăng 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 44
+  },
+  "105029": {
+    "id": "105029",
+    "name": "Chi Lăng 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 84
+  },
+  "104967": {
+    "id": "104967",
+    "name": "Chí Linh 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 200
+  },
+  "104970": {
+    "id": "104970",
+    "name": "Chí Linh 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 51
+  },
+  "104972": {
+    "id": "104972",
+    "name": "Chí Linh 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 207
+  },
+  "104973": {
+    "id": "104973",
+    "name": "Chí Linh 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 120
+  },
+  "104971": {
+    "id": "104971",
+    "name": "Chí Linh 15",
+    "khu_vuc": "Vũng Tàu",
+    "count": 281
+  },
+  "104974": {
+    "id": "104974",
+    "name": "Chí Linh 16",
+    "khu_vuc": "Vũng Tàu",
+    "count": 191
+  },
+  "104975": {
+    "id": "104975",
+    "name": "Chí Linh 18",
+    "khu_vuc": "Vũng Tàu",
+    "count": 92
+  },
+  "104990": {
+    "id": "104990",
+    "name": "Chí Linh 20",
+    "khu_vuc": "Vũng Tàu",
+    "count": 295
+  },
+  "104991": {
+    "id": "104991",
+    "name": "Chí Linh 21",
+    "khu_vuc": "Vũng Tàu",
+    "count": 295
+  },
+  "104968": {
+    "id": "104968",
+    "name": "Chí Linh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 399
+  },
+  "104969": {
+    "id": "104969",
+    "name": "Chí Linh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 398
+  },
+  "104964": {
+    "id": "104964",
+    "name": "Chí Linh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 201
+  },
+  "104965": {
+    "id": "104965",
+    "name": "Chí Linh 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 88
+  },
+  "104966": {
+    "id": "104966",
+    "name": "Chí Linh 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 33
+  },
+  "104894": {
+    "id": "104894",
+    "name": "Chợ Phước Thành",
+    "khu_vuc": "Vũng Tàu",
+    "count": 381
+  },
+  "105096": {
+    "id": "105096",
+    "name": "Chợ phường 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 290
+  },
+  "105097": {
+    "id": "105097",
+    "name": "Chợ phường 102",
+    "khu_vuc": "Vũng Tàu",
+    "count": 59
+  },
+  "105102": {
+    "id": "105102",
+    "name": "Chợ Rạch Dừa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 461
+  },
+  "105294": {
+    "id": "105294",
+    "name": "Chu Mạnh Trịnh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 203
+  },
+  "105296": {
+    "id": "105296",
+    "name": "Chu Mạnh Trinh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 277
+  },
+  "105297": {
+    "id": "105297",
+    "name": "Chu Mạnh Trinh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 194
+  },
+  "105295": {
+    "id": "105295",
+    "name": "Chu Mạnh Trịnh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 152
+  },
+  "104946": {
+    "id": "104946",
+    "name": "Cỏ May",
+    "khu_vuc": "Vũng Tàu",
+    "count": 320
+  },
+  "104945": {
+    "id": "104945",
+    "name": "Cỏ May 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 143
+  },
+  "104932": {
+    "id": "104932",
+    "name": "Cỏ May 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 214
+  },
+  "104940": {
+    "id": "104940",
+    "name": "Cỏ May 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 208
+  },
+  "105379": {
+    "id": "105379",
+    "name": "Cô Bắc",
+    "khu_vuc": "Vũng Tàu",
+    "count": 315
+  },
+  "105370": {
+    "id": "105370",
+    "name": "Cô Giang",
+    "khu_vuc": "Vũng Tàu",
+    "count": 183
+  },
+  "105162": {
+    "id": "105162",
+    "name": "Cống Ngăn Triều",
+    "khu_vuc": "Vũng Tàu",
+    "count": 163
+  },
+  "104813": {
+    "id": "104813",
+    "name": "Công viên nước",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1
+  },
+  "105882": {
+    "id": "105882",
+    "name": "DIC PHONEIX",
+    "khu_vuc": "Vũng Tàu",
+    "count": 403
+  },
+  "105883": {
+    "id": "105883",
+    "name": "DIC PHONEIX 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 402
+  },
+  "105881": {
+    "id": "105881",
+    "name": "DIC PHONEIX 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 407
+  },
+  "105930": {
+    "id": "105930",
+    "name": "Dương Vân Nga",
+    "khu_vuc": "Vũng Tàu",
+    "count": 411
+  },
+  "105124": {
+    "id": "105124",
+    "name": "Đại An",
+    "khu_vuc": "Vũng Tàu",
+    "count": 315
+  },
+  "106342": {
+    "id": "106342",
+    "name": "Đạt Phương",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1
+  },
+  "105177": {
+    "id": "105177",
+    "name": "Đô Lương",
+    "khu_vuc": "Vũng Tàu",
+    "count": 212
+  },
+  "105191": {
+    "id": "105191",
+    "name": "Đô Lương 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 347
+  },
+  "105179": {
+    "id": "105179",
+    "name": "Đô Lương 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 373
+  },
+  "106239": {
+    "id": "106239",
+    "name": "Đô Lương 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 409
+  },
+  "105178": {
+    "id": "105178",
+    "name": "Đô Lương 14",
+    "khu_vuc": "Vũng Tàu",
+    "count": 455
+  },
+  "106243": {
+    "id": "106243",
+    "name": "Đô Lương 15",
+    "khu_vuc": "Vũng Tàu",
+    "count": 371
+  },
+  "106240": {
+    "id": "106240",
+    "name": "Đô Lương 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 527
+  },
+  "105193": {
+    "id": "105193",
+    "name": "Đô Lương 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 122
+  },
+  "105187": {
+    "id": "105187",
+    "name": "Đô Lương 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 15
+  },
+  "105185": {
+    "id": "105185",
+    "name": "Đô Lương 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 264
+  },
+  "105183": {
+    "id": "105183",
+    "name": "Đô Lương 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 69
+  },
+  "105180": {
+    "id": "105180",
+    "name": "Đô Lương 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 510
+  },
+  "105189": {
+    "id": "105189",
+    "name": "Đô Lương 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 372
+  },
+  "105190": {
+    "id": "105190",
+    "name": "Đô Lương 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 316
+  },
+  "105273": {
+    "id": "105273",
+    "name": "Đội Cấn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 222
+  },
+  "105801": {
+    "id": "105801",
+    "name": "Đội Cấn 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 309
+  },
+  "105207": {
+    "id": "105207",
+    "name": "Đồi Ngọc Tước",
+    "khu_vuc": "Vũng Tàu",
+    "count": 19
+  },
+  "106275": {
+    "id": "106275",
+    "name": "Đồi Ngọc Tước 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 9
+  },
+  "105945": {
+    "id": "105945",
+    "name": "Đống Đa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 381
+  },
+  "105946": {
+    "id": "105946",
+    "name": "Đống Đa 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 234
+  },
+  "106233": {
+    "id": "106233",
+    "name": "Đông Xuyên",
+    "khu_vuc": "Vũng Tàu",
+    "count": 468
+  },
+  "105918": {
+    "id": "105918",
+    "name": "Đông Xuyên 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 237
+  },
+  "104874": {
+    "id": "104874",
+    "name": "Đông Xuyên 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 215
+  },
+  "105182": {
+    "id": "105182",
+    "name": "Đường 29",
+    "khu_vuc": "Vũng Tàu",
+    "count": 37
+  },
+  "105783": {
+    "id": "105783",
+    "name": "Đường 293",
+    "khu_vuc": "Vũng Tàu",
+    "count": 62
+  },
+  "105128": {
+    "id": "105128",
+    "name": "Đường 34",
+    "khu_vuc": "Vũng Tàu",
+    "count": 296
+  },
+  "105129": {
+    "id": "105129",
+    "name": "Đường 342",
+    "khu_vuc": "Vũng Tàu",
+    "count": 108
+  },
+  "105131": {
+    "id": "105131",
+    "name": "Đường 343",
+    "khu_vuc": "Vũng Tàu",
+    "count": 215
+  },
+  "105170": {
+    "id": "105170",
+    "name": "Đường 344",
+    "khu_vuc": "Vũng Tàu",
+    "count": 266
+  },
+  "104908": {
+    "id": "104908",
+    "name": "Ẹo Ông Từ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 144
+  },
+  "105019": {
+    "id": "105019",
+    "name": "Ẹo Ông Từ 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 60
+  },
+  "104912": {
+    "id": "104912",
+    "name": "Ẹo Ông Từ 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 119
+  },
+  "106340": {
+    "id": "106340",
+    "name": "GATEWAY6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1525
+  },
+  "105101": {
+    "id": "105101",
+    "name": "Giáo Xứ Hải Xuân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 240
+  },
+  "105610": {
+    "id": "105610",
+    "name": "Gò Găng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 77
+  },
+  "105624": {
+    "id": "105624",
+    "name": "Gò Găng 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 79
+  },
+  "105611": {
+    "id": "105611",
+    "name": "Gò Găng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 34
+  },
+  "106281": {
+    "id": "106281",
+    "name": "Gò Găng 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 60
+  },
+  "105623": {
+    "id": "105623",
+    "name": "Gò Găng 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 6
+  },
+  "105619": {
+    "id": "105619",
+    "name": "Gò Găng 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 21
+  },
+  "105622": {
+    "id": "105622",
+    "name": "Gò Găng 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 33
+  },
+  "105609": {
+    "id": "105609",
+    "name": "Gò Găng 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 40
+  },
+  "105662": {
+    "id": "105662",
+    "name": "Hạ Long",
+    "khu_vuc": "Vũng Tàu",
+    "count": 243
+  },
+  "105661": {
+    "id": "105661",
+    "name": "Hạ Long 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 18
+  },
+  "105659": {
+    "id": "105659",
+    "name": "Hạ Long 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 8
+  },
+  "105658": {
+    "id": "105658",
+    "name": "Hạ Long 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 29
+  },
+  "105656": {
+    "id": "105656",
+    "name": "Hạ Long 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 51
+  },
+  "105657": {
+    "id": "105657",
+    "name": "Hạ Long 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 22
+  },
+  "106269": {
+    "id": "106269",
+    "name": "Hải Đăng Núi Nhỏ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 5
+  },
+  "130504": {
+    "id": "130504",
+    "name": "Hải Đoàn 129",
+    "khu_vuc": "Vũng Tàu",
+    "count": 98
+  },
+  "105760": {
+    "id": "105760",
+    "name": "Hàn Thuyên",
+    "khu_vuc": "Vũng Tàu",
+    "count": 291
+  },
+  "105759": {
+    "id": "105759",
+    "name": "Hàn Thuyên 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 309
+  },
+  "105106": {
+    "id": "105106",
+    "name": "Hàng Dương",
+    "khu_vuc": "Vũng Tàu",
+    "count": 341
+  },
+  "104867": {
+    "id": "104867",
+    "name": "Hàng Dương 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 174
+  },
+  "105861": {
+    "id": "105861",
+    "name": "Hoàng Diệu 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 6
+  },
+  "105095": {
+    "id": "105095",
+    "name": "Hoàng Hoa Thám",
+    "khu_vuc": "Vũng Tàu",
+    "count": 298
+  },
+  "105444": {
+    "id": "105444",
+    "name": "Hoàng Hoa Thám 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "105446": {
+    "id": "105446",
+    "name": "Hoàng Hoa Thám 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 173
+  },
+  "105476": {
+    "id": "105476",
+    "name": "Hoàng Hoa Thám 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 84
+  },
+  "105492": {
+    "id": "105492",
+    "name": "Hoàng Hoa Thám 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 124
+  },
+  "105094": {
+    "id": "105094",
+    "name": "Hoàng Hoa Thám 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 224
+  },
+  "105312": {
+    "id": "105312",
+    "name": "Hoàng Văn Thụ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 255
+  },
+  "105112": {
+    "id": "105112",
+    "name": "Hoàng Văn Thụ 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 430
+  },
+  "105485": {
+    "id": "105485",
+    "name": "Hòn Ngọc Viễn Đông",
+    "khu_vuc": "Vũng Tàu",
+    "count": 19
+  },
+  "105202": {
+    "id": "105202",
+    "name": "HOTEX",
+    "khu_vuc": "Vũng Tàu",
+    "count": 4
+  },
+  "105598": {
+    "id": "105598",
+    "name": "Hồ Lọc Nước",
+    "khu_vuc": "Vũng Tàu",
+    "count": 420
+  },
+  "105236": {
+    "id": "105236",
+    "name": "Hồ Quý Ly",
+    "khu_vuc": "Vũng Tàu",
+    "count": 23
+  },
+  "105224": {
+    "id": "105224",
+    "name": "Hồ Quý Ly 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 65
+  },
+  "1501T4600": {
+    "id": "1501T4600",
+    "name": "HU-480BN/30/58 -Bến Điệp 1 A",
+    "khu_vuc": "Vũng Tàu",
+    "count": 179
+  },
+  "105274": {
+    "id": "105274",
+    "name": "Huyền Trân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 254
+  },
+  "105276": {
+    "id": "105276",
+    "name": "Huyền Trân 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 320
+  },
+  "105275": {
+    "id": "105275",
+    "name": "Huyền Trân 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 343
+  },
+  "105277": {
+    "id": "105277",
+    "name": "Huyền Trân 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 85
+  },
+  "1501T4800": {
+    "id": "1501T4800",
+    "name": "HX-480BN/30/71 -Bến Điệp 2A",
+    "khu_vuc": "Vũng Tàu",
+    "count": 34
+  },
+  "105790": {
+    "id": "105790",
+    "name": "KDC 47HA",
+    "khu_vuc": "Vũng Tàu",
+    "count": 542
+  },
+  "105796": {
+    "id": "105796",
+    "name": "KDC 47HA 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 110
+  },
+  "105586": {
+    "id": "105586",
+    "name": "KDC Bình Minh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 97
+  },
+  "105772": {
+    "id": "105772",
+    "name": "KDC Đồi 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 116
+  },
+  "105773": {
+    "id": "105773",
+    "name": "KDC Đồi 22",
+    "khu_vuc": "Vũng Tàu",
+    "count": 151
+  },
+  "105771": {
+    "id": "105771",
+    "name": "KDC Đồi 23",
+    "khu_vuc": "Vũng Tàu",
+    "count": 248
+  },
+  "106323": {
+    "id": "106323",
+    "name": "KDC Đồi 24",
+    "khu_vuc": "Vũng Tàu",
+    "count": 247
+  },
+  "105774": {
+    "id": "105774",
+    "name": "KDC Đồi 25",
+    "khu_vuc": "Vũng Tàu",
+    "count": 422
+  },
+  "104917": {
+    "id": "104917",
+    "name": "KDC Hoa Lư",
+    "khu_vuc": "Vũng Tàu",
+    "count": 84
+  },
+  "105781": {
+    "id": "105781",
+    "name": "KDC Phước Sơn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 96
+  },
+  "105374": {
+    "id": "105374",
+    "name": "KDC Quân sự Tỉnh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 113
+  },
+  "104910": {
+    "id": "104910",
+    "name": "KDC Sông Cây khế",
+    "khu_vuc": "Vũng Tàu",
+    "count": 20
+  },
+  "105727": {
+    "id": "105727",
+    "name": "KDC Tây 3 tháng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 17
+  },
+  "105477": {
+    "id": "105477",
+    "name": "Khách sạn Hoàng Hoa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 26
+  },
+  "105279": {
+    "id": "105279",
+    "name": "Khách sạn Phương Anh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 151
+  },
+  "105860": {
+    "id": "105860",
+    "name": "Khách sạn Rex",
+    "khu_vuc": "Vũng Tàu",
+    "count": 7
+  },
+  "105777": {
+    "id": "105777",
+    "name": "Khang Linh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 669
+  },
+  "105787": {
+    "id": "105787",
+    "name": "Khang Linh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 277
+  },
+  "105788": {
+    "id": "105788",
+    "name": "Khang Linh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 59
+  },
+  "105782": {
+    "id": "105782",
+    "name": "Khang Linh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 242
+  },
+  "106324": {
+    "id": "106324",
+    "name": "Khang Linh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 196
+  },
+  "105795": {
+    "id": "105795",
+    "name": "Khang Linh 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 274
+  },
+  "105473": {
+    "id": "105473",
+    "name": "Khu Á Châu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 111
+  },
+  "105474": {
+    "id": "105474",
+    "name": "Khu Á Châu 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 33
+  },
+  "105004": {
+    "id": "105004",
+    "name": "Khu nhà ở 41D",
+    "khu_vuc": "Vũng Tàu",
+    "count": 34
+  },
+  "105311": {
+    "id": "105311",
+    "name": "Khu nhà ở IDICO",
+    "khu_vuc": "Vũng Tàu",
+    "count": 23
+  },
+  "104898": {
+    "id": "104898",
+    "name": "Kiểm Ngư",
+    "khu_vuc": "Vũng Tàu",
+    "count": 176
+  },
+  "104899": {
+    "id": "104899",
+    "name": "Kiểm Ngư 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 161
+  },
+  "105927": {
+    "id": "105927",
+    "name": "Kim Đồng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 115
+  },
+  "105371": {
+    "id": "105371",
+    "name": "Ký Con",
+    "khu_vuc": "Vũng Tàu",
+    "count": 458
+  },
+  "105229": {
+    "id": "105229",
+    "name": "La Văn Cầu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 9
+  },
+  "105450": {
+    "id": "105450",
+    "name": "Lạc Long Quân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 232
+  },
+  "105133": {
+    "id": "105133",
+    "name": "Làng cá Bến Đình",
+    "khu_vuc": "Vũng Tàu",
+    "count": 288
+  },
+  "130518": {
+    "id": "130518",
+    "name": "Lê Hồng Phong",
+    "khu_vuc": "Vũng Tàu",
+    "count": 129
+  },
+  "105350": {
+    "id": "105350",
+    "name": "Lê Hồng Phong 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 120
+  },
+  "105579": {
+    "id": "105579",
+    "name": "Lê Hồng Phong 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 85
+  },
+  "105551": {
+    "id": "105551",
+    "name": "Lê Hồng Phong 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 37
+  },
+  "105351": {
+    "id": "105351",
+    "name": "Lê Hồng Phong 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 268
+  },
+  "105375": {
+    "id": "105375",
+    "name": "Lê Hồng Phong 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 263
+  },
+  "105378": {
+    "id": "105378",
+    "name": "Lê Hồng Phong 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 141
+  },
+  "105380": {
+    "id": "105380",
+    "name": "Lê Hồng Phong 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 376
+  },
+  "105278": {
+    "id": "105278",
+    "name": "Lê Hồng Phong 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 270
+  },
+  "105282": {
+    "id": "105282",
+    "name": "Lê Hồng Phong 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 146
+  },
+  "105436": {
+    "id": "105436",
+    "name": "Lê Hồng Phong 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 177
+  },
+  "105646": {
+    "id": "105646",
+    "name": "Lê Hồng Phong 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 3
+  },
+  "105281": {
+    "id": "105281",
+    "name": "Lê Hồng Phong 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 61
+  },
+  "105594": {
+    "id": "105594",
+    "name": "Lê Lợi",
+    "khu_vuc": "Vũng Tàu",
+    "count": 214
+  },
+  "105595": {
+    "id": "105595",
+    "name": "Lê Lợi 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 483
+  },
+  "105139": {
+    "id": "105139",
+    "name": "Lê Lợi 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 314
+  },
+  "105140": {
+    "id": "105140",
+    "name": "Lê Lợi 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 309
+  },
+  "105145": {
+    "id": "105145",
+    "name": "Lê Lợi 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 326
+  },
+  "105146": {
+    "id": "105146",
+    "name": "Lê Lợi 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 389
+  },
+  "105596": {
+    "id": "105596",
+    "name": "Lê Lợi 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 372
+  },
+  "105356": {
+    "id": "105356",
+    "name": "Lê Ngọc Hân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 169
+  },
+  "105304": {
+    "id": "105304",
+    "name": "Lê Quang Định",
+    "khu_vuc": "Vũng Tàu",
+    "count": 74
+  },
+  "105305": {
+    "id": "105305",
+    "name": "Lê Quang Định 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 181
+  },
+  "105306": {
+    "id": "105306",
+    "name": "Lê Quang Định 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 456
+  },
+  "105307": {
+    "id": "105307",
+    "name": "Lê Quang Định 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 482
+  },
+  "105308": {
+    "id": "105308",
+    "name": "Lê Quang Định 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 379
+  },
+  "105309": {
+    "id": "105309",
+    "name": "Lê Quang Định 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 445
+  },
+  "105014": {
+    "id": "105014",
+    "name": "Lê Văn Lộc",
+    "khu_vuc": "Vũng Tàu",
+    "count": 126
+  },
+  "105013": {
+    "id": "105013",
+    "name": "Lê Văn Lộc 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 257
+  },
+  "105871": {
+    "id": "105871",
+    "name": "Long Sơn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 314
+  },
+  "105636": {
+    "id": "105636",
+    "name": "Long Sơn 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 237
+  },
+  "105637": {
+    "id": "105637",
+    "name": "Long Sơn 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 155
+  },
+  "105633": {
+    "id": "105633",
+    "name": "Long Sơn 14",
+    "khu_vuc": "Vũng Tàu",
+    "count": 78
+  },
+  "106332": {
+    "id": "106332",
+    "name": "Long Sơn 16",
+    "khu_vuc": "Vũng Tàu",
+    "count": 142
+  },
+  "105869": {
+    "id": "105869",
+    "name": "Long Sơn 17",
+    "khu_vuc": "Vũng Tàu",
+    "count": 113
+  },
+  "105240": {
+    "id": "105240",
+    "name": "Long Sơn 18",
+    "khu_vuc": "Vũng Tàu",
+    "count": 160
+  },
+  "105241": {
+    "id": "105241",
+    "name": "Long Sơn 19",
+    "khu_vuc": "Vũng Tàu",
+    "count": 42
+  },
+  "105867": {
+    "id": "105867",
+    "name": "Long Sơn 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 117
+  },
+  "105877": {
+    "id": "105877",
+    "name": "Long Sơn 20",
+    "khu_vuc": "Vũng Tàu",
+    "count": 98
+  },
+  "105878": {
+    "id": "105878",
+    "name": "Long Sơn 21",
+    "khu_vuc": "Vũng Tàu",
+    "count": 102
+  },
+  "105244": {
+    "id": "105244",
+    "name": "Long Sơn 23",
+    "khu_vuc": "Vũng Tàu",
+    "count": 8
+  },
+  "105864": {
+    "id": "105864",
+    "name": "Long Sơn 24",
+    "khu_vuc": "Vũng Tàu",
+    "count": 40
+  },
+  "105629": {
+    "id": "105629",
+    "name": "Long Sơn 25",
+    "khu_vuc": "Vũng Tàu",
+    "count": 471
+  },
+  "105635": {
+    "id": "105635",
+    "name": "Long Sơn 26",
+    "khu_vuc": "Vũng Tàu",
+    "count": 18
+  },
+  "105863": {
+    "id": "105863",
+    "name": "Long Sơn 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 105
+  },
+  "105627": {
+    "id": "105627",
+    "name": "Long Sơn 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 310
+  },
+  "105630": {
+    "id": "105630",
+    "name": "Long Sơn 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 340
+  },
+  "105632": {
+    "id": "105632",
+    "name": "Long Sơn 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 663
+  },
+  "105638": {
+    "id": "105638",
+    "name": "Long Sơn 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 468
+  },
+  "105634": {
+    "id": "105634",
+    "name": "Long Sơn 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 178
+  },
+  "106338": {
+    "id": "106338",
+    "name": "Long Sơn 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 36
+  },
+  "105318": {
+    "id": "105318",
+    "name": "Lương Thế Vinh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 243
+  },
+  "105932": {
+    "id": "105932",
+    "name": "Lưu Chí Hiếu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 394
+  },
+  "105933": {
+    "id": "105933",
+    "name": "Lưu Chí Hiếu 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 127
+  },
+  "105893": {
+    "id": "105893",
+    "name": "Lưu Hữu Phước",
+    "khu_vuc": "Vũng Tàu",
+    "count": 402
+  },
+  "105895": {
+    "id": "105895",
+    "name": "Lưu Hữu Phước 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 98
+  },
+  "105364": {
+    "id": "105364",
+    "name": "Lý Thường Kiệt",
+    "khu_vuc": "Vũng Tàu",
+    "count": 68
+  },
+  "105082": {
+    "id": "105082",
+    "name": "Lý Thường Kiệt 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 215
+  },
+  "105063": {
+    "id": "105063",
+    "name": "Lý Thường Kiệt 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 320
+  },
+  "105122": {
+    "id": "105122",
+    "name": "Lý tự Trọng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 455
+  },
+  "105105": {
+    "id": "105105",
+    "name": "Mai Thúc Loan",
+    "khu_vuc": "Vũng Tàu",
+    "count": 343
+  },
+  "1501T2100": {
+    "id": "1501T2100",
+    "name": "MQ-480BN/30/24/07 - T2 Bến Xe Cầu Bần",
+    "khu_vuc": "Vũng Tàu",
+    "count": 126
+  },
+  "106226": {
+    "id": "106226",
+    "name": "Nam Bình",
+    "khu_vuc": "Vũng Tàu",
+    "count": 523
+  },
+  "105018": {
+    "id": "105018",
+    "name": "Nam Bình 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 397
+  },
+  "104903": {
+    "id": "104903",
+    "name": "Nam Bình 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 219
+  },
+  "104905": {
+    "id": "104905",
+    "name": "Nam Bình 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 155
+  },
+  "105098": {
+    "id": "105098",
+    "name": "Nam Đồng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 205
+  },
+  "104872": {
+    "id": "104872",
+    "name": "Nam Đồng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 233
+  },
+  "105298": {
+    "id": "105298",
+    "name": "Nam Kỳ Khởi Nghĩa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 176
+  },
+  "105302": {
+    "id": "105302",
+    "name": "Nam Kỳ Khởi Nghĩa 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 139
+  },
+  "105067": {
+    "id": "105067",
+    "name": "Nam Kỳ Khởi Nghĩa 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 293
+  },
+  "105066": {
+    "id": "105066",
+    "name": "Nam Kỳ Khởi Nghĩa 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 384
+  },
+  "105299": {
+    "id": "105299",
+    "name": "Nam Kỳ Khởi Nghĩa 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 510
+  },
+  "105092": {
+    "id": "105092",
+    "name": "Nam Kỳ Khởi Nghĩa 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 163
+  },
+  "104814": {
+    "id": "104814",
+    "name": "Ngô Đức Kế",
+    "khu_vuc": "Vũng Tàu",
+    "count": 69
+  },
+  "105377": {
+    "id": "105377",
+    "name": "Ngô Đức Kế 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 381
+  },
+  "104815": {
+    "id": "104815",
+    "name": "Ngô Đức Kế 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 205
+  },
+  "105494": {
+    "id": "105494",
+    "name": "Ngô Quyền",
+    "khu_vuc": "Vũng Tàu",
+    "count": 342
+  },
+  "105928": {
+    "id": "105928",
+    "name": "Ngô Quyền 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 243
+  },
+  "105931": {
+    "id": "105931",
+    "name": "Ngô Quyền 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 124
+  },
+  "105923": {
+    "id": "105923",
+    "name": "Ngô Quyền 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 357
+  },
+  "105593": {
+    "id": "105593",
+    "name": "Nguyễn An Ninh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 304
+  },
+  "105590": {
+    "id": "105590",
+    "name": "Nguyễn An Ninh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 510
+  },
+  "105320": {
+    "id": "105320",
+    "name": "Nguyễn An Ninh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 150
+  },
+  "105313": {
+    "id": "105313",
+    "name": "Nguyễn An Ninh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 151
+  },
+  "105310": {
+    "id": "105310",
+    "name": "Nguyễn An Ninh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 320
+  },
+  "104987": {
+    "id": "104987",
+    "name": "Nguyễn An Ninh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 118
+  },
+  "105316": {
+    "id": "105316",
+    "name": "Nguyễn An Ninh 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 289
+  },
+  "104986": {
+    "id": "104986",
+    "name": "Nguyễn An Ninh 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 297
+  },
+  "105607": {
+    "id": "105607",
+    "name": "Nguyễn An Ninh 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 424
+  },
+  "105592": {
+    "id": "105592",
+    "name": "Nguyễn Bảo",
+    "khu_vuc": "Vũng Tàu",
+    "count": 564
+  },
+  "105591": {
+    "id": "105591",
+    "name": "Nguyễn Bảo 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 394
+  },
+  "105064": {
+    "id": "105064",
+    "name": "Nguyễn Bỉnh Khiêm",
+    "khu_vuc": "Vũng Tàu",
+    "count": 394
+  },
+  "105065": {
+    "id": "105065",
+    "name": "Nguyễn Bỉnh Khiêm 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 249
+  },
+  "105672": {
+    "id": "105672",
+    "name": "Nguyễn Du",
+    "khu_vuc": "Vũng Tàu",
+    "count": 59
+  },
+  "105078": {
+    "id": "105078",
+    "name": "Nguyễn Du 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 57
+  },
+  "105062": {
+    "id": "105062",
+    "name": "Nguyễn Du 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 208
+  },
+  "105690": {
+    "id": "105690",
+    "name": "Nguyễn Gia Thiều",
+    "khu_vuc": "Vũng Tàu",
+    "count": 485
+  },
+  "105687": {
+    "id": "105687",
+    "name": "Nguyễn Gia Thiều 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 251
+  },
+  "105692": {
+    "id": "105692",
+    "name": "Nguyễn Gia Thiều 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 403
+  },
+  "105688": {
+    "id": "105688",
+    "name": "Nguyễn Gia Thiều 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 254
+  },
+  "105459": {
+    "id": "105459",
+    "name": "Nguyễn Hiền",
+    "khu_vuc": "Vũng Tàu",
+    "count": 30
+  },
+  "105445": {
+    "id": "105445",
+    "name": "Nguyễn Hiền 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 67
+  },
+  "105107": {
+    "id": "105107",
+    "name": "Nguyễn Hới",
+    "khu_vuc": "Vũng Tàu",
+    "count": 260
+  },
+  "105319": {
+    "id": "105319",
+    "name": "Nguyễn Hới 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 174
+  },
+  "105589": {
+    "id": "105589",
+    "name": "Nguyễn Hữu Cảnh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 265
+  },
+  "105934": {
+    "id": "105934",
+    "name": "Nguyễn Hữu Cảnh 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 157
+  },
+  "105938": {
+    "id": "105938",
+    "name": "Nguyễn Hữu Cảnh 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 385
+  },
+  "105936": {
+    "id": "105936",
+    "name": "Nguyễn Hữu Cảnh 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 493
+  },
+  "105942": {
+    "id": "105942",
+    "name": "Nguyễn Hữu Cảnh 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 202
+  },
+  "105943": {
+    "id": "105943",
+    "name": "Nguyễn Hữu Cảnh 14",
+    "khu_vuc": "Vũng Tàu",
+    "count": 5
+  },
+  "105894": {
+    "id": "105894",
+    "name": "Nguyễn Hữu Cảnh 15",
+    "khu_vuc": "Vũng Tàu",
+    "count": 76
+  },
+  "104827": {
+    "id": "104827",
+    "name": "Nguyễn Hữu Cảnh 16",
+    "khu_vuc": "Vũng Tàu",
+    "count": 199
+  },
+  "104866": {
+    "id": "104866",
+    "name": "Nguyễn Hữu Cảnh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 278
+  },
+  "104868": {
+    "id": "104868",
+    "name": "Nguyễn Hữu Cảnh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 548
+  },
+  "105879": {
+    "id": "105879",
+    "name": "Nguyễn Hữu Cảnh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 592
+  },
+  "105880": {
+    "id": "105880",
+    "name": "Nguyễn Hữu Cảnh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 370
+  },
+  "105725": {
+    "id": "105725",
+    "name": "Nguyễn Hữu Cảnh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 385
+  },
+  "104959": {
+    "id": "104959",
+    "name": "Nguyễn Hữu Cảnh 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 492
+  },
+  "105314": {
+    "id": "105314",
+    "name": "Nguyễn Lương Bằng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 259
+  },
+  "105584": {
+    "id": "105584",
+    "name": "Nguyễn Thị Minh Khai",
+    "khu_vuc": "Vũng Tàu",
+    "count": 192
+  },
+  "106261": {
+    "id": "106261",
+    "name": "Nguyễn Thiện Thuật",
+    "khu_vuc": "Vũng Tàu",
+    "count": 326
+  },
+  "104870": {
+    "id": "104870",
+    "name": "Nguyễn Thiện Thuật 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 137
+  },
+  "104825": {
+    "id": "104825",
+    "name": "Nguyễn Thiện Thuật 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 100
+  },
+  "105111": {
+    "id": "105111",
+    "name": "Nguyễn Tri Phương",
+    "khu_vuc": "Vũng Tàu",
+    "count": 328
+  },
+  "105132": {
+    "id": "105132",
+    "name": "Nguyễn Trung Trực",
+    "khu_vuc": "Vũng Tàu",
+    "count": 263
+  },
+  "105012": {
+    "id": "105012",
+    "name": "Nguyễn Trung Trực 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 260
+  },
+  "105322": {
+    "id": "105322",
+    "name": "Nguyễn Văn Trỗi",
+    "khu_vuc": "Vũng Tàu",
+    "count": 149
+  },
+  "105376": {
+    "id": "105376",
+    "name": "Nguyễn Văn Trỗi 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 105
+  },
+  "105372": {
+    "id": "105372",
+    "name": "Nguyễn Văn Trỗi 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 255
+  },
+  "105369": {
+    "id": "105369",
+    "name": "Nguyễn Văn Trỗi 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 416
+  },
+  "105270": {
+    "id": "105270",
+    "name": "Nhà nghỉ Minh Phụng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 116
+  },
+  "104861": {
+    "id": "104861",
+    "name": "Nhà ở Phước Thắng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "105891": {
+    "id": "105891",
+    "name": "Nơ Trang Long",
+    "khu_vuc": "Vũng Tàu",
+    "count": 296
+  },
+  "105099": {
+    "id": "105099",
+    "name": "Nơ Trang Long 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 35
+  },
+  "150190060": {
+    "id": "150190060",
+    "name": "Nước đá Hiệp Hòa (công cộng)",
+    "khu_vuc": "Vũng Tàu",
+    "count": 184
+  },
+  "104906": {
+    "id": "104906",
+    "name": "Ông Từ 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 43
+  },
+  "105090": {
+    "id": "105090",
+    "name": "PACIFFIC",
+    "khu_vuc": "Vũng Tàu",
+    "count": 10
+  },
+  "105134": {
+    "id": "105134",
+    "name": "Phạm Hồng Thái",
+    "khu_vuc": "Vũng Tàu",
+    "count": 216
+  },
+  "105135": {
+    "id": "105135",
+    "name": "Phạm Hồng Thái 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 476
+  },
+  "105136": {
+    "id": "105136",
+    "name": "Phạm Hồng Thái 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 175
+  },
+  "105458": {
+    "id": "105458",
+    "name": "Phan Chu Trinh 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 83
+  },
+  "105466": {
+    "id": "105466",
+    "name": "Phan Chu Trinh 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 309
+  },
+  "105467": {
+    "id": "105467",
+    "name": "Phan Chu Trinh 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 226
+  },
+  "105468": {
+    "id": "105468",
+    "name": "Phan Chu Trinh 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 123
+  },
+  "105453": {
+    "id": "105453",
+    "name": "Phan Chu Trinh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 41
+  },
+  "105456": {
+    "id": "105456",
+    "name": "Phan Chu Trinh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 17
+  },
+  "105452": {
+    "id": "105452",
+    "name": "Phan Chu Trinh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 171
+  },
+  "105068": {
+    "id": "105068",
+    "name": "Phan Chu Trinh 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 143
+  },
+  "105454": {
+    "id": "105454",
+    "name": "Phan Chu Trinh 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 119
+  },
+  "105069": {
+    "id": "105069",
+    "name": "Phan Chu Trinh 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 273
+  },
+  "105230": {
+    "id": "105230",
+    "name": "Phan Văn Trị",
+    "khu_vuc": "Vũng Tàu",
+    "count": 3
+  },
+  "105231": {
+    "id": "105231",
+    "name": "Phan Văn Trị 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 12
+  },
+  "105225": {
+    "id": "105225",
+    "name": "Phó Đức Chính",
+    "khu_vuc": "Vũng Tàu",
+    "count": 10
+  },
+  "105226": {
+    "id": "105226",
+    "name": "Phó Đức Chính 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 8
+  },
+  "105227": {
+    "id": "105227",
+    "name": "Phó Đức Chính 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 5
+  },
+  "106237": {
+    "id": "106237",
+    "name": "Phước An",
+    "khu_vuc": "Vũng Tàu",
+    "count": 376
+  },
+  "106236": {
+    "id": "106236",
+    "name": "Phước An 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 505
+  },
+  "104889": {
+    "id": "104889",
+    "name": "Phước An 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 391
+  },
+  "104891": {
+    "id": "104891",
+    "name": "Phước An 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 246
+  },
+  "1501H0282": {
+    "id": "1501H0282",
+    "name": "Phước Sơn 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 23
+  },
+  "106223": {
+    "id": "106223",
+    "name": "Phước Thành 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 146
+  },
+  "105026": {
+    "id": "105026",
+    "name": "Phước Thắng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 360
+  },
+  "105031": {
+    "id": "105031",
+    "name": "Phước Thắng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 79
+  },
+  "105035": {
+    "id": "105035",
+    "name": "Phước Thắng 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "105041": {
+    "id": "105041",
+    "name": "Phước Thắng 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 181
+  },
+  "105048": {
+    "id": "105048",
+    "name": "Phước Thắng 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 268
+  },
+  "105054": {
+    "id": "105054",
+    "name": "Phước Thắng 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 80
+  },
+  "105020": {
+    "id": "105020",
+    "name": "Phước Thắng 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 270
+  },
+  "106235": {
+    "id": "106235",
+    "name": "Phước Thắng 8881",
+    "khu_vuc": "Vũng Tàu",
+    "count": 265
+  },
+  "105173": {
+    "id": "105173",
+    "name": "Phước Thắng 8882",
+    "khu_vuc": "Vũng Tàu",
+    "count": 104
+  },
+  "105174": {
+    "id": "105174",
+    "name": "Phước Thắng 8883",
+    "khu_vuc": "Vũng Tàu",
+    "count": 201
+  },
+  "105175": {
+    "id": "105175",
+    "name": "Phước Thắng 8884",
+    "khu_vuc": "Vũng Tàu",
+    "count": 111
+  },
+  "105038": {
+    "id": "105038",
+    "name": "Phước Thắng 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 157
+  },
+  "106225": {
+    "id": "106225",
+    "name": "Phước Thiện",
+    "khu_vuc": "Vũng Tàu",
+    "count": 404
+  },
+  "105016": {
+    "id": "105016",
+    "name": "Phước Thiện 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 142
+  },
+  "106224": {
+    "id": "106224",
+    "name": "Phước Thiện 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 593
+  },
+  "105017": {
+    "id": "105017",
+    "name": "Phước Thiện 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 270
+  },
+  "104869": {
+    "id": "104869",
+    "name": "Phương Hòa",
+    "khu_vuc": "Vũng Tàu",
+    "count": 214
+  },
+  "106232": {
+    "id": "106232",
+    "name": "Quang Hưng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 364
+  },
+  "104956": {
+    "id": "104956",
+    "name": "Quốc Lộ 51C",
+    "khu_vuc": "Vũng Tàu",
+    "count": 149
+  },
+  "105747": {
+    "id": "105747",
+    "name": "Quốc lộ 51C 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 186
+  },
+  "105700": {
+    "id": "105700",
+    "name": "Quốc lộ 51C 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 66
+  },
+  "105695": {
+    "id": "105695",
+    "name": "Quốc lộ 51C 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 116
+  },
+  "105389": {
+    "id": "105389",
+    "name": "Rạch Già",
+    "khu_vuc": "Vũng Tàu",
+    "count": 33
+  },
+  "105868": {
+    "id": "105868",
+    "name": "Rạch Già 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 62
+  },
+  "106249": {
+    "id": "106249",
+    "name": "Rạch Già 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 114
+  },
+  "105242": {
+    "id": "105242",
+    "name": "Rạch Già 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 63
+  },
+  "106265": {
+    "id": "106265",
+    "name": "Rạch Già 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 48
+  },
+  "105245": {
+    "id": "105245",
+    "name": "Rạch Già 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 38
+  },
+  "105484": {
+    "id": "105484",
+    "name": "Sài Gòn TOWER",
+    "khu_vuc": "Vũng Tàu",
+    "count": 247
+  },
+  "104996": {
+    "id": "104996",
+    "name": "Sao Mai Bến Đình",
+    "khu_vuc": "Vũng Tàu",
+    "count": 104
+  },
+  "105465": {
+    "id": "105465",
+    "name": "Sơn Thịnh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 199
+  },
+  "105550": {
+    "id": "105550",
+    "name": "Sơn Thịnh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 353
+  },
+  "105303": {
+    "id": "105303",
+    "name": "Tạ Uyên",
+    "khu_vuc": "Vũng Tàu",
+    "count": 314
+  },
+  "105935": {
+    "id": "105935",
+    "name": "Tập thể Khí Đốt",
+    "khu_vuc": "Vũng Tàu",
+    "count": 356
+  },
+  "105002": {
+    "id": "105002",
+    "name": "Tập thể Quốc lộ 51A",
+    "khu_vuc": "Vũng Tàu",
+    "count": 260
+  },
+  "104806": {
+    "id": "104806",
+    "name": "Tập thể Tàu Thuyền",
+    "khu_vuc": "Vũng Tàu",
+    "count": 73
+  },
+  "105007": {
+    "id": "105007",
+    "name": "Tập thể Thông Tin",
+    "khu_vuc": "Vũng Tàu",
+    "count": 334
+  },
+  "105720": {
+    "id": "105720",
+    "name": "TĐC 10HA",
+    "khu_vuc": "Vũng Tàu",
+    "count": 19
+  },
+  "106326": {
+    "id": "106326",
+    "name": "TĐC Long Sơn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 211
+  },
+  "106218": {
+    "id": "106218",
+    "name": "TĐC Phước Cơ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1
+  },
+  "105058": {
+    "id": "105058",
+    "name": "Thành Uỷ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 372
+  },
+  "106227": {
+    "id": "106227",
+    "name": "The Light City",
+    "khu_vuc": "Vũng Tàu",
+    "count": 31
+  },
+  "105555": {
+    "id": "105555",
+    "name": "The Song",
+    "khu_vuc": "Vũng Tàu",
+    "count": 441
+  },
+  "105556": {
+    "id": "105556",
+    "name": "The Song 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 390
+  },
+  "105557": {
+    "id": "105557",
+    "name": "The Song 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 422
+  },
+  "105558": {
+    "id": "105558",
+    "name": "The Song 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 406
+  },
+  "105563": {
+    "id": "105563",
+    "name": "Thi Sách 1",
+    "khu_vuc": "Vũng Tàu",
+    "count": 57
+  },
+  "105802": {
+    "id": "105802",
+    "name": "Thích ca Phật Đài",
+    "khu_vuc": "Vũng Tàu",
+    "count": 385
+  },
+  "105060": {
+    "id": "105060",
+    "name": "Thống Nhất",
+    "khu_vuc": "Vũng Tàu",
+    "count": 226
+  },
+  "105061": {
+    "id": "105061",
+    "name": "Thống Nhất 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 326
+  },
+  "105156": {
+    "id": "105156",
+    "name": "Thủ Khoa Huân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 126
+  },
+  "105650": {
+    "id": "105650",
+    "name": "Thùy Vân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 10
+  },
+  "105647": {
+    "id": "105647",
+    "name": "Thùy Vân 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 13
+  },
+  "105223": {
+    "id": "105223",
+    "name": "Thùy Vân 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 24
+  },
+  "105480": {
+    "id": "105480",
+    "name": "Thùy Vân 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 4
+  },
+  "104890": {
+    "id": "104890",
+    "name": "Thương Cảng 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 143
+  },
+  "105929": {
+    "id": "105929",
+    "name": "Tiền Cảng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 435
+  },
+  "105746": {
+    "id": "105746",
+    "name": "Trại Nhái",
+    "khu_vuc": "Vũng Tàu",
+    "count": 21
+  },
+  "105496": {
+    "id": "105496",
+    "name": "Trần Anh Tông",
+    "khu_vuc": "Vũng Tàu",
+    "count": 361
+  },
+  "105740": {
+    "id": "105740",
+    "name": "Trần Bình Trọng",
+    "khu_vuc": "Vũng Tàu",
+    "count": 225
+  },
+  "105293": {
+    "id": "105293",
+    "name": "Trần Bình Trọng 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 142
+  },
+  "105292": {
+    "id": "105292",
+    "name": "Trần Bình Trọng 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 255
+  },
+  "105363": {
+    "id": "105363",
+    "name": "Trần Hưng Đạo 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 112
+  },
+  "105080": {
+    "id": "105080",
+    "name": "Trần Hưng Đạo 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 47
+  },
+  "105079": {
+    "id": "105079",
+    "name": "Trần Hưng Đạo 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 131
+  },
+  "105070": {
+    "id": "105070",
+    "name": "Trần Hưng Đạo 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 31
+  },
+  "105073": {
+    "id": "105073",
+    "name": "Trần Hưng Đạo 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 219
+  },
+  "105081": {
+    "id": "105081",
+    "name": "Trần Hưng Đạo 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 107
+  },
+  "105362": {
+    "id": "105362",
+    "name": "Trần Hưng Đạo 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 47
+  },
+  "105600": {
+    "id": "105600",
+    "name": "Trần Phú",
+    "khu_vuc": "Vũng Tàu",
+    "count": 321
+  },
+  "105831": {
+    "id": "105831",
+    "name": "Trần Phú 10",
+    "khu_vuc": "Vũng Tàu",
+    "count": 42
+  },
+  "105839": {
+    "id": "105839",
+    "name": "Trần Phú 11",
+    "khu_vuc": "Vũng Tàu",
+    "count": 94
+  },
+  "105846": {
+    "id": "105846",
+    "name": "Trần Phú 12",
+    "khu_vuc": "Vũng Tàu",
+    "count": 56
+  },
+  "105851": {
+    "id": "105851",
+    "name": "Trần Phú 13",
+    "khu_vuc": "Vũng Tàu",
+    "count": 41
+  },
+  "105854": {
+    "id": "105854",
+    "name": "Trần Phú 14",
+    "khu_vuc": "Vũng Tàu",
+    "count": 42
+  },
+  "105828": {
+    "id": "105828",
+    "name": "Trần Phú 16",
+    "khu_vuc": "Vũng Tàu",
+    "count": 23
+  },
+  "105599": {
+    "id": "105599",
+    "name": "Trần Phú 17",
+    "khu_vuc": "Vũng Tàu",
+    "count": 386
+  },
+  "105816": {
+    "id": "105816",
+    "name": "Trần Phú 18",
+    "khu_vuc": "Vũng Tàu",
+    "count": 315
+  },
+  "105603": {
+    "id": "105603",
+    "name": "Trần Phú 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 528
+  },
+  "105862": {
+    "id": "105862",
+    "name": "Trần Phú 20",
+    "khu_vuc": "Vũng Tàu",
+    "count": 136
+  },
+  "105826": {
+    "id": "105826",
+    "name": "Trần Phú 21",
+    "khu_vuc": "Vũng Tàu",
+    "count": 24
+  },
+  "105810": {
+    "id": "105810",
+    "name": "Trần Phú 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 155
+  },
+  "105813": {
+    "id": "105813",
+    "name": "Trần Phú 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 279
+  },
+  "105817": {
+    "id": "105817",
+    "name": "Trần Phú 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 559
+  },
+  "105818": {
+    "id": "105818",
+    "name": "Trần Phú 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 269
+  },
+  "105819": {
+    "id": "105819",
+    "name": "Trần Phú 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 178
+  },
+  "105820": {
+    "id": "105820",
+    "name": "Trần Phú 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 138
+  },
+  "105821": {
+    "id": "105821",
+    "name": "Trần Phú 9",
+    "khu_vuc": "Vũng Tàu",
+    "count": 122
+  },
+  "105221": {
+    "id": "105221",
+    "name": "Trần Quý Cáp",
+    "khu_vuc": "Vũng Tàu",
+    "count": 14
+  },
+  "105222": {
+    "id": "105222",
+    "name": "Trần Quý Cáp 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 19
+  },
+  "105601": {
+    "id": "105601",
+    "name": "Trần Xuân Độ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 474
+  },
+  "105602": {
+    "id": "105602",
+    "name": "Trần Xuân Độ 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 264
+  },
+  "104821": {
+    "id": "104821",
+    "name": "Trung tâm thương mại 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 178
+  },
+  "130491": {
+    "id": "130491",
+    "name": "Trung tâm thương mại 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 377
+  },
+  "105108": {
+    "id": "105108",
+    "name": "Trương Công Định",
+    "khu_vuc": "Vũng Tàu",
+    "count": 246
+  },
+  "105113": {
+    "id": "105113",
+    "name": "Trương Công Định 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 375
+  },
+  "105056": {
+    "id": "105056",
+    "name": "Trương Công Định 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 344
+  },
+  "105057": {
+    "id": "105057",
+    "name": "Trương Công Định 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 312
+  },
+  "105059": {
+    "id": "105059",
+    "name": "Trương Công Định 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 291
+  },
+  "105109": {
+    "id": "105109",
+    "name": "Trương Công Định 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 149
+  },
+  "105114": {
+    "id": "105114",
+    "name": "Trương Công Định 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 206
+  },
+  "104807": {
+    "id": "104807",
+    "name": "Trương Văn Bang",
+    "khu_vuc": "Vũng Tàu",
+    "count": 96
+  },
+  "104810": {
+    "id": "104810",
+    "name": "Trương Văn Bang 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 157
+  },
+  "105148": {
+    "id": "105148",
+    "name": "Vi Ba",
+    "khu_vuc": "Vũng Tàu",
+    "count": 315
+  },
+  "105689": {
+    "id": "105689",
+    "name": "Võ Nguyên Giáp",
+    "khu_vuc": "Vũng Tàu",
+    "count": 53
+  },
+  "105745": {
+    "id": "105745",
+    "name": "Võ Nguyên Giáp 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 214
+  },
+  "105645": {
+    "id": "105645",
+    "name": "Võ Thị Sáu",
+    "khu_vuc": "Vũng Tàu",
+    "count": 88
+  },
+  "105194": {
+    "id": "105194",
+    "name": "Võ Thị Sáu 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 64
+  },
+  "105212": {
+    "id": "105212",
+    "name": "Võ Thị Sáu 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 77
+  },
+  "105204": {
+    "id": "105204",
+    "name": "Võ Thị Sáu 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 73
+  },
+  "105447": {
+    "id": "105447",
+    "name": "Võ Thị Sáu 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 122
+  },
+  "105448": {
+    "id": "105448",
+    "name": "Võ Thị Sáu 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 248
+  },
+  "105451": {
+    "id": "105451",
+    "name": "Võ Thị Sáu 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 139
+  },
+  "105800": {
+    "id": "105800",
+    "name": "Vòng Xoay Dầu Khí",
+    "khu_vuc": "Vũng Tàu",
+    "count": 172
+  },
+  "105284": {
+    "id": "105284",
+    "name": "Vũng Tàu PLZA 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 440
+  },
+  "105166": {
+    "id": "105166",
+    "name": "Vườn điều",
+    "khu_vuc": "Vũng Tàu",
+    "count": 548
+  },
+  "105168": {
+    "id": "105168",
+    "name": "Vườn điều 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 295
+  },
+  "105167": {
+    "id": "105167",
+    "name": "Vườn điều 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 406
+  },
+  "105169": {
+    "id": "105169",
+    "name": "Vườn Nhãn",
+    "khu_vuc": "Vũng Tàu",
+    "count": 397
+  },
+  "104887": {
+    "id": "104887",
+    "name": "Vườn Nhãn 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 365
+  },
+  "104881": {
+    "id": "104881",
+    "name": "Vườn Nhãn 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 127
+  },
+  "105697": {
+    "id": "105697",
+    "name": "Vườn Xuân",
+    "khu_vuc": "Vũng Tàu",
+    "count": 62
+  },
+  "106317": {
+    "id": "106317",
+    "name": "Vườn Xuân 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 64
+  },
+  "106314": {
+    "id": "106314",
+    "name": "Vườn Xuân 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 50
+  },
+  "106318": {
+    "id": "106318",
+    "name": "Vườn Xuân 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 54
+  },
+  "106315": {
+    "id": "106315",
+    "name": "Vườn Xuân 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 40
+  },
+  "106316": {
+    "id": "106316",
+    "name": "Vườn Xuân 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 27
+  },
+  "105698": {
+    "id": "105698",
+    "name": "Vườn Xuân 7",
+    "khu_vuc": "Vũng Tàu",
+    "count": 45
+  },
+  "105699": {
+    "id": "105699",
+    "name": "Vườn Xuân 8",
+    "khu_vuc": "Vũng Tàu",
+    "count": 1
+  },
+  "105100": {
+    "id": "105100",
+    "name": "Xâm Bồ",
+    "khu_vuc": "Vũng Tàu",
+    "count": 351
+  },
+  "105866": {
+    "id": "105866",
+    "name": "Xóm Tư bê",
+    "khu_vuc": "Vũng Tàu",
+    "count": 155
+  },
+  "105437": {
+    "id": "105437",
+    "name": "Xô Viết Nghệ Tĩnh",
+    "khu_vuc": "Vũng Tàu",
+    "count": 213
+  },
+  "105438": {
+    "id": "105438",
+    "name": "Xô Viết Nghệ Tĩnh 2",
+    "khu_vuc": "Vũng Tàu",
+    "count": 229
+  },
+  "105439": {
+    "id": "105439",
+    "name": "Xô Viết Nghệ Tĩnh 3",
+    "khu_vuc": "Vũng Tàu",
+    "count": 294
+  },
+  "105441": {
+    "id": "105441",
+    "name": "Xô Viết Nghệ Tĩnh 4",
+    "khu_vuc": "Vũng Tàu",
+    "count": 353
+  },
+  "105440": {
+    "id": "105440",
+    "name": "Xô Viết Nghệ Tĩnh 5",
+    "khu_vuc": "Vũng Tàu",
+    "count": 305
+  },
+  "105443": {
+    "id": "105443",
+    "name": "Xô Viết Nghệ Tĩnh 6",
+    "khu_vuc": "Vũng Tàu",
+    "count": 279
+  },
+  "105381": {
+    "id": "105381",
+    "name": "Yên Bái",
+    "khu_vuc": "Vũng Tàu",
+    "count": 333
+  }
+}

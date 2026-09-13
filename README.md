@@ -1,63 +1,64 @@
 # CÔNG TY ĐIỆN LỰC VŨNG TÀU - TỔNG CÔNG TY ĐIỆN LỰC TP. HỒ CHÍ MINH (EVNHCMC)
-## HỆ THỐNG KIỂM TRA TRẠM CÓ TỔN THẤT BẤT THƯỜNG & SANG TẢI CHUYỂN LƯỚI
+## HỆ THỐNG KIỆN TOÀN HỆ THỐNG ĐO ĐẾM - PC VŨNG TÀU
 
-Ứng dụng Web Đơn (Single Page Application - SPA) chuyên biệt cho cán bộ kỹ thuật và điều độ viên Công ty Điện lực Vũng Tàu để theo dõi tổn thất điện năng (TTĐN), phát hiện trạm bất thường (đặc biệt là các trạm có $TTĐN < 0\%$), mô phỏng tính toán bù trừ sang tải khách hàng và quản lý hàng chờ kiểm tra hiện trường kèm tính năng **Rollover chuyển việc qua tháng**.
+Ứng dụng Web Đơn (Single Page Application - SPA) chuyên biệt cho cán bộ kỹ thuật và nhân viên kiểm tra hiện trường của **Công ty Điện lực Vũng Tàu (EVNHCMC)** để thực hiện công tác kiểm tra, kiện toàn hệ thống đo đếm (HTĐĐ) của các khách hàng trong trạm biến áp, kết nối trực tiếp với **Google Sheets**, lưu trữ an toàn, chụp ảnh hiện trường và sẵn sàng triển khai trên **Vercel**.
 
 ---
 
 ### 🌟 CÁC TÍNH NĂNG NỔI BẬT
 
-1. **Thanh menu bên trái kiểu YouTube (Collapsible Sidebar)**:
-   - Có thể thu gọn / mở rộng linh hoạt, giao diện chuẩn nhận diện thương hiệu EVNHCMC.
-   - Chuyển tab tức thì, **không reload trang, không đổi đường link URL**.
+1. **Trang Web Đơn (SPA) Chuẩn Vercel**:
+   - Thao tác lọc, tìm kiếm, tích chọn hoàn thành, tải ảnh, nhập ghi chú **hoàn toàn trên 1 trang duy nhất, tuyệt đối không thay đổi đường link URL**.
+   - Cấu hình sẵn tệp `vercel.json` để triển khai chỉ với 1 cú click lên Vercel.
 
-2. **Thanh tìm kiếm thông minh (Global Smart Search Header)**:
-   - Tra cứu nhanh tức thì theo **ID Trạm**, **Tên Trạm**, **Mã Khách Hàng**, **Tên KH**, hoặc **Địa Chỉ**.
-   - Xem đầy đủ danh sách khách hàng thuộc trạm (số pha 1P/3P, mã điểm đo ĐĐO, sản lượng điện tiêu thụ $SL\_T08\_2026$, số thiết bị công tơ).
+2. **Dữ liệu Google Sheet Chuẩn 6 Cột**:
+   - Kết nối trực tiếp đường link Google Sheet: `https://docs.google.com/spreadsheets/d/1mcdRAreNWC4x8KIA_c89O_6Tjh8I5Ox-La0G1aSBEDs/edit?gid=0#gid=0`
+   - Cột A: **STT**
+   - Cột B: **ID trạm**
+   - Cột C: **Mã Khách Hàng**
+   - Cột D: **Tên khách hàng**
+   - Cột E: **Địa chỉ công tơ**
+   - Cột F: **Khu vực**
+   - Không sử dụng cơ sở dữ liệu bên ngoài, chỉ làm việc trên ứng dụng, Google Sheets và Google.
 
-3. **Tổng Quan Dashboard**:
-   - Thống kê toàn diện theo từng kỳ kiểm tra (từ **Tháng 1 đến Tháng 9**).
-   - Phân loại trực quan: **Trạm TTĐN < 0% (Báo động đỏ)**, **Trạm TTĐN cao (> 2.35%)**, **Trạm mất đầu nguồn (#DIV/0!)**, **Trạm bình thường (0 - 2.35%)**.
-   - Tích hợp nguyên lý nghiệp vụ: *TTĐN < 0% do Thương phẩm > Điện năng đầu nguồn (nghi vấn tráo dây công tơ tổng, nhầm ranh trạm hoặc phát sinh điện mặt trời NLMT)*.
+3. **Bảng Thống Kê Tổng Quan & Tiến Độ Trực Quan**:
+   - Thống kê tỷ lệ và số lượng khách hàng **ĐÃ KIỂM TRA** (Hoàn thành) và **CHƯA KIỂM TRA** (Cần làm).
+   - Thanh tiến độ (Progress bar) % hoàn thành kiện toàn theo thời gian thực.
+   - Thống kê số lượng trạm biến áp đang quản lý.
 
-4. **Kiểm Tra Định Kỳ Trạm Bất Thường**:
-   - Lọc sẵn các trạm cần đi kiểm tra trong kỳ.
-   - Nhập ghi chú hiện trạng lưới điện và đề xuất kỹ thuật.
-   - Đưa nhanh trạm vào Hàng chờ kiểm tra hiện trường (không chứa dữ liệu mẫu).
+4. **Tìm Kiếm & Lọc Nhanh Thông Minh**:
+   - **Tìm kiếm ID trạm hoặc Tên trạm**: Có gợi ý thông minh (Auto-complete), khi chọn trạm sẽ hiển thị Banner trạm và toàn bộ danh sách khách hàng thuộc trạm đó để phục vụ đi kiểm tra.
+   - **Lọc theo Khu vực (Cột F)**: Dropdown tự động nhận diện tất cả khu vực có trong dữ liệu.
+   - **Lọc theo Trạng thái**: *Tất cả*, *Chưa kiểm tra*, *Đã kiểm tra*.
+   - **Tìm nhanh đa năng**: Nhập Mã KH, Tên KH, Địa chỉ công tơ.
 
-5. **Sang Tải Chuyển Lưới & Công Cụ Mô Phỏng Tính Toán Lại TTĐN**:
-   - Quản lý các trạm STCL-XDM và trạm bổ sung theo công văn của Đội Quản lý lưới điện.
-   - **Mô phỏng Sang Tải (Load Transfer Simulator)**:
-     - Chọn Trạm Nguồn (A) và Trạm Đích (B).
-     - Chọn danh sách khách hàng cần tách chuyển.
-     - Hệ thống tự động tính toán lại Thương phẩm mới và Tỷ lệ TTĐN mới cho cả 2 trạm từ số liệu thực tế.
-     - Đánh giá hiệu quả: Xóa bỏ tổn thất âm, đưa tổn thất về dải an toàn, lưu phương án vào hàng chờ.
+5. **Nghiệp Vụ Kiểm Tra & Kiện Toàn Hiện Trường**:
+   - **Dạng Checkbox**: Tích chọn checkbox để chuyển trạng thái sang **"Đã hoàn thành"** (Đã kiểm tra) với màu xanh đặc trưng của ngành điện, tự động lưu thời gian kiểm tra.
+   - **Chụp & Tải Ảnh Hiện Trường**: Cho phép tải ảnh chụp công tơ, niêm chì, hòm hộp từ máy tính hoặc chụp trực tiếp từ camera điện thoại; hỗ trợ thu nhỏ tự động và click phóng to xem chi tiết sắc nét.
+   - **Ghi Chú Hiện Trạng**: Ô nhập ghi chú tình trạng đo đếm kèm các nút tag chọn nhanh (*Đo đếm tốt, niêm chì nguyên vẹn*, *Đứt chì hòm công tơ*, *Mặt kính mờ/vỡ*, *Sai tỷ số TI/TU*, *Đã thay chì mới*, *Đã thay công tơ*...).
+   - **Nút "Kiểm tra tất cả KH trong trạm này"**: Phê duyệt nhanh toàn trạm khi kiểm tra đạt chuẩn.
 
-6. **Quản Lý Hàng Chờ & Tính Năng Rollover Qua Tháng**:
-   - Theo dõi tiến độ kiểm tra: *Chưa thực hiện* ➔ *Đang xử lý* ➔ *Đã thực hiện*.
-   - **Nút "Chuyển các trạm chưa hoàn thiện sang tháng sau (Rollover)"**: Tự động dồn các trạm chưa xong sang kỳ kiểm tra tiếp theo, gộp chung với các trạm mới đề xuất của tháng sau để không bao giờ bị bỏ sót việc.
-   - Hỗ trợ xuất dữ liệu ra file **Excel / CSV** và **In Phiếu Giao Việc Hiện Trường**.
-
-7. **Tra Cứu Khách Hàng & Đồng Bộ Google Sheets**:
-   - Tích hợp logo chính thức [avph472lv.png](file:///e:/Antigraviti_PCVT/avph472lv.png) của EVNHCMC.
-   - Tích hợp sẵn 2 đường link Google Sheets của Điện lực Vũng Tàu.
-   - Đóng gói sẵn hơn **4.900 trạm biến áp** và **25.000+ khách hàng** thực tế để ứng dụng chạy mượt mà ngay cả khi không có mạng (offline-ready).
+6. **Lưu Trữ & Xuất Báo Cáo**:
+   - Toàn bộ kết quả kiểm tra, ghi chú và hình ảnh được tự động lưu vào **LocalStorage** của trình duyệt (không bị mất khi tải lại trang hoặc mất mạng).
+   - Hỗ trợ nút **"Xuất Báo Cáo"** ra file CSV/Excel (chuẩn font tiếng Việt có dấu UTF-8 BOM) để nộp báo cáo hoặc cập nhật ngược lại Google Sheet.
 
 ---
 
-### 🚀 HƯỚNG DẪN CHẠY VÀ TRIỂN KHAI
+### 🚀 HƯỚNG DẪN TRIỂN KHAI LÊN VERCEL
 
-#### Cách 1: Chạy trực tiếp trên máy tính (Không cần cài đặt)
-- Nhấp đúp chuột trực tiếp vào tệp `index.html` để mở trên Google Chrome, Microsoft Edge hoặc Cốc Cốc.
-- Hoặc mở PowerShell tại thư mục này và gõ:
+1. Tải toàn bộ mã nguồn lên GitHub của bạn (hoặc thư mục này).
+2. Truy cập [vercel.com](https://vercel.com) và đăng nhập.
+3. Chọn **Add New...** ➔ **Project** ➔ Chọn kho lưu trữ GitHub của bạn.
+4. Bấm **Deploy**. Vercel sẽ tự động nhận diện cấu hình `vercel.json` và cấp đường link công khai dạng:
+   `https://kienthoan-htdd-pcvt.vercel.app` để cán bộ công nhân viên PC Vũng Tàu truy cập sử dụng trên cả máy tính lẫn điện thoại thông minh!
+
+---
+
+### 💻 HƯỚNG DẪN CHẠY TRỰC TIẾP TRÊN MÁY TÍNH
+
+- **Cách 1**: Mở thư mục này và nhấp đúp trực tiếp vào tệp `index.html` bằng Google Chrome hoặc Microsoft Edge.
+- **Cách 2**: Mở terminal/PowerShell tại thư mục và chạy:
   ```bash
   python -m http.server 8080
   ```
   Sau đó mở trình duyệt truy cập: `http://localhost:8080`
-
-#### Cách 2: Deploy lên Vercel (Miễn phí 100%, 1 phút là xong)
-1. Đăng tải thư mục này lên GitHub (hoặc kéo thả vào Vercel).
-2. Đăng nhập [vercel.com](https://vercel.com) bằng tài khoản GitHub.
-3. Bấm **"Add New..."** ➔ **"Project"** ➔ Chọn Repository.
-4. Bấm **"Deploy"**. Vercel sẽ tự nhận diện cấu hình `vercel.json` và cấp đường link công khai dạng:
-   `https://dienluc-vungtau-ttdn.vercel.app` để toàn thể anh em trong công ty truy cập trên máy tính và điện thoại thông minh!
