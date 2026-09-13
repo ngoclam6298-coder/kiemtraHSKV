@@ -1331,7 +1331,7 @@
     }
 
     const btnExport = document.getElementById('btnExportExcel');
-    if (btnExport) btnExport.addEventListener('click', exportToCSV);
+    if (btnExport) btnExport.addEventListener('click', exportToExcel);
 
     const btnCheckAllStation = document.getElementById('btnCheckAllStation');
     if (btnCheckAllStation) btnCheckAllStation.addEventListener('click', checkAllInCurrentStation);
@@ -1871,6 +1871,14 @@ function doPost(e) {
 
     scrollToTop: function() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    exportToExcel: function() {
+      exportToExcel();
+    },
+
+    exportToCSV: function() {
+      exportToCSV();
     }
   };
 
@@ -1905,13 +1913,103 @@ function doPost(e) {
     }
   }
 
+  // ==========================================================================
+  // EXCEL (.XLSX) & CSV EXPORT - 13 CỘT ĐỒNG BỘ GOOGLE SHEET PC VŨNG TÀU
+  // ==========================================================================
+  function exportToExcel() {
+    if (allCustomers.length === 0) {
+      showToast('Không có dữ liệu để xuất!', 'error');
+      return;
+    }
+
+    showLoading(true, 'Đang tạo tệp Excel (.xlsx)... Vui lòng đợi trong giây lát');
+
+    setTimeout(() => {
+      try {
+        // 13 Cột chuẩn Google Sheet PCVT (Cột M là Trạng thái có dấu "X")
+        const headers = [
+          'Stt', 'Mã KH', 'Tên KH', 'Địa chỉ KH', 'Địa chỉ điểm đo',
+          'Mã trạm', 'Tên trạm', 'Danh số', 'Số điện thoại', 'Số No',
+          'Khu vực', 'Người cập nhật', 'Trạng thái'
+        ];
+
+        const rows = [headers];
+
+        allCustomers.forEach((c, idx) => {
+          const insp = inspectionsMap[c.ma_kh] || {};
+          const itemStation = c.id_tram || c.ma_tram || '';
+          const sMeta = stationsMeta[itemStation];
+          const sName = (sMeta && sMeta.name) || c.ten_tram || '';
+          const isInspected = (insp.trang_thai === 'Đã kiểm tra');
+          const statusMark = isInspected ? 'X' : '';
+
+          rows.push([
+            c.stt || (idx + 1),
+            String(c.ma_kh || ''),
+            String(c.ten_kh || ''),
+            String(c.dia_chi_kh || ''),
+            String(c.dia_chi_ddo || ''),
+            String(itemStation || ''),
+            String(sName || ''),
+            String(c.danh_so || ''),
+            String(c.sdt || ''),
+            String(formatMeterNo(c.so_no) || ''),
+            String(c.khu_vuc || ''),
+            String(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || ''),
+            statusMark
+          ]);
+        });
+
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
+        const filename = `Kien_Toan_HTDD_PCVT_${dateStr}.xlsx`;
+
+        if (typeof XLSX !== 'undefined') {
+          const ws = XLSX.utils.aoa_to_sheet(rows);
+
+          // Căn chỉnh độ rộng cột chuẩn thẩm mỹ chuyên nghiệp trong Excel
+          ws['!cols'] = [
+            { wch: 7 },   // Stt
+            { wch: 15 },  // Mã KH
+            { wch: 28 },  // Tên KH
+            { wch: 35 },  // Địa chỉ KH
+            { wch: 35 },  // Địa chỉ điểm đo
+            { wch: 12 },  // Mã trạm
+            { wch: 24 },  // Tên trạm
+            { wch: 12 },  // Danh số
+            { wch: 14 },  // Số điện thoại
+            { wch: 18 },  // Số No
+            { wch: 14 },  // Khu vực
+            { wch: 22 },  // Người cập nhật
+            { wch: 12 }   // Trạng thái (dấu X)
+          ];
+
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Kiểm tra HTĐĐ');
+          XLSX.writeFile(wb, filename);
+
+          showLoading(false);
+          showToast(`Đã xuất thành công tệp Excel .xlsx (${allCustomers.length.toLocaleString('vi-VN')} KH)!`, 'success');
+        } else {
+          // Fallback to CSV if XLSX is not loaded
+          exportToCSV();
+          showLoading(false);
+        }
+      } catch (err) {
+        console.error('Export Excel error:', err);
+        showLoading(false);
+        showToast('Có lỗi khi tạo tệp Excel, chuyển sang tải tệp CSV dự phòng!', 'error');
+        exportToCSV();
+      }
+    }, 100);
+  }
+
   function exportToCSV() {
     if (allCustomers.length === 0) {
       showToast('Không có dữ liệu để xuất!', 'error');
       return;
     }
 
-    // 13 Cột đồng bộ chuẩn Google Sheet PCVT (Cột M là Trạng thái có dấu "X")
     const headers = [
       'Stt', 'Mã KH', 'Tên KH', 'Địa chỉ KH', 'Địa chỉ điểm đo',
       'Mã trạm', 'Tên trạm', 'Danh số', 'Số điện thoại', 'Số No',
@@ -1957,7 +2055,7 @@ function doPost(e) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Đã xuất file 13 cột đồng bộ Google Sheet (Cột Trạng thái có dấu "X")!', 'success');
+    showToast('Đã xuất file 13 cột đồng bộ Google Sheet!', 'success');
   }
 
   function escapeCSV(str) {
@@ -1970,25 +2068,58 @@ function doPost(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
+    const fileName = (file.name || '').toLowerCase();
     showLoading(true, 'Đang đọc và xử lý tệp khách hàng...');
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const text = evt.target.result;
-      const parsed = parseCSV(text);
-      if (parsed && parsed.length > 0) {
-        allCustomers = parsed;
-        buildStationsMetaFromCustomers();
-        await saveCustomersToIDB(allCustomers);
-        applyFilters();
-        renderApp();
-        showLoading(false);
-        showToast(`Đã nạp thành công toàn bộ ${parsed.length.toLocaleString('vi-VN')} KH từ tệp!`, 'success');
-      } else {
-        showLoading(false);
-        showToast('Không tìm thấy bản ghi khách hàng hợp lệ!', 'error');
-      }
-    };
-    reader.readAsText(file, 'utf-8');
+
+    if ((fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) && typeof XLSX !== 'undefined') {
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const csvText = XLSX.utils.sheet_to_csv(worksheet);
+          const parsed = parseCSV(csvText);
+          if (parsed && parsed.length > 0) {
+            allCustomers = parsed;
+            buildStationsMetaFromCustomers();
+            await saveCustomersToIDB(allCustomers);
+            applyFilters();
+            renderApp();
+            showLoading(false);
+            showToast(`Đã nạp thành công ${parsed.length.toLocaleString('vi-VN')} KH từ file Excel .xlsx!`, 'success');
+          } else {
+            showLoading(false);
+            showToast('Không tìm thấy dữ liệu khách hàng hợp lệ trong file Excel!', 'error');
+          }
+        } catch (err) {
+          console.error('Read Excel error:', err);
+          showLoading(false);
+          showToast('Lỗi khi đọc file Excel: ' + err.message, 'error');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        const text = evt.target.result;
+        const parsed = parseCSV(text);
+        if (parsed && parsed.length > 0) {
+          allCustomers = parsed;
+          buildStationsMetaFromCustomers();
+          await saveCustomersToIDB(allCustomers);
+          applyFilters();
+          renderApp();
+          showLoading(false);
+          showToast(`Đã nạp thành công toàn bộ ${parsed.length.toLocaleString('vi-VN')} KH từ tệp!`, 'success');
+        } else {
+          showLoading(false);
+          showToast('Không tìm thấy bản ghi khách hàng hợp lệ!', 'error');
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    }
   }
 
   window.openModal = function(id) {

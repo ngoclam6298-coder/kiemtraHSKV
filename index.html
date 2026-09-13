@@ -52,19 +52,19 @@
           <span>Đồng bộ Sheet</span>
         </button>
 
-        <label class="btn-header" title="Nạp dữ liệu từ file CSV / Excel tải về">
-          <input type="file" id="fileImportInput" accept=".csv, .txt" style="display:none">
+        <label class="btn-header" title="Nạp dữ liệu từ file Excel (.xlsx) hoặc CSV tải về">
+          <input type="file" id="fileImportInput" accept=".xlsx, .xls, .csv, .txt" style="display:none">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
           </svg>
-          <span>Nhập CSV</span>
+          <span>Nhập Excel/CSV</span>
         </label>
 
-        <button class="btn-header primary" id="btnExportExcel" title="Xuất file chuẩn Google Sheet (13 cột có dấu X cho khách hàng đã kiểm tra)">
+        <button class="btn-header primary" id="btnExportExcel" title="Xuất file Excel (.xlsx) chuẩn 13 cột có dấu X cho khách hàng đã kiểm tra">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
           </svg>
-          <span>Xuất Báo Cáo (Cột X)</span>
+          <span>Xuất Excel (.xlsx)</span>
         </button>
 
         <button class="btn-header" onclick="openModal('modalSheetGuide')" title="Cài đặt liên kết và hướng dẫn">
@@ -452,6 +452,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="js/vendor/xlsx.full.min.js"></script>
   <script src="js/kienthoan.js"></script>
 </body>
 </html>
