@@ -14,6 +14,7 @@
   const STORAGE_KEY_SHEET_URL = 'PCVT_KT_SHEET_URL_V2';
   const STORAGE_KEY_INSPECTOR = 'PCVT_CURRENT_INSPECTOR';
   const STORAGE_KEY_WEBHOOK_URL = 'PCVT_APPS_SCRIPT_URL';
+  const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzMEYBk19BLUyew0FBjnmKWpcP-jVBevIesaxRYowMY9mqUzgWfu45Ylk3TO6rXbCm7MQ/exec';
   const STORAGE_KEY_OFFLINE_QUEUE = 'PCVT_OFFLINE_QUEUE';
   const STORAGE_KEY_LIVE_SYNC_ENABLED = 'PCVT_LIVE_SYNC_ENABLED';
   const STORAGE_KEY_SOUND_ENABLED = 'PCVT_SOUND_ENABLED';
@@ -143,6 +144,15 @@
     return trimmed;
   }
 
+  function getWebhookUrl() {
+    let url = (localStorage.getItem(STORAGE_KEY_WEBHOOK_URL) || '').trim();
+    if (!url) {
+      url = DEFAULT_WEBHOOK_URL;
+      localStorage.setItem(STORAGE_KEY_WEBHOOK_URL, url);
+    }
+    return url;
+  }
+
   function updateSyncStatus(status, text, subText) {
     const statusEl = document.getElementById('syncRealtimeStatus');
     const textEl = document.getElementById('syncRealtimeText');
@@ -189,7 +199,7 @@
     const queue = getOfflineQueue();
     if (queue.length === 0) return;
 
-    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const webhookUrl = getWebhookUrl();
     if (!webhookUrl || !navigator.onLine) return;
 
     updateSyncStatus('syncing', `Đang đồng bộ ${queue.length} bản ghi...`, 'Tự động gửi cập nhật ngoại tuyến lên Google Sheet');
@@ -233,7 +243,7 @@
     }
 
     // 3. Webhook Real-time Sync to Google Sheet
-    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const webhookUrl = getWebhookUrl();
     const insp = inspectionsMap[ma_kh] || {};
     const currentInsp = getCurrentInspector();
     const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
@@ -379,7 +389,7 @@
     }
 
     // Init Webhook URL
-    const savedWebhook = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const savedWebhook = getWebhookUrl();
     const inputWebhook = document.getElementById('inputAppsScriptUrl');
     if (inputWebhook && savedWebhook) {
       inputWebhook.value = savedWebhook;
@@ -1735,7 +1745,7 @@ function doGet(e) {
 
     // Share Webhook auto-config link for mobile phone
     function handleShareWebhook() {
-      const currentWebhook = (localStorage.getItem(STORAGE_KEY_WEBHOOK_URL) || '').trim();
+      const currentWebhook = getWebhookUrl();
       if (!currentWebhook) {
         showToast('Bạn chưa cấu hình Webhook URL! Vui lòng dán link Webhook và bấm Lưu Cấu Hình trước.', 'warning');
         openModal('modalSheetGuide');
@@ -2541,7 +2551,7 @@ function doGet(e) {
     }
 
     let newUpdates = [];
-    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const webhookUrl = getWebhookUrl();
 
     // Chiến lược 1: Nếu có Webhook URL, gọi doGet(e) nhận các thay đổi mới
     if (webhookUrl) {
