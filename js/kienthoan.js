@@ -1497,14 +1497,22 @@ function doPost(e) {
     if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({status: 'empty'}));
 
     // 1. Cập nhật vào trang tính chính (Cột L: Người cập nhật, Cột M: Trạng thái dấu X)
-    var maKHCodes = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
     var rowIndex = -1;
-    for (var i = 0; i < maKHCodes.length; i++) {
-      if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
-        rowIndex = i + 2;
-        sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
-        sheet.getRange(rowIndex, 13).setValue(trangThaiX);
-        break;
+    var rangeB = sheet.getRange("B:B");
+    var foundCell = rangeB.createTextFinder(String(maKH).trim()).matchEntireCell(true).findNext();
+    if (foundCell) {
+      rowIndex = foundCell.getRow();
+      sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
+      sheet.getRange(rowIndex, 13).setValue(trangThaiX);
+    } else {
+      var maKHCodes = sheet.getRange(2, 2, Math.min(lastRow - 1, 30000), 1).getValues();
+      for (var i = 0; i < maKHCodes.length; i++) {
+        if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
+          rowIndex = i + 2;
+          sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
+          sheet.getRange(rowIndex, 13).setValue(trangThaiX);
+          break;
+        }
       }
     }
 
