@@ -1714,8 +1714,11 @@
     const btnSyncGSheet = document.getElementById('btnSyncGSheet');
     if (btnSyncGSheet) {
       btnSyncGSheet.addEventListener('click', async () => {
-        const sheetUrl = localStorage.getItem(STORAGE_KEY_SHEET_URL) || DEFAULT_SHEET_URL;
-        await syncFromGoogleSheet(sheetUrl, true);
+        showToast('🔄 Đang đồng bộ kết quả kiểm tra và phân công từ Google Sheet...', 'info');
+        if (navigator.onLine) {
+          processOfflineQueue();
+        }
+        await pollFieldUpdates(true);
       });
     }
 
@@ -4432,21 +4435,19 @@ function donDepLogDongBo() {
       if (hasChanges) {
         if (liveActivityLog.length > 50) liveActivityLog = liveActivityLog.slice(0, 50);
         saveLocalInspections();
-        renderKPIs();
-        renderStationBanner();
-        renderMobileStickyBar();
+        applyFilters();
+        renderApp();
         renderLiveActivityFeed();
 
         if (newlyCheckedCount > 0) {
           if (isSoundAlertEnabled) playNotificationChime();
-          const latest = liveActivityLog[0];
-          showToast(`🔔 [Hiện trường] ${latest.nguoi_cap_nhat} vừa cập nhật KH ${latest.ma_kh} (${newlyCheckedCount} bản ghi mới)`, 'success');
+          showToast(`🔔 [Đồng bộ] Đã cập nhật thành công ${newlyCheckedCount} khách hàng đã kiểm tra từ Google Sheet!`, 'success');
         }
         if (revertedCount > 0) {
           showToast(`🔄 [Đồng bộ] Đã chuyển ${revertedCount} KH về "Chưa kiểm tra" theo Google Sheet`, 'info');
         }
       } else if (isManual) {
-        showToast('Dữ liệu hiện trường đã ở trạng thái mới nhất!', 'info');
+        showToast('Dữ liệu trên máy tính đã ở trạng thái mới nhất!', 'info');
       }
     } else if (isManual) {
       showToast('Không thể kết nối đến Webhook Google Sheet để kiểm tra!', 'warning');
