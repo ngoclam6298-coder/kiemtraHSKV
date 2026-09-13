@@ -2235,3 +2235,717 @@ body {
   flex-shrink: 0;
 }
 
+/* ==========================================================================
+   YOUTUBE-STYLE LEFT SIDEBAR & WORKGROUP ASSIGNMENT SYSTEM
+   ========================================================================== */
+
+/* 1. YouTube Hamburger Button in Header */
+.btn-yt-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-yt-hamburger:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.btn-yt-hamburger:active {
+  transform: scale(0.92);
+}
+
+/* 2. YouTube Sidebar Backdrop (for Mobile & Overlay Drawer) */
+.yt-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 1040;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.yt-sidebar-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 3. YouTube-style Sidebar Container */
+.yt-sidebar {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  width: 270px;
+  background: #ffffff;
+  border-right: 1px solid var(--border-color);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Desktop layout adjustment when sidebar is active */
+@media (min-width: 1200px) {
+  body.sidebar-open .yt-sidebar {
+    transform: translateX(0);
+  }
+  body.sidebar-open .main-wrapper {
+    margin-left: 285px;
+    max-width: calc(100% - 300px);
+    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  body.sidebar-collapsed .yt-sidebar {
+    transform: translateX(-100%);
+  }
+  body.sidebar-collapsed .main-wrapper {
+    margin-left: auto;
+    max-width: 1600px;
+  }
+}
+
+/* Mobile & Tablet: Full overlay drawer */
+@media (max-width: 1199px) {
+  .yt-sidebar {
+    top: 0;
+    width: 310px;
+    max-width: 88vw;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.2);
+  }
+  .yt-sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* 4. Sidebar Header (Shown on mobile or inside drawer) */
+.yt-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--evn-primary);
+  color: #ffffff;
+}
+
+.yt-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.yt-brand-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.yt-brand-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.yt-brand-sub {
+  display: block;
+  font-size: 0.7rem;
+  color: #fed7aa;
+  font-weight: 600;
+}
+
+.yt-sidebar-close {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.yt-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 5. Sidebar Scrollable Content */
+.yt-sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.yt-sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+.yt-sidebar-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.yt-sidebar-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Navigation items (YouTube-style) */
+.yt-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.yt-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.yt-nav-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.yt-nav-item.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.yt-nav-icon {
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.yt-nav-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Call-to-action button inside sidebar */
+.yt-nav-assign-cta {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.yt-nav-assign-cta:hover {
+  background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%);
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.yt-nav-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.yt-nav-badge-hot {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #ea580c;
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+  animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.yt-sidebar-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.4rem 0.5rem;
+}
+
+.yt-sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.75rem 0.25rem 0.75rem;
+}
+
+.yt-sidebar-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.yt-title-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Active Filter Notice Box in Sidebar */
+.yt-active-filter-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  margin: 0.2rem 0.25rem;
+}
+
+.yt-filter-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.yt-filter-box-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #1e40af;
+  letter-spacing: 0.3px;
+}
+
+.yt-btn-clear-filter {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #dc2626;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.yt-btn-clear-filter:hover {
+  text-decoration: underline;
+}
+
+.yt-filter-box-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 0.2rem;
+  line-height: 1.3;
+}
+
+.yt-filter-box-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* 6. Workgroup List inside Sidebar */
+.yt-workgroup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.yt-workgroup-card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.yt-workgroup-card:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.yt-workgroup-card.active {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+}
+
+.yt-group-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a326a 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.yt-workgroup-card:nth-child(even) .yt-group-avatar {
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+}
+.yt-workgroup-card:nth-child(3n) .yt-group-avatar {
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+}
+
+.yt-group-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.yt-group-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.yt-group-leader {
+  font-size: 0.68rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.yt-group-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 3px;
+}
+
+.yt-badge-stations {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.yt-workgroup-card.active .yt-badge-stations {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.yt-badge-progress {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* 7. Active Workgroup Banner on Main Wrapper */
+.group-filter-banner {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0a326a 100%);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255,255,255,0.15);
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.group-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.group-banner-icon {
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-banner-title {
+  font-size: 0.88rem;
+  color: #bfdbfe;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.group-banner-title strong {
+  color: #ffffff;
+  font-size: 0.96rem;
+}
+
+.group-banner-sub {
+  font-size: 0.78rem;
+  color: #e2e8f0;
+  margin-top: 2px;
+}
+
+.btn-clear-group-banner {
+  background: #ffffff;
+  color: #0a326a;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-clear-group-banner:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  color: #dc2626;
+}
+
+/* 8. Station Assignment Modal Styles */
+.assign-action-card {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.assign-group-picker {
+  flex: 1;
+  min-width: 260px;
+}
+
+.assign-label {
+  display: block;
+  font-size: 0.82rem;
+  color: #1e293b;
+  margin-bottom: 0.35rem;
+}
+
+.assign-select {
+  font-size: 0.86rem;
+  font-weight: 600;
+  border: 1.5px solid #93c5fd;
+  background-color: #ffffff;
+}
+
+.assign-btn-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.assign-search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.assign-search-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.assign-search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.assign-filter-pills {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.assign-pill-filter {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.assign-pill-filter:hover {
+  background: #e2e8f0;
+}
+
+.assign-pill-filter.active {
+  background: var(--evn-primary);
+  color: #ffffff;
+  border-color: var(--evn-primary);
+}
+
+.assign-selection-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.2rem;
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.assign-quick-select-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.assign-table-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 420px;
+  background: #ffffff;
+}
+
+.assign-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.assign-data-table th {
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  padding: 0.55rem 0.65rem;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 2px solid #e2e8f0;
+  z-index: 2;
+  text-align: left;
+}
+
+.assign-data-table td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.assign-data-table tr:hover {
+  background: #f8fafc;
+}
+
+.assign-data-table tr.selected {
+  background: #eff6ff;
+}
+
+/* Assigned Group Badge in Customer Table & Mobile Cards */
+.badge-assigned-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+.badge-assigned-group.unassigned {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.badge-station-id {
+  display: inline-block;
+  font-family: monospace;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #1e40af;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+

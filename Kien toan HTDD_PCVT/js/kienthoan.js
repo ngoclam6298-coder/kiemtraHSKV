@@ -18,6 +18,8 @@
   const STORAGE_KEY_OFFLINE_QUEUE = 'PCVT_OFFLINE_QUEUE';
   const STORAGE_KEY_LIVE_SYNC_ENABLED = 'PCVT_LIVE_SYNC_ENABLED';
   const STORAGE_KEY_SOUND_ENABLED = 'PCVT_SOUND_ENABLED';
+  const STORAGE_KEY_STATION_ASSIGNMENTS = 'PCVT_STATION_ASSIGNMENTS_V1';
+  const STORAGE_KEY_SIDEBAR_OPEN = 'PCVT_SIDEBAR_OPEN';
   const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
   // IndexedDB Constants for Customer Database (210.123 customers)
@@ -49,11 +51,18 @@
   let currentStationFilter = '';   // Selected station ID
   let currentAreaFilter = '';      // Selected Area
   let currentConditionFilter = ''; // Selected condition filter (Hiện trạng đo đếm 12 mục)
+  let currentAssignedGroupFilter = ''; // '' | 'unassigned' | 'group_1' ... 'group_9'
   let currentStatusFilter = 'all'; // 'all' | 'pending' | 'completed'
   let currentSearchKeyword = '';   // Free text search
   let currentPage = 1;
   const pageSize = 40;             // 40 items per page for ultra fast rendering
   let activeViewMode = 'auto';     // 'auto' | 'cards' | 'table'
+
+  // --- Station Assignment State (Giao việc theo ID trạm) ---
+  let stationAssignments = {};     // Map: stationId -> { groupId, groupIndex, groupName, leader, fullName, assignedAt }
+  let selectedAssignStations = new Set(); // Station IDs currently selected in Assignment Modal
+  let currentAssignModalFilter = 'all';   // 'all' | 'assigned' | 'unassigned'
+  let currentAssignModalSearch = '';
 
   // --- Real-time Field Sync State (Giám sát hiện trường thời gian thực) ---
   let liveSyncTimer = null;
@@ -62,13 +71,104 @@
   let liveActivityLog = [];        // Dòng thời gian các KH vừa kiểm tra ngoài hiện trường
   let lastLivePollTimestamp = 0;   // Dấu thời gian quét gần nhất
 
-  // --- Preset Inspectors List (Thanh sổ chọn) ---
-  const PRESET_INSPECTORS = [
-    'Nguyễn Văn Nguyên',
-    'Phạm Duy Phương',
-    'Lê Gia Quốc Trung',
-    'Nguyễn Đức Thành'
+  // --- 9 Nhóm công tác kiểm tra hệ thống đo đếm (PC Vũng Tàu) chuẩn theo ảnh mẫu ---
+  const PRESET_WORKGROUPS = [
+    {
+      id: 'group_1',
+      index: 1,
+      name: 'Nguyễn Xuân Thắng + Phạm Duy Phương',
+      leader: 'Nguyễn Xuân Thắng',
+      shortName: 'Thắng + Phương',
+      fullName: 'Nguyễn Xuân Thắng + Phạm Duy Phương (Trưởng nhóm: Nguyễn Xuân Thắng)'
+    },
+    {
+      id: 'group_2',
+      index: 2,
+      name: 'Nguyễn Thế Viện + Nguyễn Kim Linh',
+      leader: 'Nguyễn Thế Viện',
+      shortName: 'Viện + Linh',
+      fullName: 'Nguyễn Thế Viện + Nguyễn Kim Linh (Trưởng nhóm: Nguyễn Thế Viện)'
+    },
+    {
+      id: 'group_3',
+      index: 3,
+      name: 'Nguyễn Đức Thành + Lê Gia Quốc Trung',
+      leader: 'Nguyễn Đức Thành',
+      shortName: 'Thành + Trung',
+      fullName: 'Nguyễn Đức Thành + Lê Gia Quốc Trung (Trưởng nhóm: Nguyễn Đức Thành)'
+    },
+    {
+      id: 'group_4',
+      index: 4,
+      name: 'Lưu Quang Tuấn + Lê Gia Quốc Trung',
+      leader: 'Lưu Quang Tuấn',
+      shortName: 'Tuấn + Trung',
+      fullName: 'Lưu Quang Tuấn + Lê Gia Quốc Trung (Trưởng nhóm: Lưu Quang Tuấn)'
+    },
+    {
+      id: 'group_5',
+      index: 5,
+      name: 'Nguyễn Ngọc Kỳ + Huỳnh Tấn Phát',
+      leader: 'Nguyễn Ngọc Kỳ',
+      shortName: 'Kỳ + Phát',
+      fullName: 'Nguyễn Ngọc Kỳ + Huỳnh Tấn Phát (Trưởng nhóm: Nguyễn Ngọc Kỳ)'
+    },
+    {
+      id: 'group_6',
+      index: 6,
+      name: 'Nguyễn Trọng Hải + Nguyễn văn Thành',
+      leader: 'Nguyễn Trọng Hải',
+      shortName: 'Hải + Thành',
+      fullName: 'Nguyễn Trọng Hải + Nguyễn văn Thành (Trưởng nhóm: Nguyễn Trọng Hải)'
+    },
+    {
+      id: 'group_7',
+      index: 7,
+      name: 'Nguyễn Đức Thành + Nguyễn Văn Nguyên',
+      leader: 'Nguyễn Đức Thành',
+      shortName: 'Thành + Nguyên',
+      fullName: 'Nguyễn Đức Thành + Nguyễn Văn Nguyên (Trưởng nhóm: Nguyễn Đức Thành)'
+    },
+    {
+      id: 'group_8',
+      index: 8,
+      name: 'Nguyễn Văn Nguyên + Lê Phúc Hậu',
+      leader: 'Nguyễn văn Nguyên',
+      shortName: 'Nguyên + Hậu',
+      fullName: 'Nguyễn Văn Nguyên + Lê Phúc Hậu (Trưởng nhóm: Nguyễn văn Nguyên)'
+    },
+    {
+      id: 'group_9',
+      index: 9,
+      name: 'Nguyễn Hữu Mến + Lê Phúc Hậu',
+      leader: 'Nguyễn Hữu Mến',
+      shortName: 'Mến + Hậu',
+      fullName: 'Nguyễn Hữu Mến + Lê Phúc Hậu (Trưởng nhóm: Nguyễn Hữu Mến)'
+    }
   ];
+
+  const PRESET_INSPECTORS = PRESET_WORKGROUPS.map(g => g.fullName);
+
+  function isPresetInspector(val) {
+    if (!val) return false;
+    const str = String(val).trim().toLowerCase();
+    return PRESET_WORKGROUPS.some(g => 
+      g.fullName.toLowerCase() === str || 
+      g.name.toLowerCase() === str || 
+      str.includes(g.name.toLowerCase())
+    );
+  }
+
+  function getInspectorPresetValue(val) {
+    if (!val) return '';
+    const str = String(val).trim().toLowerCase();
+    for (const g of PRESET_WORKGROUPS) {
+      if (g.fullName.toLowerCase() === str || g.name.toLowerCase() === str || str.includes(g.name.toLowerCase())) {
+        return g.fullName;
+      }
+    }
+    return '__custom__';
+  }
 
   // --- 12 Hiện trạng hệ thống đo đếm chuẩn (PC Vũng Tàu) ---
   const PRESET_CONDITIONS = [
@@ -123,11 +223,12 @@
     const input = document.getElementById('inputInspectorName');
     const btn = document.getElementById('btnSaveInspector');
 
-    const isPreset = PRESET_INSPECTORS.includes(trimmed);
+    const isPreset = isPresetInspector(trimmed);
+    const presetVal = getInspectorPresetValue(trimmed);
 
     if (sel) {
       if (isPreset) {
-        sel.value = trimmed;
+        sel.value = presetVal;
       } else if (trimmed) {
         sel.value = '__custom__';
       } else {
@@ -256,9 +357,19 @@
     const insp = inspectionsMap[ma_kh] || {};
     const currentInsp = getCurrentInspector();
     const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
+
+    // Retrieve station & customer metadata for Log_DongBo 9 columns
+    const custObj = allCustomers.find(c => c.ma_kh === ma_kh);
+    const itemStation = (custObj && (custObj.id_tram || custObj.ma_tram)) || '';
+    const itemStationName = (custObj && custObj.ten_tram) || (stationsMeta[itemStation] && stationsMeta[itemStation].name) || '';
+    const itemDanhSo = (custObj && custObj.danh_so) || '';
+
     const itemPayload = {
       action: 'update_customer',
       ma_kh: ma_kh,
+      id_tram: itemStation,
+      ten_tram: itemStationName,
+      danh_so: itemDanhSo,
       nguoi_cap_nhat: insp.nguoi_cap_nhat || currentInsp || '',
       trang_thai: insp.trang_thai || 'Chưa kiểm tra',
       trang_thai_x: isCompleted ? 'X' : '',
@@ -301,8 +412,8 @@
 
       const isCompleted = data.inspection && data.inspection.trang_thai === 'Đã kiểm tra';
       const upVal = (data.inspection && data.inspection.nguoi_cap_nhat) || '';
-      const isPreset = PRESET_INSPECTORS.includes(upVal);
-      const selVal = isPreset ? upVal : (upVal ? '__custom__' : '');
+      const isPreset = isPresetInspector(upVal);
+      const selVal = isPreset ? getInspectorPresetValue(upVal) : (upVal ? '__custom__' : '');
 
       const row = document.getElementById(`row-${data.ma_kh}`);
       if (row) {
@@ -424,7 +535,21 @@
     }
 
     initEventListeners();
+    loadStationAssignments();
     await loadInitialData();
+    renderSidebarWorkgroups();
+    updateFilterWorkgroupDropdown();
+
+    // Setup YouTube sidebar responsive state
+    const isDesktop = window.innerWidth >= 1200;
+    const savedSidebarOpen = localStorage.getItem(STORAGE_KEY_SIDEBAR_OPEN);
+    if (isDesktop) {
+      if (savedSidebarOpen === '0') {
+        document.body.classList.add('sidebar-collapsed');
+      } else {
+        document.body.classList.add('sidebar-open');
+      }
+    }
 
     // Init inspector name
     const savedInspector = getCurrentInspector();
@@ -924,6 +1049,16 @@
       if (stationFilter && itemStation !== stationFilter) return false;
       if (areaFilter && item.khu_vuc !== areaFilter) return false;
 
+      // Filter by Assigned Workgroup (Phân công 9 nhóm)
+      if (currentAssignedGroupFilter) {
+        const assign = stationAssignments[itemStation];
+        if (currentAssignedGroupFilter === 'unassigned') {
+          if (assign) return false;
+        } else {
+          if (!assign || assign.groupId !== currentAssignedGroupFilter) return false;
+        }
+      }
+
       const insp = inspectionsMap[item.ma_kh] || {};
       const isCompleted = insp.trang_thai === 'Đã kiểm tra';
       if (currentStatusFilter === 'completed' && !isCompleted) return false;
@@ -965,6 +1100,7 @@
     renderKPIs();
     renderStationBanner();
     renderAreaDropdown();
+    renderSidebarWorkgroups();
     renderDataList();
     renderPagination();
     renderMobileStickyBar();
@@ -1155,14 +1291,21 @@
         : '<span style="color:var(--text-light)">---</span>';
 
       const currentUpdater = insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '';
-      const isPreset = PRESET_INSPECTORS.includes(currentUpdater);
+      const isPreset = isPresetInspector(currentUpdater);
+      const presetVal = getInspectorPresetValue(currentUpdater);
       const isCustom = Boolean(currentUpdater && !isPreset);
 
-      let updaterSelectOptions = `<option value="">-- Chọn cán bộ --</option>`;
-      PRESET_INSPECTORS.forEach(p => {
-        updaterSelectOptions += `<option value="${escapeHTML(p)}" ${currentUpdater === p ? 'selected' : ''}>${escapeHTML(p)}</option>`;
+      let updaterSelectOptions = `<option value="">-- Chọn nhóm công tác --</option>`;
+      PRESET_WORKGROUPS.forEach(g => {
+        const isSel = (currentUpdater === g.fullName || currentUpdater === g.name || presetVal === g.fullName);
+        updaterSelectOptions += `<option value="${escapeHTML(g.fullName)}" ${isSel ? 'selected' : ''}>Nhóm ${g.index}: ${escapeHTML(g.shortName)} (TN: ${escapeHTML(g.leader)})</option>`;
       });
       updaterSelectOptions += `<option value="__custom__" ${isCustom ? 'selected' : ''}>✏️ Khác (Tự nhập)...</option>`;
+
+      const stationAssign = getStationAssignment(itemStation);
+      const assignBadgeHtml = stationAssign 
+        ? `<div class="badge-assigned-group" title="Phân công: ${escapeHTML(stationAssign.fullName)} - Giao lúc: ${escapeHTML(stationAssign.assignedAt || '')}">👥 Nhóm ${stationAssign.groupIndex}: ${escapeHTML(stationAssign.shortName || stationAssign.groupName)}</div>`
+        : '';
 
       tableHtml += `
         <tr class="${isCompleted ? 'row-completed' : ''}" id="row-${escapeHTML(c.ma_kh)}">
@@ -1184,6 +1327,7 @@
           <td class="col-station" title="${escapeHTML(stationDisplay)}">
             <strong>${escapeHTML(itemStation || '---')}</strong>
             ${stationName ? `<div style="font-size:0.75rem; color:var(--text-muted);">${escapeHTML(stationName)}</div>` : ''}
+            ${assignBadgeHtml}
           </td>
           <td class="col-danhso" style="font-family:monospace; font-size:0.75rem;">${escapeHTML(c.danh_so || '---')}</td>
           <td class="col-phone">${phoneLink}</td>
@@ -1285,7 +1429,10 @@
           <div class="mobile-meta-grid">
             <div class="mobile-meta-item">
               <strong>⚡ Trạm:</strong>
-              <span>${escapeHTML(itemStation || '---')} ${stationName ? `(${escapeHTML(stationName)})` : ''}</span>
+              <div>
+                <span>${escapeHTML(itemStation || '---')} ${stationName ? `(${escapeHTML(stationName)})` : ''}</span>
+                ${assignBadgeHtml}
+              </div>
             </div>
             ${c.sdt ? `
               <div class="mobile-meta-item">
@@ -1653,7 +1800,8 @@
     const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
     if (btnCopyScript) {
       btnCopyScript.addEventListener('click', () => {
-        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 1 HÀNG DUY NHẤT & TỰ ĐỘNG XÓA KHI HỦY)
+        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU
+// BẢNG LOG_DONGBO 9 CỘT: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.tryLock(10000);
@@ -1662,6 +1810,9 @@ function doPost(e) {
     var sheet = ss.getActiveSheet();
     var data = JSON.parse(e.postData.contents);
     var maKH = String(data.ma_kh || '').trim();
+    var idTram = String(data.id_tram || '').trim();
+    var tenTram = String(data.ten_tram || '').trim();
+    var danhSo = String(data.danh_so || '').trim();
     var nguoiCapNhat = String(data.nguoi_cap_nhat || '').trim();
     var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
     var ghiChu = String(data.ghi_chu || '').trim();
@@ -1695,12 +1846,17 @@ function doPost(e) {
     }
 
     // =========================================================================
-    // 2. CẬP NHẬT TRANG NHẬT KÝ (Log_DongBo): GHI ĐÚNG 1 HÀNG, XÓA NẾU HỦY
+    // 2. CẬP NHẬT TRANG NHẬT KÝ (Log_DongBo 9 CỘT): GHI ĐÚNG 1 HÀNG, XÓA NẾU HỦY
+    // Cấu trúc: [Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú]
     // =========================================================================
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
-      logSheet.appendRow(['Timestamp', 'Mã KH', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+    } else {
+      if (logSheet.getLastRow() === 0) {
+        logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+      }
     }
 
     // Tìm tất cả dòng chứa Mã KH này trong trang Log_DongBo
@@ -1714,10 +1870,10 @@ function doPost(e) {
     }
 
     if (trangThaiX === 'X') {
-      var rowData = [new Date().getTime(), maKH, nguoiCapNhat, 'X', ngayKT, ghiChu];
+      var rowData = [new Date().getTime(), maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu];
       if (existingRows.length > 0) {
-        // Đã có -> Ghi đè vào đúng 1 hàng duy nhất
-        logSheet.getRange(existingRows[0], 1, 1, 6).setValues([rowData]);
+        // Đã có -> Ghi đè vào đúng 1 hàng duy nhất (9 cột)
+        logSheet.getRange(existingRows[0], 1, 1, 9).setValues([rowData]);
         // Nếu trước đó lỡ có nhiều dòng trùng thì xóa bỏ các dòng thừa
         for (var d = existingRows.length - 1; d >= 1; d--) {
           logSheet.deleteRow(existingRows[d]);
@@ -1761,17 +1917,35 @@ function doGet(e) {
 
     if (logSheet && logSheet.getLastRow() > 1) {
       var data = logSheet.getDataRange().getValues();
+      var numCols = (data[0] && data[0].length) || 0;
+      var isNineCol = (numCols >= 9);
+
       for (var i = 1; i < data.length; i++) {
         var rowTime = Number(data[i][0]);
         if (rowTime > since) {
-          updates.push({
-            timestamp: rowTime,
-            ma_kh: String(data[i][1]),
-            nguoi_cap_nhat: String(data[i][2]),
-            trang_thai_x: String(data[i][3]),
-            ngay_kiem_tra: String(data[i][4]),
-            ghi_chu: String(data[i][5])
-          });
+          if (isNineCol) {
+            updates.push({
+              timestamp: rowTime,
+              ma_kh: String(data[i][1]),
+              id_tram: String(data[i][2] || ''),
+              ten_tram: String(data[i][3] || ''),
+              danh_so: String(data[i][4] || ''),
+              nguoi_cap_nhat: String(data[i][5] || ''),
+              trang_thai_x: String(data[i][6] || ''),
+              ngay_kiem_tra: String(data[i][7] || ''),
+              ghi_chu: String(data[i][8] || '')
+            });
+          } else {
+            // Định dạng cũ (6 cột)
+            updates.push({
+              timestamp: rowTime,
+              ma_kh: String(data[i][1]),
+              nguoi_cap_nhat: String(data[i][2]),
+              trang_thai_x: String(data[i][3]),
+              ngay_kiem_tra: String(data[i][4]),
+              ghi_chu: String(data[i][5])
+            });
+          }
         }
       }
     } else {
@@ -1811,12 +1985,14 @@ function donDepLogDongBo() {
   if (!logSheet || logSheet.getLastRow() < 2) return;
 
   var data = logSheet.getDataRange().getValues();
+  var isNineCol = (data[0] && data[0].length >= 9);
+  var statusIdx = isNineCol ? 6 : 3;
   var seen = {};
   var rowsToDelete = [];
 
   for (var i = 1; i < data.length; i++) {
     var maKH = String(data[i][1]).trim();
-    var status = String(data[i][3]).trim();
+    var status = String(data[i][statusIdx]).trim();
     if (status !== 'X' || seen[maKH] || maKH.indexOf('TEST_PING') !== -1) {
       rowsToDelete.push(i + 1);
     } else {
@@ -2000,6 +2176,662 @@ function donDepLogDongBo() {
     if (btnSharePhoneModal) {
       btnSharePhoneModal.addEventListener('click', handleShareWebhook);
     }
+
+    // --- YouTube Sidebar & Station Assignment Events ---
+    const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+    if (btnToggleSidebar) btnToggleSidebar.addEventListener('click', toggleSidebar);
+
+    const btnCloseSidebar = document.getElementById('btnCloseSidebar');
+    if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', closeSidebar);
+
+    const sidebarBackdrop = document.getElementById('ytSidebarBackdrop');
+    if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+
+    const ytNavAll = document.getElementById('ytNavAllCustomers');
+    if (ytNavAll) {
+      ytNavAll.addEventListener('click', () => {
+        setAssignedGroupFilter('');
+        window.PCVT.scrollToTop();
+      });
+    }
+
+    const btnOpenAssignModal = document.getElementById('btnOpenAssignModal');
+    if (btnOpenAssignModal) {
+      btnOpenAssignModal.addEventListener('click', () => {
+        openStationAssignmentModal();
+      });
+    }
+
+    const btnClearFilterSidebar = document.getElementById('ytBtnClearGroupFilter');
+    if (btnClearFilterSidebar) {
+      btnClearFilterSidebar.addEventListener('click', () => setAssignedGroupFilter(''));
+    }
+
+    const btnClearGroupBanner = document.getElementById('btnClearGroupBanner');
+    if (btnClearGroupBanner) {
+      btnClearGroupBanner.addEventListener('click', () => setAssignedGroupFilter(''));
+    }
+
+    const filterWorkgroupSelect = document.getElementById('filterWorkgroupSelect');
+    if (filterWorkgroupSelect) {
+      filterWorkgroupSelect.addEventListener('change', () => {
+        setAssignedGroupFilter(filterWorkgroupSelect.value);
+      });
+    }
+
+    // Station Assignment Modal interactions
+    const assignSearchInput = document.getElementById('assignStationSearchInput');
+    const btnClearAssignSearch = document.getElementById('btnClearAssignStationSearch');
+    if (assignSearchInput) {
+      assignSearchInput.addEventListener('input', () => {
+        currentAssignModalSearch = assignSearchInput.value;
+        if (btnClearAssignSearch) {
+          btnClearAssignSearch.style.display = currentAssignModalSearch ? 'block' : 'none';
+        }
+        renderStationAssignmentModalTable();
+      });
+    }
+    if (btnClearAssignSearch) {
+      btnClearAssignSearch.addEventListener('click', () => {
+        if (assignSearchInput) assignSearchInput.value = '';
+        currentAssignModalSearch = '';
+        btnClearAssignSearch.style.display = 'none';
+        renderStationAssignmentModalTable();
+      });
+    }
+
+    // Filter pills in assignment modal
+    document.querySelectorAll('.assign-pill-filter').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.assign-pill-filter').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentAssignModalFilter = pill.getAttribute('data-filter') || 'all';
+        renderStationAssignmentModalTable();
+      });
+    });
+
+    // Select all checkbox in assignment modal
+    const chkAssignAll = document.getElementById('chkAssignSelectAll');
+    if (chkAssignAll) {
+      chkAssignAll.addEventListener('change', () => {
+        const filtered = getFilteredStationsForAssignModal().slice(0, 100);
+        if (chkAssignAll.checked) {
+          filtered.forEach(([stId]) => selectedAssignStations.add(stId));
+        } else {
+          filtered.forEach(([stId]) => selectedAssignStations.delete(stId));
+        }
+        renderStationAssignmentModalTable();
+      });
+    }
+
+    // Quick select buttons in assignment modal
+    const btnSelectAllFiltered = document.getElementById('btnSelectAllFilteredStations');
+    if (btnSelectAllFiltered) {
+      btnSelectAllFiltered.addEventListener('click', () => {
+        const filtered = getFilteredStationsForAssignModal();
+        filtered.forEach(([stId]) => selectedAssignStations.add(stId));
+        renderStationAssignmentModalTable();
+        showToast(`Đã chọn ${filtered.length} trạm đang lọc!`, 'info');
+      });
+    }
+
+    const btnClearAllSelected = document.getElementById('btnClearAllSelectedStations');
+    if (btnClearAllSelected) {
+      btnClearAllSelected.addEventListener('click', () => {
+        selectedAssignStations.clear();
+        renderStationAssignmentModalTable();
+        showToast('Đã bỏ chọn tất cả trạm', 'info');
+      });
+    }
+
+    // Apply / Unassign buttons in assignment modal
+    const btnApplyAssign = document.getElementById('btnApplyStationAssign');
+    if (btnApplyAssign) btnApplyAssign.addEventListener('click', applySelectedStationAssignment);
+
+    const btnUnassign = document.getElementById('btnUnassignSelectedStations');
+    if (btnUnassign) btnUnassign.addEventListener('click', applySelectedStationUnassignment);
+
+    const btnExportAssign = document.getElementById('btnExportAssignments');
+    if (btnExportAssign) btnExportAssign.addEventListener('click', exportAssignments);
+  }
+
+  // ==========================================================================
+  // STATION WORKGROUP ASSIGNMENT SYSTEM (GIAO VIỆC CHO 9 NHÓM THEO ID TRẠM)
+  // ==========================================================================
+  function loadStationAssignments() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_STATION_ASSIGNMENTS);
+      if (raw) {
+        stationAssignments = JSON.parse(raw) || {};
+      }
+    } catch (e) {
+      console.warn('Error loading station assignments:', e);
+      stationAssignments = {};
+    }
+  }
+
+  function saveStationAssignments() {
+    try {
+      localStorage.setItem(STORAGE_KEY_STATION_ASSIGNMENTS, JSON.stringify(stationAssignments));
+    } catch (e) {
+      console.warn('Error saving station assignments:', e);
+    }
+  }
+
+  function getStationAssignment(stationId) {
+    if (!stationId) return null;
+    return stationAssignments[String(stationId).trim()] || null;
+  }
+
+  function assignStationsToGroup(stationIds, groupId) {
+    const group = PRESET_WORKGROUPS.find(g => g.id === groupId);
+    if (!group) {
+      showToast('Nhóm công tác không hợp lệ!', 'error');
+      return;
+    }
+    if (!stationIds || stationIds.length === 0) {
+      showToast('Vui lòng chọn ít nhất 1 trạm để giao việc!', 'warning');
+      return;
+    }
+
+    const now = new Date();
+    const timeStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+    stationIds.forEach(stId => {
+      const cleanId = String(stId).trim();
+      stationAssignments[cleanId] = {
+        groupId: group.id,
+        groupIndex: group.index,
+        groupName: group.name,
+        leader: group.leader,
+        shortName: group.shortName,
+        fullName: group.fullName,
+        assignedAt: timeStr
+      };
+    });
+
+    saveStationAssignments();
+    renderSidebarWorkgroups();
+    renderStationAssignmentModalTable();
+    updateFilterWorkgroupDropdown();
+    applyFilters();
+    renderApp();
+
+    showToast(`Đã giao ${stationIds.length} trạm cho Nhóm ${group.index} (${group.shortName})!`, 'success');
+  }
+
+  function unassignStations(stationIds) {
+    if (!stationIds || stationIds.length === 0) {
+      showToast('Vui lòng chọn trạm cần hủy giao việc!', 'warning');
+      return;
+    }
+
+    let count = 0;
+    stationIds.forEach(stId => {
+      const cleanId = String(stId).trim();
+      if (stationAssignments[cleanId]) {
+        delete stationAssignments[cleanId];
+        count++;
+      }
+    });
+
+    saveStationAssignments();
+    renderSidebarWorkgroups();
+    renderStationAssignmentModalTable();
+    updateFilterWorkgroupDropdown();
+    applyFilters();
+    renderApp();
+
+    showToast(`Đã hủy giao việc ${count} trạm!`, 'info');
+  }
+
+  function getGroupStationStats() {
+    const stats = {};
+    PRESET_WORKGROUPS.forEach(g => {
+      stats[g.id] = {
+        group: g,
+        stationCount: 0,
+        customerCount: 0,
+        completedCustomerCount: 0
+      };
+    });
+    stats['unassigned'] = {
+      group: { id: 'unassigned', index: 0, name: 'Chưa giao việc', shortName: 'Chưa giao' },
+      stationCount: 0,
+      customerCount: 0,
+      completedCustomerCount: 0
+    };
+
+    const stationIds = Object.keys(stationsMeta);
+    stationIds.forEach(stId => {
+      const meta = stationsMeta[stId] || { count: 0 };
+      const assign = stationAssignments[stId];
+      const targetKey = assign ? assign.groupId : 'unassigned';
+
+      if (stats[targetKey]) {
+        stats[targetKey].stationCount += 1;
+        stats[targetKey].customerCount += meta.count || 0;
+      }
+    });
+
+    allCustomers.forEach(c => {
+      const stId = c.id_tram || c.ma_tram;
+      const assign = stationAssignments[stId];
+      const targetKey = assign ? assign.groupId : 'unassigned';
+      const insp = inspectionsMap[c.ma_kh];
+      if (insp && insp.trang_thai === 'Đã kiểm tra') {
+        if (stats[targetKey]) {
+          stats[targetKey].completedCustomerCount += 1;
+        }
+      }
+    });
+
+    return stats;
+  }
+
+  function renderSidebarWorkgroups() {
+    const container = document.getElementById('ytWorkgroupList');
+    if (!container) return;
+
+    const stats = getGroupStationStats();
+    const totalStations = Object.keys(stationsMeta).length || 1696;
+    let totalAssigned = 0;
+
+    let html = '';
+    PRESET_WORKGROUPS.forEach(g => {
+      const st = stats[g.id] || { stationCount: 0, customerCount: 0, completedCustomerCount: 0 };
+      totalAssigned += st.stationCount;
+      const pct = st.customerCount > 0 ? Math.round((st.completedCustomerCount / st.customerCount) * 100) : 0;
+      const isActive = (currentAssignedGroupFilter === g.id);
+
+      html += `
+        <button type="button" class="yt-workgroup-card ${isActive ? 'active' : ''}" onclick="window.PCVT.setAssignedGroupFilter('${g.id}')" title="Bấm để xem danh sách của Nhóm ${g.index}: ${escapeHTML(g.fullName)}">
+          <div class="yt-group-avatar">${g.index}</div>
+          <div class="yt-group-info">
+            <div class="yt-group-name">Nhóm ${g.index}: ${escapeHTML(g.shortName)}</div>
+            <div class="yt-group-leader">TN: ${escapeHTML(g.leader)}</div>
+            <div class="yt-group-stats">
+              <span class="yt-badge-stations">${st.stationCount} trạm (${st.customerCount.toLocaleString('vi-VN')} KH)</span>
+              ${st.customerCount > 0 ? `<span class="yt-badge-progress">${pct}%</span>` : ''}
+            </div>
+          </div>
+        </button>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    const statBadge = document.getElementById('ytAssignedStatBadge');
+    if (statBadge) {
+      statBadge.textContent = `${totalAssigned}/${totalStations.toLocaleString('vi-VN')} trạm`;
+    }
+  }
+
+  function setAssignedGroupFilter(groupId) {
+    if (currentAssignedGroupFilter === groupId) {
+      currentAssignedGroupFilter = '';
+    } else {
+      currentAssignedGroupFilter = groupId || '';
+    }
+
+    updateGroupFilterUI();
+
+    if (window.innerWidth < 1200) {
+      closeSidebar();
+    }
+
+    applyFilters();
+    renderApp();
+  }
+
+  function updateGroupFilterUI() {
+    const banner = document.getElementById('groupFilterBanner');
+    const bannerName = document.getElementById('groupBannerName');
+    const bannerStats = document.getElementById('groupBannerStats');
+    const sidebarFilterBox = document.getElementById('ytActiveFilterBox');
+    const sidebarFilterName = document.getElementById('ytFilterGroupName');
+    const sidebarFilterSub = document.getElementById('ytFilterGroupSub');
+    const selectFilter = document.getElementById('filterWorkgroupSelect');
+
+    if (selectFilter && selectFilter.value !== currentAssignedGroupFilter) {
+      selectFilter.value = currentAssignedGroupFilter;
+    }
+
+    if (!currentAssignedGroupFilter) {
+      if (banner) banner.style.display = 'none';
+      if (sidebarFilterBox) sidebarFilterBox.style.display = 'none';
+      renderSidebarWorkgroups();
+      return;
+    }
+
+    const stats = getGroupStationStats();
+    let titleText = '';
+    let subText = '';
+
+    if (currentAssignedGroupFilter === 'unassigned') {
+      titleText = 'Chưa phân công cho nhóm nào';
+      const st = stats['unassigned'] || { stationCount: 0, customerCount: 0 };
+      subText = `Tổng cộng: ${st.stationCount} trạm &bull; ${st.customerCount.toLocaleString('vi-VN')} khách hàng`;
+    } else {
+      const g = PRESET_WORKGROUPS.find(item => item.id === currentAssignedGroupFilter);
+      if (g) {
+        titleText = `Nhóm ${g.index}: ${g.name} (Trưởng nhóm: ${g.leader})`;
+        const st = stats[g.id] || { stationCount: 0, customerCount: 0, completedCustomerCount: 0 };
+        const pct = st.customerCount > 0 ? Math.round((st.completedCustomerCount / st.customerCount) * 100) : 0;
+        subText = `Phụ trách: ${st.stationCount} trạm &bull; ${st.customerCount.toLocaleString('vi-VN')} KH (Đã kiểm tra: ${st.completedCustomerCount.toLocaleString('vi-VN')} KH - ${pct}%)`;
+      }
+    }
+
+    if (banner) {
+      banner.style.display = 'flex';
+      if (bannerName) bannerName.textContent = titleText;
+      if (bannerStats) bannerStats.innerHTML = subText;
+    }
+
+    if (sidebarFilterBox) {
+      sidebarFilterBox.style.display = 'block';
+      if (sidebarFilterName) sidebarFilterName.textContent = titleText;
+      if (sidebarFilterSub) sidebarFilterSub.innerHTML = subText;
+    }
+
+    renderSidebarWorkgroups();
+  }
+
+  function updateFilterWorkgroupDropdown() {
+    const sel = document.getElementById('filterWorkgroupSelect');
+    if (!sel) return;
+
+    const stats = getGroupStationStats();
+    let html = `<option value="">-- Tất cả nhóm công tác --</option>`;
+    const unassigned = stats['unassigned'] || { stationCount: 0, customerCount: 0 };
+    html += `<option value="unassigned" ${currentAssignedGroupFilter === 'unassigned' ? 'selected' : ''}>⚠️ Chưa giao việc (${unassigned.stationCount} trạm, ${unassigned.customerCount.toLocaleString('vi-VN')} KH)</option>`;
+
+    PRESET_WORKGROUPS.forEach(g => {
+      const st = stats[g.id] || { stationCount: 0, customerCount: 0 };
+      const isSel = (currentAssignedGroupFilter === g.id);
+      html += `<option value="${g.id}" ${isSel ? 'selected' : ''}>Nhóm ${g.index}: ${escapeHTML(g.shortName)} (${st.stationCount} trạm, ${st.customerCount.toLocaleString('vi-VN')} KH)</option>`;
+    });
+
+    sel.innerHTML = html;
+  }
+
+  function openStationAssignmentModal(preselectedGroupId) {
+    openModal('modalStationAssignment');
+    currentAssignModalSearch = '';
+    selectedAssignStations.clear();
+
+    const searchInput = document.getElementById('assignStationSearchInput');
+    if (searchInput) searchInput.value = '';
+    const clearBtn = document.getElementById('btnClearAssignStationSearch');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    if (preselectedGroupId) {
+      const groupSelect = document.getElementById('assignGroupSelect');
+      if (groupSelect) groupSelect.value = preselectedGroupId;
+    }
+
+    renderStationAssignmentModalTable();
+  }
+
+  function getFilteredStationsForAssignModal() {
+    const query = currentAssignModalSearch.toLowerCase().trim();
+    const stationEntries = Object.entries(stationsMeta);
+
+    return stationEntries.filter(([stId, meta]) => {
+      const sName = (meta && meta.name) || '';
+      const assign = stationAssignments[stId];
+
+      if (currentAssignModalFilter === 'assigned' && !assign) return false;
+      if (currentAssignModalFilter === 'unassigned' && assign) return false;
+
+      if (query) {
+        const idMatch = stId.toLowerCase().includes(query);
+        const nameMatch = sName.toLowerCase().includes(query);
+        const groupMatch = assign && (assign.groupName.toLowerCase().includes(query) || assign.leader.toLowerCase().includes(query));
+        if (!idMatch && !nameMatch && !groupMatch) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function renderStationAssignmentModalTable() {
+    const tbody = document.getElementById('assignStationTableBody');
+    if (!tbody) return;
+
+    const allStationEntries = Object.entries(stationsMeta);
+    let totalAssigned = 0;
+    allStationEntries.forEach(([stId]) => {
+      if (stationAssignments[stId]) totalAssigned++;
+    });
+    const totalCount = allStationEntries.length;
+    const totalUnassigned = Math.max(0, totalCount - totalAssigned);
+
+    const countAllEl = document.getElementById('assignCountAll');
+    const countAssignedEl = document.getElementById('assignCountAssigned');
+    const countUnassignedEl = document.getElementById('assignCountUnassigned');
+    if (countAllEl) countAllEl.textContent = totalCount.toLocaleString('vi-VN');
+    if (countAssignedEl) countAssignedEl.textContent = totalAssigned.toLocaleString('vi-VN');
+    if (countUnassignedEl) countUnassignedEl.textContent = totalUnassigned.toLocaleString('vi-VN');
+
+    const filteredStations = getFilteredStationsForAssignModal();
+    updateAssignSelectionCountDisplay(filteredStations);
+
+    if (filteredStations.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">
+            🔍 Không tìm thấy trạm nào khớp với điều kiện tìm kiếm.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    const stationCustStats = {};
+    allCustomers.forEach(c => {
+      const sId = c.id_tram || c.ma_tram;
+      if (sId) {
+        if (!stationCustStats[sId]) stationCustStats[sId] = { total: 0, checked: 0 };
+        stationCustStats[sId].total++;
+        if (inspectionsMap[c.ma_kh] && inspectionsMap[c.ma_kh].trang_thai === 'Đã kiểm tra') {
+          stationCustStats[sId].checked++;
+        }
+      }
+    });
+
+    let rowsHtml = '';
+    const displayList = filteredStations.slice(0, 100);
+
+    displayList.forEach(([stId, meta]) => {
+      const sName = (meta && meta.name) || '---';
+      const assign = stationAssignments[stId];
+      const isSelected = selectedAssignStations.has(stId);
+      const stats = stationCustStats[stId] || { total: meta.count || 0, checked: 0 };
+      const pct = stats.total > 0 ? Math.round((stats.checked / stats.total) * 100) : 0;
+
+      let groupBadge = '';
+      if (assign) {
+        groupBadge = `<span class="badge-assigned-group" title="Trưởng nhóm: ${escapeHTML(assign.leader)} - Giao lúc: ${escapeHTML(assign.assignedAt || '')}">
+          👥 Nhóm ${assign.groupIndex}: ${escapeHTML(assign.shortName || assign.groupName)}
+        </span>`;
+      } else {
+        groupBadge = `<span class="badge-assigned-group unassigned">⚠️ Chưa giao việc</span>`;
+      }
+
+      rowsHtml += `
+        <tr class="${isSelected ? 'selected' : ''}" id="assign-row-${escapeHTML(stId)}">
+          <td style="text-align:center;">
+            <input type="checkbox" class="assign-row-chk" value="${escapeHTML(stId)}" 
+                   ${isSelected ? 'checked' : ''} 
+                   onchange="window.PCVT.toggleStationAssignSelection('${escapeHTML(stId)}', this.checked)">
+          </td>
+          <td><span class="badge-station-id">${escapeHTML(stId)}</span></td>
+          <td>
+            <strong>${escapeHTML(sName)}</strong>
+            ${meta.khu_vuc ? `<span style="font-size:0.7rem; color:var(--text-muted); margin-left:4px;">(${escapeHTML(meta.khu_vuc)})</span>` : ''}
+          </td>
+          <td style="text-align:right; font-weight:600;">${stats.total.toLocaleString('vi-VN')}</td>
+          <td style="text-align:center;">
+            <div style="font-size:0.75rem; font-weight:700; color:${pct === 100 ? '#059669' : '#1e293b'}">
+              ${stats.checked}/${stats.total} (${pct}%)
+            </div>
+            <div style="width:100%; height:4px; background:#e2e8f0; border-radius:2px; margin-top:2px; overflow:hidden;">
+              <div style="width:${pct}%; height:100%; background:${pct === 100 ? '#059669' : '#2563eb'};"></div>
+            </div>
+          </td>
+          <td>${groupBadge}</td>
+          <td style="text-align:center;">
+            <button type="button" class="btn-link" onclick="window.PCVT.quickFilterByStation('${escapeHTML(stId)}', '${escapeHTML(sName)}')" title="Xem khách hàng của trạm này">
+              🔍 Xem KH
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    if (filteredStations.length > 100) {
+      rowsHtml += `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:0.75rem; color:var(--text-muted); font-size:0.78rem; background:#f8fafc;">
+            ⚡ Đang hiển thị 100/${filteredStations.length.toLocaleString('vi-VN')} trạm phù hợp. Nhập mã ID trạm hoặc tên trạm vào ô tìm kiếm để thao tác chính xác.
+          </td>
+        </tr>
+      `;
+    }
+
+    tbody.innerHTML = rowsHtml;
+  }
+
+  function updateAssignSelectionCountDisplay(filteredStations) {
+    const selCountEl = document.getElementById('assignSelectedCount');
+    if (selCountEl) {
+      selCountEl.textContent = selectedAssignStations.size.toLocaleString('vi-VN');
+    }
+
+    const selectAllChk = document.getElementById('chkAssignSelectAll');
+    if (selectAllChk && filteredStations) {
+      const displayStations = filteredStations.slice(0, 100);
+      const allChecked = displayStations.length > 0 && displayStations.every(([stId]) => selectedAssignStations.has(stId));
+      selectAllChk.checked = allChecked;
+    }
+  }
+
+  function applySelectedStationAssignment() {
+    if (selectedAssignStations.size === 0) {
+      showToast('Vui lòng chọn ít nhất 1 trạm từ danh sách!', 'warning');
+      return;
+    }
+    const groupSelect = document.getElementById('assignGroupSelect');
+    const groupId = groupSelect ? groupSelect.value : 'group_1';
+
+    assignStationsToGroup(Array.from(selectedAssignStations), groupId);
+    selectedAssignStations.clear();
+    renderStationAssignmentModalTable();
+  }
+
+  function applySelectedStationUnassignment() {
+    if (selectedAssignStations.size === 0) {
+      showToast('Vui lòng chọn ít nhất 1 trạm để hủy giao việc!', 'warning');
+      return;
+    }
+
+    unassignStations(Array.from(selectedAssignStations));
+    selectedAssignStations.clear();
+    renderStationAssignmentModalTable();
+  }
+
+  function exportAssignments() {
+    const totalStations = Object.keys(stationsMeta);
+    if (totalStations.length === 0) {
+      showToast('Chưa có danh sách trạm để xuất!', 'warning');
+      return;
+    }
+
+    const rows = [
+      ['STT', 'ID Tram', 'Ten Tram', 'Khu Vuc', 'Tong So KH', 'Ma Nhom', 'Ten Nhom Cong Tac', 'Truong Nhom', 'Thoi Gian Giao']
+    ];
+
+    let idx = 1;
+    totalStations.sort().forEach(stId => {
+      const meta = stationsMeta[stId] || {};
+      const assign = stationAssignments[stId];
+      rows.push([
+        idx++,
+        stId,
+        meta.name || '',
+        meta.khu_vuc || '',
+        meta.count || 0,
+        assign ? assign.groupId : '',
+        assign ? assign.groupName : 'Chua giao viec',
+        assign ? assign.leader : '',
+        assign ? (assign.assignedAt || '') : ''
+      ]);
+    });
+
+    const csvContent = '\uFEFF' + rows.map(r => r.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Phan_Cong_Giao_Viec_Tram_PCVT_${Date.now()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Đã xuất danh sách trạm phân công thành công!', 'success');
+  }
+
+  // YouTube-style Sidebar Drawer Toggle
+  function toggleSidebar() {
+    const isDesktop = window.innerWidth >= 1200;
+    const sidebar = document.getElementById('ytSidebar');
+    const backdrop = document.getElementById('ytSidebarBackdrop');
+
+    if (isDesktop) {
+      if (document.body.classList.contains('sidebar-collapsed')) {
+        document.body.classList.remove('sidebar-collapsed');
+        document.body.classList.add('sidebar-open');
+        localStorage.setItem(STORAGE_KEY_SIDEBAR_OPEN, '1');
+      } else {
+        document.body.classList.remove('sidebar-open');
+        document.body.classList.add('sidebar-collapsed');
+        localStorage.setItem(STORAGE_KEY_SIDEBAR_OPEN, '0');
+      }
+    } else {
+      if (sidebar) sidebar.classList.toggle('open');
+      if (backdrop) backdrop.classList.toggle('active');
+    }
+  }
+
+  function closeSidebar() {
+    const isDesktop = window.innerWidth >= 1200;
+    const sidebar = document.getElementById('ytSidebar');
+    const backdrop = document.getElementById('ytSidebarBackdrop');
+
+    if (isDesktop) {
+      document.body.classList.remove('sidebar-open');
+      document.body.classList.add('sidebar-collapsed');
+      localStorage.setItem(STORAGE_KEY_SIDEBAR_OPEN, '0');
+    } else {
+      if (sidebar) sidebar.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('active');
+    }
+  }
+
+  function openSidebar() {
+    const isDesktop = window.innerWidth >= 1200;
+    const sidebar = document.getElementById('ytSidebar');
+    const backdrop = document.getElementById('ytSidebarBackdrop');
+
+    if (isDesktop) {
+      document.body.classList.remove('sidebar-collapsed');
+      document.body.classList.add('sidebar-open');
+      localStorage.setItem(STORAGE_KEY_SIDEBAR_OPEN, '1');
+    } else {
+      if (sidebar) sidebar.classList.add('open');
+      if (backdrop) backdrop.classList.add('active');
+    }
   }
 
   function applyViewMode(mode) {
@@ -2023,6 +2855,7 @@ function donDepLogDongBo() {
     currentStationFilter = '';
     currentAreaFilter = '';
     currentConditionFilter = '';
+    currentAssignedGroupFilter = '';
     currentStatusFilter = 'all';
     currentSearchKeyword = '';
 
@@ -2036,6 +2869,8 @@ function donDepLogDongBo() {
     if (gInput) gInput.value = '';
     const clearBtn = document.getElementById('btnClearStation');
     if (clearBtn) clearBtn.style.display = 'none';
+
+    updateGroupFilterUI();
 
     document.querySelectorAll('.status-tab-btn').forEach(b => {
       b.classList.remove('active');
@@ -2077,8 +2912,8 @@ function donDepLogDongBo() {
           const curInsp = getCurrentInspector();
           if (curInsp) {
             inspectionsMap[ma_kh].nguoi_cap_nhat = curInsp;
-            const isPreset = PRESET_INSPECTORS.includes(curInsp);
-            const selVal = isPreset ? curInsp : '__custom__';
+            const isPreset = isPresetInspector(curInsp);
+            const selVal = isPreset ? getInspectorPresetValue(curInsp) : '__custom__';
 
             const dSel = document.getElementById(`sel-updater-${ma_kh}`);
             const mSel = document.getElementById(`msel-updater-${ma_kh}`);
@@ -2266,8 +3101,8 @@ function donDepLogDongBo() {
       inspectionsMap[ma_kh].nguoi_cap_nhat = trimmed;
       syncItemImmediately(ma_kh);
 
-      const isPreset = PRESET_INSPECTORS.includes(trimmed);
-      const selVal = isPreset ? trimmed : (trimmed ? '__custom__' : '');
+      const isPreset = isPresetInspector(trimmed);
+      const selVal = isPreset ? getInspectorPresetValue(trimmed) : (trimmed ? '__custom__' : '');
 
       const dSel = document.getElementById(`sel-updater-${ma_kh}`);
       const mSel = document.getElementById(`msel-updater-${ma_kh}`);
@@ -2494,6 +3329,47 @@ function donDepLogDongBo() {
 
     mergeSyncPackage: function(rawContent) {
       return mergeSyncPackage(rawContent);
+    },
+
+    toggleSidebar: function() {
+      toggleSidebar();
+    },
+
+    closeSidebar: function() {
+      closeSidebar();
+    },
+
+    openSidebar: function() {
+      openSidebar();
+    },
+
+    setAssignedGroupFilter: function(groupId) {
+      setAssignedGroupFilter(groupId);
+    },
+
+    openAssignModal: function(preselectedGroupId) {
+      openStationAssignmentModal(preselectedGroupId);
+    },
+
+    quickFilterByStation: function(id, name) {
+      closeModal('modalStationAssignment');
+      this.selectStation(id, name);
+    },
+
+    toggleStationAssignSelection: function(stationId, isChecked) {
+      if (isChecked) {
+        selectedAssignStations.add(stationId);
+      } else {
+        selectedAssignStations.delete(stationId);
+      }
+      const row = document.getElementById(`assign-row-${stationId}`);
+      if (row) row.classList.toggle('selected', isChecked);
+      const filtered = getFilteredStationsForAssignModal();
+      updateAssignSelectionCountDisplay(filtered);
+    },
+
+    exportAssignments: function() {
+      exportAssignments();
     }
   };
 
@@ -2873,8 +3749,8 @@ function donDepLogDongBo() {
         const sheetIdMatch = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
         const sheetId = sheetIdMatch ? sheetIdMatch[1] : '1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4';
         
-        // Quét trang Log_DongBo qua GViz
-        const gvizLogUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Log_DongBo&tq=` + encodeURIComponent("select B, C, D, E, F where D = 'X' or D = 'x'");
+        // Quét trang Log_DongBo qua GViz (Hỗ trợ cả bảng 9 cột mới và 6 cột cũ)
+        const gvizLogUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Log_DongBo&tq=` + encodeURIComponent("select *");
         const resp = await fetch(gvizLogUrl);
         if (resp.ok) {
           const raw = await resp.text();
@@ -2886,15 +3762,41 @@ function donDepLogDongBo() {
             isConnected = true;
             rows.forEach(r => {
               const cCells = r.c || [];
-              const ma_kh = (cCells[0] && cCells[0].v != null) ? String(cCells[0].v).trim() : '';
-              const nguoi_cap_nhat = (cCells[1] && cCells[1].v != null) ? String(cCells[1].v).trim() : '';
-              const trang_thai = (cCells[2] && cCells[2].v != null) ? String(cCells[2].v).trim() : '';
-              const ngay_kt = (cCells[3] && cCells[3].v != null) ? String(cCells[3].v).trim() : '';
-              const ghi_chu = (cCells[4] && cCells[4].v != null) ? String(cCells[4].v).trim() : '';
+              const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
+              let ma_kh = '';
+              let id_tram = '';
+              let ten_tram = '';
+              let danh_so = '';
+              let nguoi_cap_nhat = '';
+              let trang_thai = '';
+              let ngay_kt = '';
+              let ghi_chu = '';
+
+              if (rawVals.length >= 9) {
+                // Định dạng 9 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
+                ma_kh = rawVals[1];
+                id_tram = rawVals[2];
+                ten_tram = rawVals[3];
+                danh_so = rawVals[4];
+                nguoi_cap_nhat = rawVals[5];
+                trang_thai = rawVals[6];
+                ngay_kt = rawVals[7];
+                ghi_chu = rawVals[8];
+              } else if (rawVals.length >= 4) {
+                // Định dạng 6 cột cũ
+                ma_kh = rawVals[1];
+                nguoi_cap_nhat = rawVals[2];
+                trang_thai = rawVals[3];
+                ngay_kt = rawVals[4] || '';
+                ghi_chu = rawVals[5] || '';
+              }
 
               if (ma_kh && (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra')) {
                 sheetCheckedMap.set(ma_kh, {
                   ma_kh: ma_kh,
+                  id_tram: id_tram,
+                  ten_tram: ten_tram,
+                  danh_so: danh_so,
                   nguoi_cap_nhat: nguoi_cap_nhat,
                   trang_thai_x: 'X',
                   ngay_kiem_tra: ngay_kt,

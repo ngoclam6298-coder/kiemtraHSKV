@@ -33,6 +33,13 @@
     <div class="header-container">
       <!-- Brand Section -->
       <div class="brand-section">
+        <button class="btn-yt-hamburger" id="btnToggleSidebar" aria-label="Mở/đóng danh mục giao việc" title="Danh mục giao việc & 9 Nhóm công tác">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
         <img src="avph472lv.png" alt="EVNHCMC Logo" class="brand-logo">
         <div class="brand-text">
           <h1>CÔNG TY ĐIỆN LỰC VŨNG TÀU</h1>
@@ -67,15 +74,16 @@
           <span>Xuất Excel (.xlsx)</span>
         </button>
 
-        <button class="btn-header" onclick="openModal('modalMultiDeviceSync')" title="Gộp và đồng bộ kết quả giữa điện thoại và máy tính">
+        <button class="btn-header" id="btnExportJson" title="Sao lưu dữ liệu ra file JSON">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-            <line x1="12" y1="18" x2="12.01" y2="18"/>
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
           </svg>
-          <span>Gộp Đa Thiết Bị</span>
+          <span>Sao lưu</span>
         </button>
 
-        <button class="btn-header" onclick="openModal('modalSheetGuide')" title="Cài đặt liên kết và hướng dẫn">
+        <button class="btn-header" id="btnConfigGSheet" title="Cấu hình Google Sheet URL và Webhook thời gian thực">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>
           </svg>
@@ -86,9 +94,108 @@
   </header>
 
   <!-- ==========================================================================
+       YOUTUBE-STYLE COLLAPSIBLE SIDEBAR & BACKDROP
+       ========================================================================== -->
+  <div class="yt-sidebar-backdrop" id="ytSidebarBackdrop"></div>
+
+  <aside class="yt-sidebar" id="ytSidebar">
+    <!-- Sidebar Header (Mobile & Drawer) -->
+    <div class="yt-sidebar-header">
+      <div class="yt-sidebar-brand">
+        <img src="avph472lv.png" alt="EVNHCMC Logo" class="yt-brand-logo">
+        <div class="yt-brand-text">
+          <span class="yt-brand-title">ĐIỀU HÀNH HIỆN TRƯỜNG</span>
+          <span class="yt-brand-sub">PC VŨNG TÀU &bull; 9 NHÓM</span>
+        </div>
+      </div>
+      <button class="yt-sidebar-close" id="btnCloseSidebar" title="Đóng thanh bên">✕</button>
+    </div>
+
+    <div class="yt-sidebar-content">
+      <!-- Section 1: Navigation Actions -->
+      <div class="yt-nav-group">
+        <button class="yt-nav-item active" id="ytNavAllCustomers" title="Xem toàn bộ khách hàng và trạm">
+          <span class="yt-nav-icon">🏠</span>
+          <span class="yt-nav-label">Tất cả dữ liệu & Trạm</span>
+        </button>
+
+        <button class="yt-nav-item yt-nav-assign-cta" id="btnOpenAssignModal" title="Giao việc cho nhóm công tác theo ID trạm">
+          <span class="yt-nav-icon">📋</span>
+          <div class="yt-nav-text">
+            <span class="yt-nav-label">GIAO VIỆC THEO ID TRẠM</span>
+            <span class="yt-nav-badge-hot">MỚI</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="yt-sidebar-divider"></div>
+
+      <!-- Active Group Filter Notice -->
+      <div class="yt-active-filter-box" id="ytActiveFilterBox" style="display:none;">
+        <div class="yt-filter-box-header">
+          <span class="yt-filter-box-title">🎯 ĐANG LỌC NHÓM:</span>
+          <button class="yt-btn-clear-filter" id="ytBtnClearGroupFilter" title="Bỏ lọc, xem tất cả">✕ Xem tất cả</button>
+        </div>
+        <div class="yt-filter-box-name" id="ytFilterGroupName">---</div>
+        <div class="yt-filter-box-sub" id="ytFilterGroupSub">0 trạm &bull; 0 KH</div>
+      </div>
+
+      <!-- Section 2: Workgroups List (9 Nhóm công tác) -->
+      <div class="yt-sidebar-section-header">
+        <span class="yt-sidebar-section-title">👥 9 NHÓM CÔNG TÁC</span>
+        <span class="yt-title-badge" id="ytAssignedStatBadge">0/1.696 trạm</span>
+      </div>
+
+      <div class="yt-workgroup-list" id="ytWorkgroupList">
+        <!-- Rendered dynamically by js/kienthoan.js -->
+      </div>
+
+      <div class="yt-sidebar-divider"></div>
+
+      <!-- Section 3: Utilities -->
+      <div class="yt-sidebar-section-header">
+        <span class="yt-sidebar-section-title">⚡ TIỆN ÍCH HỆ THỐNG</span>
+      </div>
+      <div class="yt-nav-group">
+        <button class="yt-nav-item" onclick="document.getElementById('btnConfigGSheet').click()">
+          <span class="yt-nav-icon">⚙️</span>
+          <span class="yt-nav-label">Cài đặt Google Sheet & Webhook</span>
+        </button>
+        <button class="yt-nav-item" onclick="document.getElementById('btnExportExcel').click()">
+          <span class="yt-nav-icon">📊</span>
+          <span class="yt-nav-label">Xuất Excel đầy đủ (13 cột)</span>
+        </button>
+        <button class="yt-nav-item" id="btnExportAssignments">
+          <span class="yt-nav-icon">📤</span>
+          <span class="yt-nav-label">Xuất danh sách trạm đã giao</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
        MAIN WRAPPER (1 TAB CHỨC NĂNG TOÀN DIỆN)
        ========================================================================== -->
-  <main class="main-wrapper">
+  <main class="main-wrapper" id="mainWrapper">
+
+    <!-- Active Workgroup Assignment Filter Banner -->
+    <section class="group-filter-banner" id="groupFilterBanner" style="display:none;">
+      <div class="group-banner-info">
+        <span class="group-banner-icon">👥</span>
+        <div class="group-banner-text">
+          <div class="group-banner-title">
+            <span>ĐANG LỌC THEO NHÓM CÔNG TÁC:</span>
+            <strong id="groupBannerName">---</strong>
+          </div>
+          <div class="group-banner-sub" id="groupBannerStats">
+            Phụ trách: 0 trạm &bull; 0 khách hàng
+          </div>
+        </div>
+      </div>
+      <button class="btn-clear-group-banner" id="btnClearGroupBanner" title="Bỏ lọc theo nhóm công tác">
+        ✕ Xem tất cả khách hàng
+      </button>
+    </section>
 
     <!-- KPI Cards Row -->
     <section class="kpi-grid">
@@ -143,14 +250,19 @@
       <div class="inspector-box">
         <div class="inspector-icon">👤</div>
         <div class="inspector-info">
-          <span class="inspector-title">CÁN BỘ KIỂM TRA (NGƯỜI CẬP NHẬT - CỘT L)</span>
+          <span class="inspector-title">CÁN BỘ KIỂM TRA (NGƯỜI CẬP NHẬT - 9 NHÓM CÔNG TÁC)</span>
           <div class="inspector-input-wrap">
-            <select id="selectInspectorPreset" class="inspector-select" title="Chọn cán bộ kiểm tra">
-              <option value="">-- Chọn cán bộ kiểm tra --</option>
-              <option value="Nguyễn Văn Nguyên">Nguyễn Văn Nguyên</option>
-              <option value="Phạm Duy Phương">Phạm Duy Phương</option>
-              <option value="Lê Gia Quốc Trung">Lê Gia Quốc Trung</option>
-              <option value="Nguyễn Đức Thành">Nguyễn Đức Thành</option>
+            <select id="selectInspectorPreset" class="inspector-select" title="Chọn nhóm cán bộ kiểm tra">
+              <option value="">-- Chọn nhóm công tác kiểm tra --</option>
+              <option value="Nguyễn Xuân Thắng + Phạm Duy Phương (Trưởng nhóm: Nguyễn Xuân Thắng)">Nhóm 1: Nguyễn Xuân Thắng + Phạm Duy Phương (TN: Nguyễn Xuân Thắng)</option>
+              <option value="Nguyễn Thế Viện + Nguyễn Kim Linh (Trưởng nhóm: Nguyễn Thế Viện)">Nhóm 2: Nguyễn Thế Viện + Nguyễn Kim Linh (TN: Nguyễn Thế Viện)</option>
+              <option value="Nguyễn Đức Thành + Lê Gia Quốc Trung (Trưởng nhóm: Nguyễn Đức Thành)">Nhóm 3: Nguyễn Đức Thành + Lê Gia Quốc Trung (TN: Nguyễn Đức Thành)</option>
+              <option value="Lưu Quang Tuấn + Lê Gia Quốc Trung (Trưởng nhóm: Lưu Quang Tuấn)">Nhóm 4: Lưu Quang Tuấn + Lê Gia Quốc Trung (TN: Lưu Quang Tuấn)</option>
+              <option value="Nguyễn Ngọc Kỳ + Huỳnh Tấn Phát (Trưởng nhóm: Nguyễn Ngọc Kỳ)">Nhóm 5: Nguyễn Ngọc Kỳ + Huỳnh Tấn Phát (TN: Nguyễn Ngọc Kỳ)</option>
+              <option value="Nguyễn Trọng Hải + Nguyễn văn Thành (Trưởng nhóm: Nguyễn Trọng Hải)">Nhóm 6: Nguyễn Trọng Hải + Nguyễn văn Thành (TN: Nguyễn Trọng Hải)</option>
+              <option value="Nguyễn Đức Thành + Nguyễn Văn Nguyên (Trưởng nhóm: Nguyễn Đức Thành)">Nhóm 7: Nguyễn Đức Thành + Nguyễn Văn Nguyên (TN: Nguyễn Đức Thành)</option>
+              <option value="Nguyễn Văn Nguyên + Lê Phúc Hậu (Trưởng nhóm: Nguyễn văn Nguyên)">Nhóm 8: Nguyễn Văn Nguyên + Lê Phúc Hậu (TN: Nguyễn văn Nguyên)</option>
+              <option value="Nguyễn Hữu Mến + Lê Phúc Hậu (Trưởng nhóm: Nguyễn Hữu Mến)">Nhóm 9: Nguyễn Hữu Mến + Lê Phúc Hậu (TN: Nguyễn Hữu Mến)</option>
               <option value="__custom__">✏️ Khác (Tự nhập tên)...</option>
             </select>
             <input type="text" id="inputInspectorName" class="inspector-input" placeholder="Nhập tên cán bộ khác..." style="display:none;" autocomplete="name">
@@ -295,7 +407,28 @@
           </select>
         </div>
 
-        <!-- 3. Free Text Search across 12 columns -->
+        <!-- 4. Filter Workgroup Assigned -->
+        <div class="form-group">
+          <label class="form-label" for="filterWorkgroupSelect">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Nhóm công tác được giao:
+          </label>
+          <select class="form-control form-select" id="filterWorkgroupSelect">
+            <option value="">-- Tất cả nhóm công tác --</option>
+            <option value="unassigned">⚠️ Chưa giao cho nhóm nào</option>
+            <option value="group_1">Nhóm 1: Thắng + Phương</option>
+            <option value="group_2">Nhóm 2: Viện + Linh</option>
+            <option value="group_3">Nhóm 3: Thành + Trung</option>
+            <option value="group_4">Nhóm 4: Tuấn + Trung</option>
+            <option value="group_5">Nhóm 5: Kỳ + Phát</option>
+            <option value="group_6">Nhóm 6: Hải + Thành</option>
+            <option value="group_7">Nhóm 7: Thành + Nguyên</option>
+            <option value="group_8">Nhóm 8: Nguyên + Hậu</option>
+            <option value="group_9">Nhóm 9: Mến + Hậu</option>
+          </select>
+        </div>
+
+        <!-- 5. Free Text Search across 12 columns -->
         <div class="form-group">
           <label class="form-label" for="globalKeywordInput">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -411,6 +544,104 @@
       <button class="btn-mobile-sticky" onclick="document.getElementById('btnExportExcel').click()" style="background:#0a326a; color:#fff; border-color:#0a326a;">
         📊 Xuất Excel
       </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       STATION ASSIGNMENT MODAL (GIAO VIỆC THEO ID TRẠM CHO 9 NHÓM CÔNG TÁC)
+       ========================================================================== -->
+  <div class="modal-overlay" id="modalStationAssignment">
+    <div class="modal-box modal-box-large" style="max-width: 960px; width: 96vw;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📋 GIAO VIỆC CHO NHÓM CÔNG TÁC THEO ID TRẠM</span>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal('modalStationAssignment')">✕</button>
+      </div>
+
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 0.85rem; max-height: 75vh; overflow-y: auto;">
+        <!-- Step 1 & Action Card -->
+        <div class="assign-action-card">
+          <div class="assign-group-picker">
+            <label class="assign-label" for="assignGroupSelect"><strong>Bước 1: Chọn nhóm công tác nhận việc:</strong></label>
+            <select id="assignGroupSelect" class="form-control form-select assign-select">
+              <option value="group_1">Nhóm 1: Nguyễn Xuân Thắng + Phạm Duy Phương (TN: Nguyễn Xuân Thắng)</option>
+              <option value="group_2">Nhóm 2: Nguyễn Thế Viện + Nguyễn Kim Linh (TN: Nguyễn Thế Viện)</option>
+              <option value="group_3">Nhóm 3: Nguyễn Đức Thành + Lê Gia Quốc Trung (TN: Nguyễn Đức Thành)</option>
+              <option value="group_4">Nhóm 4: Lưu Quang Tuấn + Lê Gia Quốc Trung (TN: Lưu Quang Tuấn)</option>
+              <option value="group_5">Nhóm 5: Nguyễn Ngọc Kỳ + Huỳnh Tấn Phát (TN: Nguyễn Ngọc Kỳ)</option>
+              <option value="group_6">Nhóm 6: Nguyễn Trọng Hải + Nguyễn văn Thành (TN: Nguyễn Trọng Hải)</option>
+              <option value="group_7">Nhóm 7: Nguyễn Đức Thành + Nguyễn Văn Nguyên (TN: Nguyễn Đức Thành)</option>
+              <option value="group_8">Nhóm 8: Nguyễn Văn Nguyên + Lê Phúc Hậu (TN: Nguyễn văn Nguyên)</option>
+              <option value="group_9">Nhóm 9: Nguyễn Hữu Mến + Lê Phúc Hậu (TN: Nguyễn Hữu Mến)</option>
+            </select>
+          </div>
+          <div class="assign-btn-actions">
+            <button type="button" class="btn-header primary" id="btnApplyStationAssign" style="min-height: 42px; font-weight:700; padding: 0 1.25rem;">
+              ⚡ Giao các trạm đã chọn cho nhóm
+            </button>
+            <button type="button" class="btn-secondary" id="btnUnassignSelectedStations" style="min-height: 42px; color: #dc2626; border-color: #fca5a5;">
+              🗑️ Hủy giao việc trạm đã chọn
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Stations in Modal -->
+        <div class="assign-search-bar">
+          <div class="assign-search-input-wrap">
+            <span class="assign-search-icon">🔍</span>
+            <input type="text" id="assignStationSearchInput" class="form-control" placeholder="Tìm theo ID trạm (vd: 102325, 104068) hoặc tên trạm..." style="padding-left: 2.2rem;">
+            <button type="button" id="btnClearAssignStationSearch" style="position:absolute; right:10px; border:none; background:transparent; cursor:pointer; color:var(--text-light); display:none;">✕</button>
+          </div>
+
+          <div class="assign-filter-pills">
+            <button type="button" class="assign-pill-filter active" data-filter="all">Tất cả (<span id="assignCountAll">1.696</span>)</button>
+            <button type="button" class="assign-pill-filter" data-filter="assigned">Đã giao việc (<span id="assignCountAssigned">0</span>)</button>
+            <button type="button" class="assign-pill-filter" data-filter="unassigned">Chưa giao việc (<span id="assignCountUnassigned">1.696</span>)</button>
+          </div>
+        </div>
+
+        <!-- Selection Stats & Quick Select -->
+        <div class="assign-selection-summary">
+          <div class="assign-selected-count">
+            Đang chọn: <strong id="assignSelectedCount">0</strong> trạm
+          </div>
+          <div class="assign-quick-select-btns">
+            <button type="button" class="btn-link" id="btnSelectAllFilteredStations">Chọn tất cả trạm đang hiển thị</button>
+            <span style="color:#cbd5e1;">|</span>
+            <button type="button" class="btn-link" id="btnClearAllSelectedStations">Bỏ chọn tất cả</button>
+          </div>
+        </div>
+
+        <!-- Station Table List -->
+        <div class="assign-table-container">
+          <table class="assign-data-table">
+            <thead>
+              <tr>
+                <th style="width: 44px; text-align: center;">
+                  <input type="checkbox" id="chkAssignSelectAll" title="Chọn / Bỏ chọn tất cả">
+                </th>
+                <th style="width: 110px;">ID Trạm</th>
+                <th>Tên Trạm</th>
+                <th style="width: 90px; text-align: right;">Số KH</th>
+                <th style="width: 140px; text-align: center;">Tiến độ đã KT</th>
+                <th style="width: 220px;">Nhóm đang phụ trách</th>
+                <th style="width: 90px; text-align: center;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="assignStationTableBody">
+              <!-- Rendered dynamically by js/kienthoan.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: auto;">
+          💡 Dữ liệu phân công trạm được lưu tự động trên hệ thống và hiển thị huy hiệu trên bảng kiểm tra.
+        </span>
+        <button class="btn-secondary" onclick="closeModal('modalStationAssignment')">Đóng</button>
+      </div>
     </div>
   </div>
 
