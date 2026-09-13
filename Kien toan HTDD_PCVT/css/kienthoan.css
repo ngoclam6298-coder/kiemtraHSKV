@@ -2878,7 +2878,7 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: auto;
-  max-height: 420px;
+  max-height: 520px;
   background: #ffffff;
 }
 
@@ -2907,12 +2907,37 @@ body {
   vertical-align: middle;
 }
 
+.assign-data-table tr {
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
 .assign-data-table tr:hover {
   background: #f8fafc;
 }
 
 .assign-data-table tr.selected {
-  background: #eff6ff;
+  background: #e0f2fe;
+}
+
+.btn-quick-assign-row {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-quick-assign-row:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 /* Assigned Group Badge in Customer Table & Mobile Cards */

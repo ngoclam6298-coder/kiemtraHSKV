@@ -2222,18 +2222,43 @@ function donDepLogDongBo() {
     // Station Assignment Modal interactions
     const assignSearchInput = document.getElementById('assignStationSearchInput');
     const btnClearAssignSearch = document.getElementById('btnClearAssignStationSearch');
+    let assignSearchDebounceTimer = null;
     if (assignSearchInput) {
       assignSearchInput.addEventListener('input', () => {
-        currentAssignModalSearch = assignSearchInput.value;
-        if (btnClearAssignSearch) {
-          btnClearAssignSearch.style.display = currentAssignModalSearch ? 'block' : 'none';
+        clearTimeout(assignSearchDebounceTimer);
+        assignSearchDebounceTimer = setTimeout(() => {
+          currentAssignModalSearch = assignSearchInput.value;
+          if (btnClearAssignSearch) {
+            btnClearAssignSearch.style.display = currentAssignModalSearch ? 'block' : 'none';
+          }
+          renderStationAssignmentModalTable();
+        }, 100);
+      });
+
+      assignSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          clearTimeout(assignSearchDebounceTimer);
+          currentAssignModalSearch = assignSearchInput.value;
+          if (btnClearAssignSearch) {
+            btnClearAssignSearch.style.display = currentAssignModalSearch ? 'block' : 'none';
+          }
+          renderStationAssignmentModalTable();
+        } else if (e.key === 'Escape') {
+          if (assignSearchInput.value) {
+            assignSearchInput.value = '';
+            currentAssignModalSearch = '';
+            if (btnClearAssignSearch) btnClearAssignSearch.style.display = 'none';
+            renderStationAssignmentModalTable();
+          }
         }
-        renderStationAssignmentModalTable();
       });
     }
     if (btnClearAssignSearch) {
       btnClearAssignSearch.addEventListener('click', () => {
-        if (assignSearchInput) assignSearchInput.value = '';
+        if (assignSearchInput) {
+          assignSearchInput.value = '';
+          assignSearchInput.focus();
+        }
         currentAssignModalSearch = '';
         btnClearAssignSearch.style.display = 'none';
         renderStationAssignmentModalTable();
@@ -2254,7 +2279,7 @@ function donDepLogDongBo() {
     const chkAssignAll = document.getElementById('chkAssignSelectAll');
     if (chkAssignAll) {
       chkAssignAll.addEventListener('change', () => {
-        const filtered = getFilteredStationsForAssignModal().slice(0, 100);
+        const filtered = getFilteredStationsForAssignModal();
         if (chkAssignAll.checked) {
           filtered.forEach(([stId]) => selectedAssignStations.add(stId));
         } else {
@@ -2271,7 +2296,12 @@ function donDepLogDongBo() {
         const filtered = getFilteredStationsForAssignModal();
         filtered.forEach(([stId]) => selectedAssignStations.add(stId));
         renderStationAssignmentModalTable();
-        showToast(`Đã chọn ${filtered.length} trạm đang lọc!`, 'info');
+        const custStats = getStationCustStats();
+        let totalCust = 0;
+        filtered.forEach(([stId]) => {
+          totalCust += (custStats[stId] && custStats[stId].total) || 0;
+        });
+        showToast(`Đã chọn tất cả ${filtered.length.toLocaleString('vi-VN')} trạm (${totalCust.toLocaleString('vi-VN')} KH)!`, 'info');
       });
     }
 
@@ -2559,6 +2589,7 @@ function donDepLogDongBo() {
     openModal('modalStationAssignment');
     currentAssignModalSearch = '';
     selectedAssignStations.clear();
+    cachedStationCustStats = null;
 
     const searchInput = document.getElementById('assignStationSearchInput');
     if (searchInput) searchInput.value = '';
@@ -2573,22 +2604,84 @@ function donDepLogDongBo() {
     renderStationAssignmentModalTable();
   }
 
+  // Helper to remove Vietnamese tones for fast, diacritic-insensitive search
+  function removeVietnameseTones(str) {
+    if (!str) return '';
+    str = String(str);
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+    str = str.replace(/đ/g, 'd');
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, 'A');
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, 'E');
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, 'I');
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, 'O');
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, 'U');
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, 'Y');
+    str = str.replace(/Đ/g, 'D');
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
+  // Cache customer count per station for ultra-fast rendering of 1.696 stations
+  let cachedStationCustStats = null;
+  function getStationCustStats() {
+    if (cachedStationCustStats) return cachedStationCustStats;
+    const stats = {};
+    for (let i = 0; i < allCustomers.length; i++) {
+      const c = allCustomers[i];
+      const sId = c.id_tram || c.ma_tram;
+      if (sId) {
+        if (!stats[sId]) stats[sId] = { total: 0, checked: 0 };
+        stats[sId].total++;
+        if (inspectionsMap[c.ma_kh] && inspectionsMap[c.ma_kh].trang_thai === 'Đã kiểm tra') {
+          stats[sId].checked++;
+        }
+      }
+    }
+    cachedStationCustStats = stats;
+    return stats;
+  }
+
   function getFilteredStationsForAssignModal() {
-    const query = currentAssignModalSearch.toLowerCase().trim();
+    const rawQuery = (currentAssignModalSearch || '').trim();
     const stationEntries = Object.entries(stationsMeta);
 
     return stationEntries.filter(([stId, meta]) => {
       const sName = (meta && meta.name) || '';
+      const sKhuVuc = (meta && meta.khu_vuc) || '';
       const assign = stationAssignments[stId];
 
       if (currentAssignModalFilter === 'assigned' && !assign) return false;
       if (currentAssignModalFilter === 'unassigned' && assign) return false;
 
-      if (query) {
-        const idMatch = stId.toLowerCase().includes(query);
-        const nameMatch = sName.toLowerCase().includes(query);
-        const groupMatch = assign && (assign.groupName.toLowerCase().includes(query) || assign.leader.toLowerCase().includes(query));
-        if (!idMatch && !nameMatch && !groupMatch) return false;
+      if (rawQuery) {
+        // 1. Check if user pasted/entered a list of IDs (e.g. "101467, 101470" or "101467 101470")
+        const idTokens = rawQuery.split(/[,;\s\n]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
+        const isMultiId = idTokens.length > 1 && idTokens.every(t => /^[a-zA-Z0-9_-]+$/.test(t));
+        if (isMultiId) {
+          return idTokens.includes(stId.toLowerCase());
+        }
+
+        // 2. Flexible multi-word & accent-insensitive search on ID, Name, Khu Vuc, and Group
+        const normQuery = removeVietnameseTones(rawQuery);
+        const normId = removeVietnameseTones(stId);
+        const normName = removeVietnameseTones(sName);
+        const normKhuVuc = removeVietnameseTones(sKhuVuc);
+        const normGroup = assign ? removeVietnameseTones(`${assign.groupName} ${assign.leader} Nhom ${assign.groupIndex}`) : '';
+
+        // Exact / substring match
+        if (normId.includes(normQuery)) return true;
+        if (normName.includes(normQuery)) return true;
+        if (normKhuVuc.includes(normQuery)) return true;
+        if (normGroup && normGroup.includes(normQuery)) return true;
+
+        // All words must be present in the station info
+        const words = normQuery.split(/\s+/).filter(Boolean);
+        const fullTarget = `${normId} ${normName} ${normKhuVuc} ${normGroup}`;
+        return words.every(w => fullTarget.includes(w));
       }
 
       return true;
@@ -2628,20 +2721,9 @@ function donDepLogDongBo() {
       return;
     }
 
-    const stationCustStats = {};
-    allCustomers.forEach(c => {
-      const sId = c.id_tram || c.ma_tram;
-      if (sId) {
-        if (!stationCustStats[sId]) stationCustStats[sId] = { total: 0, checked: 0 };
-        stationCustStats[sId].total++;
-        if (inspectionsMap[c.ma_kh] && inspectionsMap[c.ma_kh].trang_thai === 'Đã kiểm tra') {
-          stationCustStats[sId].checked++;
-        }
-      }
-    });
-
+    const stationCustStats = getStationCustStats();
     let rowsHtml = '';
-    const displayList = filteredStations.slice(0, 100);
+    const displayList = filteredStations; // Hiện TOÀN BỘ tất cả trạm (không giới hạn 100)
 
     displayList.forEach(([stId, meta]) => {
       const sName = (meta && meta.name) || '---';
@@ -2660,7 +2742,7 @@ function donDepLogDongBo() {
       }
 
       rowsHtml += `
-        <tr class="${isSelected ? 'selected' : ''}" id="assign-row-${escapeHTML(stId)}">
+        <tr class="${isSelected ? 'selected' : ''}" id="assign-row-${escapeHTML(stId)}" onclick="window.PCVT.handleAssignRowClick(event, '${escapeHTML(stId)}')">
           <td style="text-align:center;">
             <input type="checkbox" class="assign-row-chk" value="${escapeHTML(stId)}" 
                    ${isSelected ? 'checked' : ''} 
@@ -2682,39 +2764,75 @@ function donDepLogDongBo() {
           </td>
           <td>${groupBadge}</td>
           <td style="text-align:center;">
-            <button type="button" class="btn-link" onclick="window.PCVT.quickFilterByStation('${escapeHTML(stId)}', '${escapeHTML(sName)}')" title="Xem khách hàng của trạm này">
-              🔍 Xem KH
-            </button>
+            <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+              <button type="button" class="btn-link" onclick="event.stopPropagation(); window.PCVT.quickFilterByStation('${escapeHTML(stId)}', '${escapeHTML(sName)}')" title="Xem danh sách khách hàng của trạm này">
+                🔍 Xem KH
+              </button>
+              <button type="button" class="btn-quick-assign-row" onclick="event.stopPropagation(); window.PCVT.quickAssignSingleStation('${escapeHTML(stId)}')" title="Giao ngay trạm này cho nhóm đang chọn ở Bước 1">
+                ⚡ Giao
+              </button>
+            </div>
           </td>
         </tr>
       `;
     });
 
-    if (filteredStations.length > 100) {
-      rowsHtml += `
-        <tr>
-          <td colspan="7" style="text-align:center; padding:0.75rem; color:var(--text-muted); font-size:0.78rem; background:#f8fafc;">
-            ⚡ Đang hiển thị 100/${filteredStations.length.toLocaleString('vi-VN')} trạm phù hợp. Nhập mã ID trạm hoặc tên trạm vào ô tìm kiếm để thao tác chính xác.
-          </td>
-        </tr>
-      `;
-    }
+    rowsHtml += `
+      <tr>
+        <td colspan="7" style="text-align:center; padding:0.65rem; color:var(--text-muted); font-size:0.78rem; background:#f8fafc; border-top:1px solid #e2e8f0;">
+          ⚡ Đang hiển thị toàn bộ <strong>${filteredStations.length.toLocaleString('vi-VN')}</strong> trạm. Nhập ID hoặc Tên trạm vào ô tìm kiếm để lọc nhanh và giao việc.
+        </td>
+      </tr>
+    `;
 
     tbody.innerHTML = rowsHtml;
   }
 
   function updateAssignSelectionCountDisplay(filteredStations) {
     const selCountEl = document.getElementById('assignSelectedCount');
+    const custStats = getStationCustStats();
+    let totalCustSelected = 0;
+    selectedAssignStations.forEach(stId => {
+      if (custStats[stId]) totalCustSelected += custStats[stId].total;
+      else if (stationsMeta[stId]) totalCustSelected += (stationsMeta[stId].count || 0);
+    });
+
     if (selCountEl) {
-      selCountEl.textContent = selectedAssignStations.size.toLocaleString('vi-VN');
+      selCountEl.innerHTML = `<strong>${selectedAssignStations.size.toLocaleString('vi-VN')}</strong> trạm <span style="font-weight:600; color:#2563eb; margin-left:4px;">(${totalCustSelected.toLocaleString('vi-VN')} KH)</span>`;
     }
 
     const selectAllChk = document.getElementById('chkAssignSelectAll');
     if (selectAllChk && filteredStations) {
-      const displayStations = filteredStations.slice(0, 100);
-      const allChecked = displayStations.length > 0 && displayStations.every(([stId]) => selectedAssignStations.has(stId));
+      const allChecked = filteredStations.length > 0 && filteredStations.every(([stId]) => selectedAssignStations.has(stId));
       selectAllChk.checked = allChecked;
     }
+  }
+
+  function quickAssignSingleStation(stId) {
+    const groupSelect = document.getElementById('assignGroupSelect');
+    const groupId = groupSelect ? groupSelect.value : 'group_1';
+    assignStationsToGroup([stId], groupId);
+    const g = PRESET_WORKGROUPS.find(item => item.id === groupId);
+    const gName = g ? `Nhóm ${g.index}: ${g.shortName}` : groupId;
+    showToast(`Đã giao trạm ${stId} cho ${gName}!`, 'success');
+    renderStationAssignmentModalTable();
+  }
+
+  function handleAssignRowClick(event, stId) {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON' || event.target.closest('button') || event.target.closest('a')) {
+      return;
+    }
+    const isChecked = !selectedAssignStations.has(stId);
+    if (isChecked) selectedAssignStations.add(stId);
+    else selectedAssignStations.delete(stId);
+
+    const chk = document.querySelector(`#assign-row-${stId} .assign-row-chk`);
+    if (chk) chk.checked = isChecked;
+    const row = document.getElementById(`assign-row-${stId}`);
+    if (row) row.classList.toggle('selected', isChecked);
+
+    const filtered = getFilteredStationsForAssignModal();
+    updateAssignSelectionCountDisplay(filtered);
   }
 
   function applySelectedStationAssignment() {
@@ -3366,6 +3484,14 @@ function donDepLogDongBo() {
       if (row) row.classList.toggle('selected', isChecked);
       const filtered = getFilteredStationsForAssignModal();
       updateAssignSelectionCountDisplay(filtered);
+    },
+
+    quickAssignSingleStation: function(stationId) {
+      quickAssignSingleStation(stationId);
+    },
+
+    handleAssignRowClick: function(event, stationId) {
+      handleAssignRowClick(event, stationId);
     },
 
     exportAssignments: function() {
