@@ -130,6 +130,27 @@
       </div>
     </section>
 
+    <!-- Inspector & Realtime Sync Toolbar -->
+    <section class="inspector-toolbar">
+      <div class="inspector-box">
+        <div class="inspector-icon">👤</div>
+        <div class="inspector-info">
+          <span class="inspector-title">CÁN BỘ KIỂM TRA (NGƯỜI CẬP NHẬT - CỘT L)</span>
+          <div class="inspector-input-wrap">
+            <input type="text" id="inputInspectorName" class="inspector-input" placeholder="Nhập tên cán bộ (vd: Nguyễn Văn A)..." autocomplete="name">
+            <button type="button" class="btn-save-inspector" id="btnSaveInspector" title="Lưu tên cán bộ">💾 Lưu tên</button>
+          </div>
+        </div>
+      </div>
+      <div class="sync-realtime-box">
+        <div class="sync-realtime-status" id="syncRealtimeStatus" title="Trạng thái đồng bộ dữ liệu">
+          <span class="sync-pulse"></span>
+          <span id="syncRealtimeText">🟢 Đã đồng bộ tức thì</span>
+        </div>
+        <div class="sync-realtime-sub" id="syncRealtimeSub">Mọi thao tác trên điện thoại được lưu và đồng bộ ngay</div>
+      </div>
+    </section>
+
     <!-- Selected Station Banner (Dynamic) -->
     <section class="station-banner" id="stationBanner" style="display: none;">
       <div class="station-banner-info">
@@ -262,6 +283,7 @@
               <th class="col-phone">Số ĐT (I)</th>
               <th class="col-address">Địa chỉ điểm đo (E) / ĐC KH (D)</th>
               <th class="col-area">Khu vực (K)</th>
+              <th class="col-updater">Người cập nhật (L)</th>
               <th class="col-note">Ghi chú hiện trạng</th>
               <th class="col-photo">Hình ảnh</th>
               <th class="col-actions">Lưu</th>
@@ -360,6 +382,49 @@
             🔄 Lưu & Đồng bộ ngay từ Google Sheet
           </button>
         </form>
+
+        <!-- Section 2: Real-time Webhook Sync -->
+        <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+          <div style="font-weight: 700; color: var(--evn-primary); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.95rem;">
+            <span>⚡ ĐỒNG BỘ 2 CHIỀU THỜI GIAN THỰC LÊN GOOGLE SHEET (WEBHOOK)</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
+            Khi cập nhật trên điện thoại (đánh dấu hoàn thành, ghi chú, người cập nhật), hệ thống sẽ gửi lệnh đồng bộ ngay lập tức lên Google Sheet.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label" for="inputAppsScriptUrl">Đường link Google Apps Script Web App (Webhook URL):</label>
+            <input type="url" class="form-control" id="inputAppsScriptUrl" style="padding-left: 0.75rem;"
+                   placeholder="https://script.google.com/macros/s/.../exec">
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+            <button type="button" class="btn-header primary" id="btnSaveWebhookUrl" style="justify-content: center; min-height: 40px;">
+              💾 Lưu Cấu Hình Webhook
+            </button>
+            <button type="button" class="btn-secondary" id="btnCopyAppsScriptCode" style="min-height: 40px;">
+              📋 Sao chép mã Google Apps Script
+            </button>
+          </div>
+
+          <!-- Collapsible Code Guide -->
+          <details style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.78rem;">
+            <summary style="font-weight: 700; cursor: pointer; color: #1e40af;">
+              📖 Hướng dẫn gắn mã vào Google Sheet (Chỉ cần làm 1 lần trong 2 phút)
+            </summary>
+            <div style="margin-top: 0.5rem; line-height: 1.5; color: #334155;">
+              <ol style="padding-left: 1.2rem; margin: 0; display:flex; flex-direction:column; gap:4px;">
+                <li>Mở Google Sheet: <code>https://docs.google.com/spreadsheets/d/1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4/edit</code></li>
+                <li>Trên thanh menu chọn: <strong>Tiện ích mở rộng (Extensions)</strong> ➔ <strong>Apps Script</strong>.</li>
+                <li>Bấm nút <strong>Sao chép mã Google Apps Script</strong> ở trên và dán toàn bộ vào màn hình Apps Script rồi bấm <strong>Save</strong> (Ctrl+S).</li>
+                <li>Bấm nút <strong>Triển khai (Deploy)</strong> ở góc trên bên phải ➔ chọn <strong>Triển khai mới (New deployment)</strong>.</li>
+                <li>Chọn loại: biểu tượng bánh răng ⚙️ ➔ <strong>Ứng dụng web (Web app)</strong>.</li>
+                <li>Mục <em>Ai có quyền truy cập (Who has access)</em>: Chọn <strong>Bất kỳ ai (Anyone)</strong>.</li>
+                <li>Bấm <strong>Triển khai (Deploy)</strong>, copy link Web App dán vào ô bên trên và bấm <strong>Lưu Cấu Hình</strong>.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalSheetGuide')">Đóng</button>

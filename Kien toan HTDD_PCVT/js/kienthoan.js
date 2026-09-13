@@ -12,6 +12,9 @@
   const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4/edit?gid=1392868293#gid=1392868293';
   const STORAGE_KEY_INSPECTIONS = 'PCVT_KT_INSPECTIONS_V2';
   const STORAGE_KEY_SHEET_URL = 'PCVT_KT_SHEET_URL_V2';
+  const STORAGE_KEY_INSPECTOR = 'PCVT_CURRENT_INSPECTOR';
+  const STORAGE_KEY_WEBHOOK_URL = 'PCVT_APPS_SCRIPT_URL';
+  const STORAGE_KEY_OFFLINE_QUEUE = 'PCVT_OFFLINE_QUEUE';
   
   // IndexedDB Constants for 221.038 customers
   const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB';
@@ -19,10 +22,23 @@
   const IDB_STORE_CHUNKS = 'customer_chunks';
   const CHUNK_SIZE = 10000;
 
+  // --- Multi-tab / Realtime Broadcast Channel ---
+  let syncChannel = null;
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      syncChannel = new BroadcastChannel('PCVT_KIENTHOAN_SYNC_CHANNEL');
+      syncChannel.onmessage = (event) => {
+        handleSyncMessage(event.data);
+      };
+    }
+  } catch (e) {
+    console.warn('BroadcastChannel not supported:', e);
+  }
+
   // --- State ---
   let allCustomers = [];           // In-memory array of all 221.038 customers
   let stationsMeta = {};           // Map: id_tram -> { id, name, khu_vuc, count }
-  let inspectionsMap = {};         // Map: ma_kh -> { trang_thai, ngay_kiem_tra, ghi_chu, hinh_anh }
+  let inspectionsMap = {};         // Map: ma_kh -> { trang_thai, ngay_kiem_tra, ghi_chu, hinh_anh, nguoi_cap_nhat }
   let filteredCustomers = [];      // Filtered list
   let currentStationFilter = '';   // Selected station ID
   let currentAreaFilter = '';      // Selected Area
@@ -44,12 +60,266 @@
   ];
 
   // ==========================================================================
+  // NUMBER NORMALIZATION (CONVERT 2,21E+14 -> 221000000000000)
+  // ==========================================================================
+  function formatMeterNo(val) {
+    if (!val) return '';
+    let s = String(val).trim();
+    // Check if scientific notation like 2,21E+14, 2.51E+14, 2.21e14
+    if (/[eE]/.test(s)) {
+      try {
+        const normalized = s.replace(',', '.');
+        const num = Number(normalized);
+        if (!isNaN(num) && isFinite(num)) {
+          return BigInt(Math.round(num)).toString();
+        }
+      } catch (e) {
+        console.warn('formatMeterNo error:', e);
+      }
+    }
+    return s;
+  }
+
+  // ==========================================================================
+  // INSPECTOR & SYNC HELPERS
+  // ==========================================================================
+  function getCurrentInspector() {
+    return (localStorage.getItem(STORAGE_KEY_INSPECTOR) || '').trim();
+  }
+
+  function setCurrentInspector(name) {
+    const trimmed = (name || '').trim();
+    localStorage.setItem(STORAGE_KEY_INSPECTOR, trimmed);
+    const input = document.getElementById('inputInspectorName');
+    if (input && input.value !== trimmed) input.value = trimmed;
+    return trimmed;
+  }
+
+  function updateSyncStatus(status, text, subText) {
+    const statusEl = document.getElementById('syncRealtimeStatus');
+    const textEl = document.getElementById('syncRealtimeText');
+    const subEl = document.getElementById('syncRealtimeSub');
+
+    if (statusEl) {
+      statusEl.className = `sync-realtime-status ${status}`;
+    }
+    if (textEl && text) {
+      textEl.textContent = text;
+    }
+    if (subEl && subText) {
+      subEl.textContent = subText;
+    }
+  }
+
+  function getOfflineQueue() {
+    try {
+      const q = localStorage.getItem(STORAGE_KEY_OFFLINE_QUEUE);
+      return q ? JSON.parse(q) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveOfflineQueue(queue) {
+    try {
+      localStorage.setItem(STORAGE_KEY_OFFLINE_QUEUE, JSON.stringify(queue));
+    } catch (e) {}
+  }
+
+  function enqueueOffline(item) {
+    const queue = getOfflineQueue();
+    const idx = queue.findIndex(q => q.ma_kh === item.ma_kh);
+    if (idx >= 0) {
+      queue[idx] = item;
+    } else {
+      queue.push(item);
+    }
+    saveOfflineQueue(queue);
+  }
+
+  async function processOfflineQueue() {
+    const queue = getOfflineQueue();
+    if (queue.length === 0) return;
+
+    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    if (!webhookUrl || !navigator.onLine) return;
+
+    updateSyncStatus('syncing', `Đang đồng bộ ${queue.length} bản ghi...`, 'Tự động gửi cập nhật ngoại tuyến lên Google Sheet');
+
+    const remaining = [];
+    for (const item of queue) {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+      } catch (err) {
+        remaining.push(item);
+      }
+    }
+
+    saveOfflineQueue(remaining);
+    if (remaining.length === 0) {
+      updateSyncStatus('synced', '🟢 Đã đồng bộ tất cả lên Google Sheet', 'Mọi dữ liệu đã được cập nhật trực tuyến');
+      showToast('Đã đồng bộ toàn bộ dữ liệu ngoại tuyến lên Google Sheet!', 'success');
+    } else {
+      updateSyncStatus('offline', `Còn ${remaining.length} bản ghi chờ mạng`, 'Sẽ tự động gửi khi kết nối mạng ổn định');
+    }
+  }
+
+  function syncItemImmediately(ma_kh) {
+    // 1. Instant local persistence
+    saveLocalInspections();
+
+    // 2. Broadcast to other open tabs
+    if (syncChannel) {
+      try {
+        syncChannel.postMessage({
+          type: 'sync_customer',
+          ma_kh: ma_kh,
+          inspection: inspectionsMap[ma_kh]
+        });
+      } catch (e) {}
+    }
+
+    // 3. Webhook Real-time Sync to Google Sheet
+    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const insp = inspectionsMap[ma_kh] || {};
+    const currentInsp = getCurrentInspector();
+    const itemPayload = {
+      action: 'update_customer',
+      ma_kh: ma_kh,
+      nguoi_cap_nhat: insp.nguoi_cap_nhat || currentInsp || '',
+      trang_thai: insp.trang_thai || 'Chưa kiểm tra',
+      ngay_kiem_tra: insp.ngay_kiem_tra || '',
+      ghi_chu: insp.ghi_chu || '',
+      timestamp: Date.now()
+    };
+
+    if (!navigator.onLine) {
+      enqueueOffline(itemPayload);
+      updateSyncStatus('offline', '💾 Đã lưu trên máy (Ngoại tuyến)', 'Tự động đồng bộ ngay khi có mạng Internet');
+      return;
+    }
+
+    if (webhookUrl) {
+      updateSyncStatus('syncing', '🔄 Đang đồng bộ lên Google Sheet...', 'Đang gửi cập nhật thời gian thực');
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemPayload)
+      }).then(() => {
+        updateSyncStatus('synced', '🟢 Đã đồng bộ ngay lên Google Sheet', 'Đã lưu trên máy và cập nhật Google Sheet thành công');
+      }).catch((err) => {
+        console.warn('Webhook sync error:', err);
+        enqueueOffline(itemPayload);
+        updateSyncStatus('offline', '💾 Đã lưu trên máy (Chờ gửi)', 'Sẽ tự động đồng bộ khi kết nối mạng ổn định');
+      });
+    } else {
+      updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Đã lưu an toàn trên máy (Có thể kết nối Webhook để đẩy vào Sheet)');
+    }
+  }
+
+  function handleSyncMessage(data) {
+    if (data && data.type === 'sync_customer' && data.ma_kh) {
+      inspectionsMap[data.ma_kh] = data.inspection;
+      renderKPIs();
+      renderStationBanner();
+      renderMobileStickyBar();
+
+      const isCompleted = data.inspection && data.inspection.trang_thai === 'Đã kiểm tra';
+      const row = document.getElementById(`row-${data.ma_kh}`);
+      if (row) {
+        if (isCompleted) {
+          row.classList.add('row-completed');
+          const stEl = row.querySelector('.col-status');
+          if (stEl) stEl.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+          const chk = row.querySelector('.custom-checkbox input');
+          if (chk) chk.checked = true;
+        } else {
+          row.classList.remove('row-completed');
+          const stEl = row.querySelector('.col-status');
+          if (stEl) stEl.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+          const chk = row.querySelector('.custom-checkbox input');
+          if (chk) chk.checked = false;
+        }
+        const noteInput = document.getElementById(`note-${data.ma_kh}`);
+        if (noteInput && data.inspection) noteInput.value = data.inspection.ghi_chu || '';
+        const upInput = document.getElementById(`updater-${data.ma_kh}`);
+        if (upInput && data.inspection) upInput.value = data.inspection.nguoi_cap_nhat || '';
+      }
+
+      const card = document.getElementById(`mcard-${data.ma_kh}`);
+      if (card) {
+        const mstatus = document.getElementById(`mstatus-${data.ma_kh}`);
+        const mbtn = document.getElementById(`mbtn-toggle-${data.ma_kh}`);
+        const mnote = document.getElementById(`mnote-${data.ma_kh}`);
+        const mupdater = document.getElementById(`mupdater-${data.ma_kh}`);
+        if (isCompleted) {
+          card.classList.add('card-completed');
+          if (mstatus) mstatus.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+          if (mbtn) {
+            mbtn.className = 'btn-mobile-status-toggle completed';
+            mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
+          }
+        } else {
+          card.classList.remove('card-completed');
+          if (mstatus) mstatus.innerHTML = '<span class="badge-status pending">⏳ Chưa kiểm tra</span>';
+          if (mbtn) {
+            mbtn.className = 'btn-mobile-status-toggle';
+            mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
+          }
+        }
+        if (mnote && data.inspection) mnote.value = data.inspection.ghi_chu || '';
+        if (mupdater && data.inspection) mupdater.value = data.inspection.nguoi_cap_nhat || '';
+      }
+    }
+  }
+
+  // ==========================================================================
   // INITIALIZATION
   // ==========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
     loadLocalInspections();
     initEventListeners();
     await loadInitialData();
+
+    // Init inspector name
+    const savedInspector = getCurrentInspector();
+    const inputInsp = document.getElementById('inputInspectorName');
+    if (inputInsp && savedInspector) {
+      inputInsp.value = savedInspector;
+    }
+
+    // Init Webhook URL
+    const savedWebhook = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+    const inputWebhook = document.getElementById('inputAppsScriptUrl');
+    if (inputWebhook && savedWebhook) {
+      inputWebhook.value = savedWebhook;
+    }
+
+    // Check online status and process offline queue
+    window.addEventListener('online', () => {
+      showToast('Đã kết nối Internet trở lại, đang đồng bộ dữ liệu...', 'info');
+      processOfflineQueue();
+    });
+
+    window.addEventListener('offline', () => {
+      updateSyncStatus('offline', '💾 Đang hoạt động ngoại tuyến', 'Mọi thao tác vẫn được lưu an toàn trên máy');
+    });
+
+    if (savedWebhook) {
+      updateSyncStatus('synced', '🟢 Đã kết nối Google Sheet Webhook', 'Cập nhật tức thì khi thao tác');
+    } else {
+      updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Mọi thao tác trên điện thoại được lưu ngay lập tức');
+    }
+
+    if (navigator.onLine) {
+      processOfflineQueue();
+    }
   });
 
   // ==========================================================================
@@ -379,7 +649,7 @@
       const ten_tram = cols[6] || '';
       const danh_so = cols[7] || '';
       const sdt = cols[8] || '';
-      const so_no = cols[9] || '';
+      const so_no = formatMeterNo(cols[9] || '');
       const khu_vuc = cols[10] || '';
       const nguoi_cap_nhat = cols[11] || '';
 
@@ -632,7 +902,7 @@
           </td>
           <td class="col-cust-name">${escapeHTML(c.ten_kh || '---')}</td>
           <td class="col-meter">
-            <span class="badge-meter" title="Số No công tơ">${escapeHTML(c.so_no || '---')}</span>
+            <span class="badge-meter" title="Số No công tơ">${escapeHTML(formatMeterNo(c.so_no) || '---')}</span>
           </td>
           <td class="col-station" title="${escapeHTML(stationDisplay)}">
             <strong>${escapeHTML(itemStation || '---')}</strong>
@@ -646,6 +916,13 @@
           </td>
           <td class="col-area">
             <span class="badge-area">${escapeHTML(c.khu_vuc || '---')}</span>
+          </td>
+          <td class="col-updater">
+            <input type="text" class="updater-input" id="updater-${escapeHTML(c.ma_kh)}" 
+                   value="${escapeHTML(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '')}" 
+                   placeholder="Tên cán bộ..."
+                   title="Người cập nhật (Cột L)"
+                   onchange="window.PCVT.updateUpdater('${escapeHTML(c.ma_kh)}', this.value)">
           </td>
           <td class="col-note">
             <div class="note-wrapper">
@@ -710,7 +987,7 @@
                 <span>Mã KH: <strong>${escapeHTML(c.ma_kh)}</strong></span>
                 <span style="font-size:0.75rem; opacity:0.8;">📋</span>
               </div>
-              ${c.so_no ? `<span class="badge-meter" title="Số No công tơ">🔢 Số No: <strong>${escapeHTML(c.so_no)}</strong></span>` : ''}
+              ${c.so_no ? `<span class="badge-meter" title="Số No công tơ">🔢 Số No: <strong>${escapeHTML(formatMeterNo(c.so_no))}</strong></span>` : ''}
               ${c.danh_so ? `<span style="font-size:0.72rem; background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#475569;">DS: ${escapeHTML(c.danh_so)}</span>` : ''}
             </div>
           </div>
@@ -745,12 +1022,15 @@
                 <span style="font-size:0.8rem;">${escapeHTML(c.dia_chi_kh)}</span>
               </div>
             ` : ''}
-            ${c.nguoi_cap_nhat ? `
-              <div class="mobile-meta-item">
-                <strong>👤 Người cập nhật:</strong>
-                <span>${escapeHTML(c.nguoi_cap_nhat)}</span>
+            <div class="mobile-meta-item" style="grid-column: 1 / -1;">
+              <strong>👤 Người cập nhật (Cột L):</strong>
+              <div style="margin-top: 3px;">
+                <input type="text" class="mobile-updater-input" id="mupdater-${escapeHTML(c.ma_kh)}" 
+                       value="${escapeHTML(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '')}" 
+                       placeholder="Nhập tên người cập nhật..."
+                       onchange="window.PCVT.updateUpdater('${escapeHTML(c.ma_kh)}', this.value)">
               </div>
-            ` : ''}
+            </div>
             ${insp.ngay_kiem_tra ? `
               <div class="mobile-meta-item">
                 <strong>🕒 Đã KT:</strong>
@@ -985,6 +1265,94 @@
 
     const fileImportInput = document.getElementById('fileImportInput');
     if (fileImportInput) fileImportInput.addEventListener('change', handleFileImport);
+
+    // Inspector name events
+    const inputInspector = document.getElementById('inputInspectorName');
+    const btnSaveInspector = document.getElementById('btnSaveInspector');
+    if (btnSaveInspector && inputInspector) {
+      btnSaveInspector.addEventListener('click', () => {
+        const name = setCurrentInspector(inputInspector.value);
+        showToast(name ? `Đã lưu cán bộ kiểm tra: "${name}"` : 'Đã xóa tên cán bộ kiểm tra', 'success');
+      });
+      inputInspector.addEventListener('change', () => {
+        setCurrentInspector(inputInspector.value);
+      });
+      inputInspector.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const name = setCurrentInspector(inputInspector.value);
+          showToast(name ? `Đã lưu cán bộ kiểm tra: "${name}"` : 'Đã xóa tên cán bộ kiểm tra', 'success');
+          inputInspector.blur();
+        }
+      });
+    }
+
+    // Webhook settings & script copy
+    const btnSaveWebhook = document.getElementById('btnSaveWebhookUrl');
+    const inputAppsScriptUrl = document.getElementById('inputAppsScriptUrl');
+    if (btnSaveWebhook && inputAppsScriptUrl) {
+      btnSaveWebhook.addEventListener('click', () => {
+        const url = inputAppsScriptUrl.value.trim();
+        localStorage.setItem(STORAGE_KEY_WEBHOOK_URL, url);
+        if (url) {
+          updateSyncStatus('synced', '🟢 Đã kết nối Webhook Google Sheet', 'Cập nhật từ điện thoại sẽ đồng bộ ngay lập tức');
+          showToast('Đã lưu cấu hình Webhook Google Apps Script thành công!', 'success');
+          processOfflineQueue();
+        } else {
+          updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Mọi thao tác trên điện thoại được lưu ngay lập tức');
+          showToast('Đã xóa cấu hình Webhook Google Sheet', 'info');
+        }
+      });
+    }
+
+    const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
+    if (btnCopyScript) {
+      btnCopyScript.addEventListener('click', () => {
+        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    var maKH = data.ma_kh;
+    var nguoiCapNhat = data.nguoi_cap_nhat || '';
+    var trangThai = data.trang_thai || '';
+    var ghiChu = data.ghi_chu || '';
+    var ngayKT = data.ngay_kiem_tra || '';
+
+    var lastRow = sheet.getLastRow();
+    if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({status: 'empty'}));
+
+    // Quét cột B (Mã KH) để tìm dòng tương ứng
+    var maKHCodes = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    for (var i = 0; i < maKHCodes.length; i++) {
+      if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
+        var rowIndex = i + 2;
+        if (nguoiCapNhat) {
+          sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat); // Cột L: Người cập nhật
+        }
+        return ContentService.createTextOutput(JSON.stringify({ status: 'success', row: rowIndex }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: 'not_found', ma_kh: maKH }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}`;
+        navigator.clipboard.writeText(scriptCode).then(() => {
+          showToast('Đã sao chép mã Google Apps Script! Hãy dán vào Apps Script của Google Sheet.', 'success');
+        }).catch(() => {
+          showToast('Vui lòng mở rộng phần hướng dẫn để xem mã!', 'info');
+        });
+      });
+    }
   }
 
   function applyViewMode(mode) {
@@ -1055,11 +1423,20 @@
       if (isChecked) {
         inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
         inspectionsMap[ma_kh].ngay_kiem_tra = timeStr;
+        if (!inspectionsMap[ma_kh].nguoi_cap_nhat) {
+          const curInsp = getCurrentInspector();
+          if (curInsp) {
+            inspectionsMap[ma_kh].nguoi_cap_nhat = curInsp;
+            const dUp = document.getElementById(`updater-${ma_kh}`);
+            const mUp = document.getElementById(`mupdater-${ma_kh}`);
+            if (dUp) dUp.value = curInsp;
+            if (mUp) mUp.value = curInsp;
+          }
+        }
       } else {
         inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
       }
 
-      saveLocalInspections();
       renderKPIs();
       renderStationBanner();
       renderMobileStickyBar();
@@ -1102,18 +1479,32 @@
         }
       }
 
+      syncItemImmediately(ma_kh);
       showToast(isChecked ? `Đã hoàn thành kiểm tra KH ${ma_kh}` : `Đã chuyển KH ${ma_kh} về Chưa kiểm tra`, 'success');
     },
 
     updateNote: function(ma_kh, value) {
       if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
       inspectionsMap[ma_kh].ghi_chu = value;
-      saveLocalInspections();
+      syncItemImmediately(ma_kh);
 
       const deskInput = document.getElementById(`note-${ma_kh}`);
       const mobInput = document.getElementById(`mnote-${ma_kh}`);
       if (deskInput && deskInput.value !== value) deskInput.value = value;
       if (mobInput && mobInput.value !== value) mobInput.value = value;
+    },
+
+    updateUpdater: function(ma_kh, value) {
+      if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+      const trimmed = (value || '').trim();
+      inspectionsMap[ma_kh].nguoi_cap_nhat = trimmed;
+      syncItemImmediately(ma_kh);
+
+      const dUp = document.getElementById(`updater-${ma_kh}`);
+      const mUp = document.getElementById(`mupdater-${ma_kh}`);
+      if (dUp && dUp.value !== trimmed) dUp.value = trimmed;
+      if (mUp && mUp.value !== trimmed) mUp.value = trimmed;
+      showToast(`Đã lưu người cập nhật: ${trimmed || '(trống)'}`, 'info');
     },
 
     addTagNote: function(ma_kh, tagText) {
@@ -1263,8 +1654,17 @@
       const deskInput = document.getElementById(`note-${ma_kh}`);
       const mobInput = document.getElementById(`mnote-${ma_kh}`);
       const val = (deskInput && deskInput.value) || (mobInput && mobInput.value) || '';
-      this.updateNote(ma_kh, val);
-      showToast(`Đã lưu kết quả kiểm tra KH ${ma_kh}`, 'success');
+
+      const deskUp = document.getElementById(`updater-${ma_kh}`);
+      const mobUp = document.getElementById(`mupdater-${ma_kh}`);
+      const upVal = (deskUp && deskUp.value) || (mobUp && mobUp.value) || '';
+
+      if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+      inspectionsMap[ma_kh].ghi_chu = val;
+      if (upVal) inspectionsMap[ma_kh].nguoi_cap_nhat = upVal.trim();
+
+      syncItemImmediately(ma_kh);
+      showToast(`Đã lưu và đồng bộ kết quả kiểm tra KH ${ma_kh}`, 'success');
     },
 
     copyText: function(text) {
@@ -1301,6 +1701,7 @@
     if (confirm(`Đánh dấu ĐÃ KIỂM TRA cho toàn bộ ${stationCustomers.length} KH trong trạm ${currentStationFilter}?`)) {
       const now = new Date();
       const timeStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+      const curInsp = getCurrentInspector();
 
       stationCustomers.forEach(c => {
         if (!inspectionsMap[c.ma_kh]) inspectionsMap[c.ma_kh] = {};
@@ -1308,9 +1709,12 @@
         if (!inspectionsMap[c.ma_kh].ngay_kiem_tra) {
           inspectionsMap[c.ma_kh].ngay_kiem_tra = timeStr;
         }
+        if (!inspectionsMap[c.ma_kh].nguoi_cap_nhat && curInsp) {
+          inspectionsMap[c.ma_kh].nguoi_cap_nhat = curInsp;
+        }
+        syncItemImmediately(c.ma_kh);
       });
 
-      saveLocalInspections();
       renderApp();
       showToast(`Đã hoàn thành toàn bộ khách hàng trạm ${currentStationFilter}!`, 'success');
     }
@@ -1347,9 +1751,9 @@
         escapeCSV(sName),
         escapeCSV(c.danh_so),
         escapeCSV(c.sdt),
-        escapeCSV(c.so_no),
+        escapeCSV(formatMeterNo(c.so_no)),
         escapeCSV(c.khu_vuc),
-        escapeCSV(c.nguoi_cap_nhat),
+        escapeCSV(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || ''),
         escapeCSV(insp.trang_thai || 'Chưa kiểm tra'),
         escapeCSV(insp.ngay_kiem_tra || ''),
         escapeCSV(insp.ghi_chu || ''),

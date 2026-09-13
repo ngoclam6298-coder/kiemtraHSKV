@@ -282,6 +282,146 @@ body {
 }
 
 /* ==========================================================================
+   INSPECTOR & REALTIME SYNC TOOLBAR
+   ========================================================================== */
+.inspector-toolbar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.inspector-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.inspector-icon {
+  font-size: 1.4rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inspector-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.inspector-title {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.inspector-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 450px;
+  width: 100%;
+}
+
+.inspector-input {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  border: 1.5px solid #94a3b8;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--evn-primary);
+  background: #f8fafc;
+  outline: none;
+  transition: var(--transition);
+  min-height: 38px;
+}
+
+.inspector-input:focus {
+  background: #ffffff;
+  border-color: var(--evn-primary);
+  box-shadow: 0 0 0 3px rgba(10, 50, 106, 0.12);
+}
+
+.btn-save-inspector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--evn-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 38px;
+  transition: var(--transition);
+}
+
+.btn-save-inspector:hover {
+  background: var(--evn-primary-light);
+}
+
+/* Sync Realtime Box */
+.sync-realtime-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.sync-realtime-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  transition: var(--transition);
+}
+
+.sync-realtime-status.syncing {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.sync-realtime-status.offline {
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.sync-realtime-sub {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+/* ==========================================================================
    STATION BANNER
    ========================================================================== */
 .station-banner {
@@ -685,9 +825,48 @@ body {
 .col-phone { width: 120px; font-size: 0.8rem; }
 .col-address { min-width: 200px; color: var(--text-muted); font-size: 0.825rem; }
 .col-area { width: 85px; text-align: center; }
+.col-updater { width: 140px; min-width: 125px; }
 .col-note { min-width: 190px; width: 250px; }
 .col-photo { width: 110px; text-align: center; }
 .col-actions { width: 75px; text-align: center; }
+
+.updater-input {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #ffffff;
+  transition: var(--transition);
+}
+
+.updater-input:focus {
+  border-color: var(--border-color-focus);
+  outline: none;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.mobile-updater-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #ffffff;
+  outline: none;
+  transition: var(--transition);
+}
+
+.mobile-updater-input:focus {
+  border-color: var(--evn-primary);
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(10, 50, 106, 0.15);
+}
 
 .badge-meter {
   display: inline-flex;
