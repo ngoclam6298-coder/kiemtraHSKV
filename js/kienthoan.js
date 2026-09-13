@@ -48,6 +48,14 @@
   const pageSize = 40;             // 40 items per page for ultra fast rendering
   let activeViewMode = 'auto';     // 'auto' | 'cards' | 'table'
 
+  // --- Preset Inspectors List (Thanh sổ chọn) ---
+  const PRESET_INSPECTORS = [
+    'Nguyễn Văn Nguyên',
+    'Phạm Duy Phương',
+    'Lê Gia Quốc Trung',
+    'Hoàng Văn Thắng'
+  ];
+
   // --- Preset Notes for Field Inspectors ---
   const PRESET_NOTES = [
     'Đo đếm tốt, niêm chì nguyên vẹn',
@@ -90,8 +98,38 @@
   function setCurrentInspector(name) {
     const trimmed = (name || '').trim();
     localStorage.setItem(STORAGE_KEY_INSPECTOR, trimmed);
+
+    const sel = document.getElementById('selectInspectorPreset');
     const input = document.getElementById('inputInspectorName');
-    if (input && input.value !== trimmed) input.value = trimmed;
+    const btn = document.getElementById('btnSaveInspector');
+
+    const isPreset = PRESET_INSPECTORS.includes(trimmed);
+
+    if (sel) {
+      if (isPreset) {
+        sel.value = trimmed;
+      } else if (trimmed) {
+        sel.value = '__custom__';
+      } else {
+        sel.value = '';
+      }
+    }
+
+    if (input) {
+      input.value = trimmed;
+      if (!isPreset && trimmed) {
+        input.style.display = 'block';
+      } else if (sel && sel.value === '__custom__') {
+        input.style.display = 'block';
+      } else {
+        input.style.display = 'none';
+      }
+    }
+
+    if (btn) {
+      btn.style.display = (input && input.style.display === 'block') ? 'inline-flex' : 'none';
+    }
+
     return trimmed;
   }
 
@@ -188,11 +226,13 @@
     const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
     const insp = inspectionsMap[ma_kh] || {};
     const currentInsp = getCurrentInspector();
+    const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
     const itemPayload = {
       action: 'update_customer',
       ma_kh: ma_kh,
       nguoi_cap_nhat: insp.nguoi_cap_nhat || currentInsp || '',
       trang_thai: insp.trang_thai || 'Chưa kiểm tra',
+      trang_thai_x: isCompleted ? 'X' : '',
       ngay_kiem_tra: insp.ngay_kiem_tra || '',
       ghi_chu: insp.ghi_chu || '',
       timestamp: Date.now()
@@ -231,6 +271,10 @@
       renderMobileStickyBar();
 
       const isCompleted = data.inspection && data.inspection.trang_thai === 'Đã kiểm tra';
+      const upVal = (data.inspection && data.inspection.nguoi_cap_nhat) || '';
+      const isPreset = PRESET_INSPECTORS.includes(upVal);
+      const selVal = isPreset ? upVal : (upVal ? '__custom__' : '');
+
       const row = document.getElementById(`row-${data.ma_kh}`);
       if (row) {
         if (isCompleted) {
@@ -248,8 +292,14 @@
         }
         const noteInput = document.getElementById(`note-${data.ma_kh}`);
         if (noteInput && data.inspection) noteInput.value = data.inspection.ghi_chu || '';
+
+        const selUp = document.getElementById(`sel-updater-${data.ma_kh}`);
         const upInput = document.getElementById(`updater-${data.ma_kh}`);
-        if (upInput && data.inspection) upInput.value = data.inspection.nguoi_cap_nhat || '';
+        if (selUp) selUp.value = selVal;
+        if (upInput) {
+          upInput.value = upVal;
+          upInput.style.display = (!isPreset && upVal) ? 'block' : 'none';
+        }
       }
 
       const card = document.getElementById(`mcard-${data.ma_kh}`);
@@ -257,6 +307,7 @@
         const mstatus = document.getElementById(`mstatus-${data.ma_kh}`);
         const mbtn = document.getElementById(`mbtn-toggle-${data.ma_kh}`);
         const mnote = document.getElementById(`mnote-${data.ma_kh}`);
+        const mselUp = document.getElementById(`msel-updater-${data.ma_kh}`);
         const mupdater = document.getElementById(`mupdater-${data.ma_kh}`);
         if (isCompleted) {
           card.classList.add('card-completed');
@@ -274,7 +325,11 @@
           }
         }
         if (mnote && data.inspection) mnote.value = data.inspection.ghi_chu || '';
-        if (mupdater && data.inspection) mupdater.value = data.inspection.nguoi_cap_nhat || '';
+        if (mselUp) mselUp.value = selVal;
+        if (mupdater) {
+          mupdater.value = upVal;
+          mupdater.style.display = (!isPreset && upVal) ? 'block' : 'none';
+        }
       }
     }
   }
@@ -289,9 +344,8 @@
 
     // Init inspector name
     const savedInspector = getCurrentInspector();
-    const inputInsp = document.getElementById('inputInspectorName');
-    if (inputInsp && savedInspector) {
-      inputInsp.value = savedInspector;
+    if (savedInspector) {
+      setCurrentInspector(savedInspector);
     }
 
     // Init Webhook URL
@@ -652,8 +706,18 @@
       const so_no = formatMeterNo(cols[9] || '');
       const khu_vuc = cols[10] || '';
       const nguoi_cap_nhat = cols[11] || '';
+      const trang_thai_sheet = (cols[12] || '').trim();
 
       if (!ma_kh && !ten_kh) continue;
+
+      // Đồng bộ từ Google Sheet: Cột M ("Trạng thái") có dấu "X"
+      if (trang_thai_sheet.toUpperCase() === 'X') {
+        if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+        inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
+        if (nguoi_cap_nhat && !inspectionsMap[ma_kh].nguoi_cap_nhat) {
+          inspectionsMap[ma_kh].nguoi_cap_nhat = nguoi_cap_nhat;
+        }
+      }
 
       result.push({
         stt: parseInt(stt) || (result.length + 1),
@@ -669,6 +733,7 @@
         so_no: so_no,
         khu_vuc: khu_vuc,
         nguoi_cap_nhat: nguoi_cap_nhat,
+        trang_thai_sheet: trang_thai_sheet,
         dia_chi: dia_chi_ddo || dia_chi_kh
       });
     }
@@ -887,6 +952,16 @@
         ? `<a href="tel:${escapeHTML(c.sdt)}" style="color:#2563eb; text-decoration:none; font-weight:600;" title="Gọi điện">📞 ${escapeHTML(c.sdt)}</a>`
         : '<span style="color:var(--text-light)">---</span>';
 
+      const currentUpdater = insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '';
+      const isPreset = PRESET_INSPECTORS.includes(currentUpdater);
+      const isCustom = Boolean(currentUpdater && !isPreset);
+
+      let updaterSelectOptions = `<option value="">-- Chọn cán bộ --</option>`;
+      PRESET_INSPECTORS.forEach(p => {
+        updaterSelectOptions += `<option value="${escapeHTML(p)}" ${currentUpdater === p ? 'selected' : ''}>${escapeHTML(p)}</option>`;
+      });
+      updaterSelectOptions += `<option value="__custom__" ${isCustom ? 'selected' : ''}>✏️ Khác (Tự nhập)...</option>`;
+
       tableHtml += `
         <tr class="${isCompleted ? 'row-completed' : ''}" id="row-${escapeHTML(c.ma_kh)}">
           <td class="col-stt">${rowStt}</td>
@@ -918,11 +993,17 @@
             <span class="badge-area">${escapeHTML(c.khu_vuc || '---')}</span>
           </td>
           <td class="col-updater">
-            <input type="text" class="updater-input" id="updater-${escapeHTML(c.ma_kh)}" 
-                   value="${escapeHTML(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '')}" 
-                   placeholder="Tên cán bộ..."
-                   title="Người cập nhật (Cột L)"
-                   onchange="window.PCVT.updateUpdater('${escapeHTML(c.ma_kh)}', this.value)">
+            <div class="updater-picker-wrap">
+              <select class="updater-select" id="sel-updater-${escapeHTML(c.ma_kh)}" onchange="window.PCVT.onUpdaterSelectChange('${escapeHTML(c.ma_kh)}', this.value)">
+                ${updaterSelectOptions}
+              </select>
+              <input type="text" class="updater-input" id="updater-${escapeHTML(c.ma_kh)}" 
+                     style="display: ${isCustom ? 'block' : 'none'};"
+                     value="${escapeHTML(currentUpdater)}" 
+                     placeholder="Nhập tên cán bộ khác..."
+                     title="Người cập nhật (Cột L)"
+                     onchange="window.PCVT.updateUpdater('${escapeHTML(c.ma_kh)}', this.value)">
+            </div>
           </td>
           <td class="col-note">
             <div class="note-wrapper">
@@ -1024,10 +1105,14 @@
             ` : ''}
             <div class="mobile-meta-item" style="grid-column: 1 / -1;">
               <strong>👤 Người cập nhật (Cột L):</strong>
-              <div style="margin-top: 3px;">
+              <div class="updater-picker-wrap" style="margin-top: 4px;">
+                <select class="mobile-updater-select" id="msel-updater-${escapeHTML(c.ma_kh)}" onchange="window.PCVT.onUpdaterSelectChange('${escapeHTML(c.ma_kh)}', this.value)">
+                  ${updaterSelectOptions}
+                </select>
                 <input type="text" class="mobile-updater-input" id="mupdater-${escapeHTML(c.ma_kh)}" 
-                       value="${escapeHTML(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || '')}" 
-                       placeholder="Nhập tên người cập nhật..."
+                       style="display: ${isCustom ? 'block' : 'none'}; margin-top: 4px;"
+                       value="${escapeHTML(currentUpdater)}" 
+                       placeholder="Nhập tên cán bộ khác..."
                        onchange="window.PCVT.updateUpdater('${escapeHTML(c.ma_kh)}', this.value)">
               </div>
             </div>
@@ -1266,9 +1351,40 @@
     const fileImportInput = document.getElementById('fileImportInput');
     if (fileImportInput) fileImportInput.addEventListener('change', handleFileImport);
 
-    // Inspector name events
+    // Inspector name dropdown & input events
+    const selInspector = document.getElementById('selectInspectorPreset');
     const inputInspector = document.getElementById('inputInspectorName');
     const btnSaveInspector = document.getElementById('btnSaveInspector');
+
+    if (selInspector) {
+      selInspector.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === '__custom__') {
+          if (inputInspector) {
+            inputInspector.style.display = 'block';
+            inputInspector.focus();
+          }
+          if (btnSaveInspector) btnSaveInspector.style.display = 'inline-flex';
+        } else if (val) {
+          if (inputInspector) {
+            inputInspector.style.display = 'none';
+            inputInspector.value = val;
+          }
+          if (btnSaveInspector) btnSaveInspector.style.display = 'none';
+          setCurrentInspector(val);
+          showToast(`Đã chọn cán bộ kiểm tra: "${val}"`, 'success');
+        } else {
+          if (inputInspector) {
+            inputInspector.style.display = 'none';
+            inputInspector.value = '';
+          }
+          if (btnSaveInspector) btnSaveInspector.style.display = 'none';
+          setCurrentInspector('');
+          showToast('Đã xóa chọn cán bộ kiểm tra', 'info');
+        }
+      });
+    }
+
     if (btnSaveInspector && inputInspector) {
       btnSaveInspector.addEventListener('click', () => {
         const name = setCurrentInspector(inputInspector.value);
@@ -1308,7 +1424,7 @@
     const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
     if (btnCopyScript) {
       btnCopyScript.addEventListener('click', () => {
-        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU
+        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 13 CỘT)
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.tryLock(10000);
@@ -1318,9 +1434,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     var maKH = data.ma_kh;
     var nguoiCapNhat = data.nguoi_cap_nhat || '';
-    var trangThai = data.trang_thai || '';
-    var ghiChu = data.ghi_chu || '';
-    var ngayKT = data.ngay_kiem_tra || '';
+    var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
 
     var lastRow = sheet.getLastRow();
     if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({status: 'empty'}));
@@ -1330,10 +1444,12 @@ function doPost(e) {
     for (var i = 0; i < maKHCodes.length; i++) {
       if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
         var rowIndex = i + 2;
-        if (nguoiCapNhat) {
-          sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat); // Cột L: Người cập nhật
-        }
-        return ContentService.createTextOutput(JSON.stringify({ status: 'success', row: rowIndex }))
+        // Cột L (cột 12): Người cập nhật
+        sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
+        // Cột M (cột 13): Trạng thái - Dấu "X" khi đã kiểm tra, rỗng khi chưa kiểm tra
+        sheet.getRange(rowIndex, 13).setValue(trangThaiX);
+
+        return ContentService.createTextOutput(JSON.stringify({ status: 'success', row: rowIndex, trang_thai: trangThaiX }))
           .setMimeType(ContentService.MimeType.JSON);
       }
     }
@@ -1427,10 +1543,24 @@ function doPost(e) {
           const curInsp = getCurrentInspector();
           if (curInsp) {
             inspectionsMap[ma_kh].nguoi_cap_nhat = curInsp;
+            const isPreset = PRESET_INSPECTORS.includes(curInsp);
+            const selVal = isPreset ? curInsp : '__custom__';
+
+            const dSel = document.getElementById(`sel-updater-${ma_kh}`);
+            const mSel = document.getElementById(`msel-updater-${ma_kh}`);
+            if (dSel) dSel.value = selVal;
+            if (mSel) mSel.value = selVal;
+
             const dUp = document.getElementById(`updater-${ma_kh}`);
             const mUp = document.getElementById(`mupdater-${ma_kh}`);
-            if (dUp) dUp.value = curInsp;
-            if (mUp) mUp.value = curInsp;
+            if (dUp) {
+              dUp.value = curInsp;
+              dUp.style.display = (!isPreset && curInsp) ? 'block' : 'none';
+            }
+            if (mUp) {
+              mUp.value = curInsp;
+              mUp.style.display = (!isPreset && curInsp) ? 'block' : 'none';
+            }
           }
         }
       } else {
@@ -1483,6 +1613,47 @@ function doPost(e) {
       showToast(isChecked ? `Đã hoàn thành kiểm tra KH ${ma_kh}` : `Đã chuyển KH ${ma_kh} về Chưa kiểm tra`, 'success');
     },
 
+    onUpdaterSelectChange: function(ma_kh, val) {
+      const dSel = document.getElementById(`sel-updater-${ma_kh}`);
+      const mSel = document.getElementById(`msel-updater-${ma_kh}`);
+      const dUp = document.getElementById(`updater-${ma_kh}`);
+      const mUp = document.getElementById(`mupdater-${ma_kh}`);
+
+      if (dSel && dSel.value !== val) dSel.value = val;
+      if (mSel && mSel.value !== val) mSel.value = val;
+
+      if (val === '__custom__') {
+        if (dUp) {
+          dUp.style.display = 'block';
+          dUp.focus();
+        }
+        if (mUp) {
+          mUp.style.display = 'block';
+          mUp.focus();
+        }
+      } else if (val) {
+        if (dUp) {
+          dUp.style.display = 'none';
+          dUp.value = val;
+        }
+        if (mUp) {
+          mUp.style.display = 'none';
+          mUp.value = val;
+        }
+        this.updateUpdater(ma_kh, val);
+      } else {
+        if (dUp) {
+          dUp.style.display = 'none';
+          dUp.value = '';
+        }
+        if (mUp) {
+          mUp.style.display = 'none';
+          mUp.value = '';
+        }
+        this.updateUpdater(ma_kh, '');
+      }
+    },
+
     updateNote: function(ma_kh, value) {
       if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
       inspectionsMap[ma_kh].ghi_chu = value;
@@ -1500,10 +1671,24 @@ function doPost(e) {
       inspectionsMap[ma_kh].nguoi_cap_nhat = trimmed;
       syncItemImmediately(ma_kh);
 
+      const isPreset = PRESET_INSPECTORS.includes(trimmed);
+      const selVal = isPreset ? trimmed : (trimmed ? '__custom__' : '');
+
+      const dSel = document.getElementById(`sel-updater-${ma_kh}`);
+      const mSel = document.getElementById(`msel-updater-${ma_kh}`);
+      if (dSel && dSel.value !== selVal) dSel.value = selVal;
+      if (mSel && mSel.value !== selVal) mSel.value = selVal;
+
       const dUp = document.getElementById(`updater-${ma_kh}`);
       const mUp = document.getElementById(`mupdater-${ma_kh}`);
-      if (dUp && dUp.value !== trimmed) dUp.value = trimmed;
-      if (mUp && mUp.value !== trimmed) mUp.value = trimmed;
+      if (dUp) {
+        if (dUp.value !== trimmed) dUp.value = trimmed;
+        dUp.style.display = (!isPreset && trimmed) ? 'block' : 'none';
+      }
+      if (mUp) {
+        if (mUp.value !== trimmed) mUp.value = trimmed;
+        mUp.style.display = (!isPreset && trimmed) ? 'block' : 'none';
+      }
       showToast(`Đã lưu người cập nhật: ${trimmed || '(trống)'}`, 'info');
     },
 
@@ -1726,11 +1911,11 @@ function doPost(e) {
       return;
     }
 
+    // 13 Cột đồng bộ chuẩn Google Sheet PCVT (Cột M là Trạng thái có dấu "X")
     const headers = [
-      'STT', 'Mã KH', 'Tên KH', 'Địa chỉ KH', 'Địa chỉ điểm đo',
-      'Mã trạm', 'Tên Trạm', 'Danh số', 'Số điện thoại', 'Số No',
-      'Khu vực', 'Người cập nhật', 'Trạng thái kiểm tra', 'Ngày kiểm tra',
-      'Ghi chú hiện trạng', 'Có ảnh'
+      'Stt', 'Mã KH', 'Tên KH', 'Địa chỉ KH', 'Địa chỉ điểm đo',
+      'Mã trạm', 'Tên trạm', 'Danh số', 'Số điện thoại', 'Số No',
+      'Khu vực', 'Người cập nhật', 'Trạng thái'
     ];
 
     let csvContent = '\uFEFF';
@@ -1741,6 +1926,9 @@ function doPost(e) {
       const itemStation = c.id_tram || c.ma_tram || '';
       const sMeta = stationsMeta[itemStation];
       const sName = (sMeta && sMeta.name) || c.ten_tram || '';
+      const isInspected = (insp.trang_thai === 'Đã kiểm tra');
+      const statusMark = isInspected ? 'X' : '';
+
       const row = [
         c.stt || (idx + 1),
         escapeCSV(c.ma_kh),
@@ -1754,10 +1942,7 @@ function doPost(e) {
         escapeCSV(formatMeterNo(c.so_no)),
         escapeCSV(c.khu_vuc),
         escapeCSV(insp.nguoi_cap_nhat || c.nguoi_cap_nhat || ''),
-        escapeCSV(insp.trang_thai || 'Chưa kiểm tra'),
-        escapeCSV(insp.ngay_kiem_tra || ''),
-        escapeCSV(insp.ghi_chu || ''),
-        insp.hinh_anh ? 'Có ảnh' : 'Không'
+        escapeCSV(statusMark)
       ];
       csvContent += row.join(',') + '\r\n';
     });
@@ -1768,11 +1953,11 @@ function doPost(e) {
     const now = new Date();
     const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
     link.setAttribute('href', url);
-    link.setAttribute('download', `Ket_Qua_Kien_Toan_HTDD_PCVT_${dateStr}.csv`);
+    link.setAttribute('download', `Kien_Toan_HTDD_PCVT_GoogleSheet_${dateStr}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Đã xuất báo cáo kiểm tra kiện toàn HTĐĐ thành công!', 'success');
+    showToast('Đã xuất file 13 cột đồng bộ Google Sheet (Cột Trạng thái có dấu "X")!', 'success');
   }
 
   function escapeCSV(str) {

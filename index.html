@@ -60,11 +60,11 @@
           <span>Nhập CSV</span>
         </label>
 
-        <button class="btn-header primary" id="btnExportExcel" title="Xuất kết quả kiểm tra ra file CSV/Excel">
+        <button class="btn-header primary" id="btnExportExcel" title="Xuất file chuẩn Google Sheet (13 cột có dấu X cho khách hàng đã kiểm tra)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
           </svg>
-          <span>Xuất Báo Cáo</span>
+          <span>Xuất Báo Cáo (Cột X)</span>
         </button>
 
         <button class="btn-header" onclick="openModal('modalSheetGuide')" title="Cài đặt liên kết và hướng dẫn">
@@ -137,8 +137,16 @@
         <div class="inspector-info">
           <span class="inspector-title">CÁN BỘ KIỂM TRA (NGƯỜI CẬP NHẬT - CỘT L)</span>
           <div class="inspector-input-wrap">
-            <input type="text" id="inputInspectorName" class="inspector-input" placeholder="Nhập tên cán bộ (vd: Nguyễn Văn A)..." autocomplete="name">
-            <button type="button" class="btn-save-inspector" id="btnSaveInspector" title="Lưu tên cán bộ">💾 Lưu tên</button>
+            <select id="selectInspectorPreset" class="inspector-select" title="Chọn cán bộ kiểm tra">
+              <option value="">-- Chọn cán bộ kiểm tra --</option>
+              <option value="Nguyễn Văn Nguyên">Nguyễn Văn Nguyên</option>
+              <option value="Phạm Duy Phương">Phạm Duy Phương</option>
+              <option value="Lê Gia Quốc Trung">Lê Gia Quốc Trung</option>
+              <option value="Hoàng Văn Thắng">Hoàng Văn Thắng</option>
+              <option value="__custom__">✏️ Khác (Tự nhập tên)...</option>
+            </select>
+            <input type="text" id="inputInspectorName" class="inspector-input" placeholder="Nhập tên cán bộ khác..." style="display:none;" autocomplete="name">
+            <button type="button" class="btn-save-inspector" id="btnSaveInspector" style="display:none;" title="Lưu tên cán bộ">💾 Lưu</button>
           </div>
         </div>
       </div>
@@ -356,7 +364,7 @@
     <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
         <div class="modal-title">
-          <span>📊 KẾT NỐI DỮ LIỆU GOOGLE SHEET (12 CỘT)</span>
+          <span>📊 KẾT NỐI DỮ LIỆU GOOGLE SHEET (13 CỘT)</span>
         </div>
         <button class="btn-close-modal" onclick="closeModal('modalSheetGuide')">✕</button>
       </div>
@@ -367,8 +375,8 @@
             https://docs.google.com/spreadsheets/d/1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4/edit?gid=1392868293#gid=1392868293
           </div>
           <div style="margin-top:8px; font-size:0.8rem; line-height:1.4;">
-            <strong>Cấu trúc 12 cột:</strong><br>
-            A: STT &bull; B: Mã KH &bull; C: Tên KH &bull; D: Địa chỉ KH &bull; E: Địa chỉ điểm đo &bull; F: Mã trạm &bull; G: Tên Trạm &bull; H: Danh số &bull; I: SĐT &bull; J: Số No &bull; K: Khu vực &bull; L: Người cập nhật
+            <strong>Cấu trúc 13 cột:</strong><br>
+            A: STT &bull; B: Mã KH &bull; C: Tên KH &bull; D: Địa chỉ KH &bull; E: Địa chỉ điểm đo &bull; F: Mã trạm &bull; G: Tên Trạm &bull; H: Danh số &bull; I: SĐT &bull; J: Số No &bull; K: Khu vực &bull; L: Người cập nhật &bull; <strong>M: Trạng thái (Dấu "X")</strong>
           </div>
         </div>
 
@@ -389,7 +397,7 @@
             <span>⚡ ĐỒNG BỘ 2 CHIỀU THỜI GIAN THỰC LÊN GOOGLE SHEET (WEBHOOK)</span>
           </div>
           <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">
-            Khi cập nhật trên điện thoại (đánh dấu hoàn thành, ghi chú, người cập nhật), hệ thống sẽ gửi lệnh đồng bộ ngay lập tức lên Google Sheet.
+            Khi cập nhật trên điện thoại (đánh dấu hoàn thành, ghi chú, người cập nhật), hệ thống sẽ gửi lệnh đồng bộ ngay lập tức lên Google Sheet (cập nhật Cột L: Người cập nhật và Cột M: Dấu "X").
           </p>
 
           <div class="form-group" style="margin-bottom: 0.75rem;">
@@ -439,7 +447,7 @@
   <footer class="app-footer">
     <div><strong>CÔNG TY ĐIỆN LỰC VŨNG TÀU</strong> &bull; Tổng công ty Điện lực TP. Hồ Chí Minh (EVNHCMC)</div>
     <div style="margin-top: 4px; color: var(--text-light); font-size: 0.75rem;">
-      Hệ Thống Kiện Toàn Đo Đếm &bull; Phiên bản 12 cột dữ liệu Google Sheet 2026
+      Hệ Thống Kiện Toàn Đo Đếm &bull; Phiên bản 13 cột dữ liệu Google Sheet 2026 (Đồng bộ dấu X)
     </div>
   </footer>
 

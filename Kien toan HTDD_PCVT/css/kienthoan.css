@@ -337,12 +337,14 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  max-width: 450px;
+  max-width: 500px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
-.inspector-input {
+.inspector-select {
   flex: 1;
+  min-width: 220px;
   padding: 0.45rem 0.75rem;
   border: 1.5px solid #94a3b8;
   border-radius: var(--radius-sm);
@@ -350,6 +352,28 @@ body {
   font-weight: 600;
   color: var(--evn-primary);
   background: #f8fafc;
+  outline: none;
+  transition: var(--transition);
+  min-height: 38px;
+  cursor: pointer;
+}
+
+.inspector-select:focus {
+  background: #ffffff;
+  border-color: var(--evn-primary);
+  box-shadow: 0 0 0 3px rgba(10, 50, 106, 0.12);
+}
+
+.inspector-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.45rem 0.75rem;
+  border: 1.5px solid #94a3b8;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--evn-primary);
+  background: #ffffff;
   outline: none;
   transition: var(--transition);
   min-height: 38px;
@@ -830,6 +854,33 @@ body {
 .col-photo { width: 110px; text-align: center; }
 .col-actions { width: 75px; text-align: center; }
 
+.updater-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+
+.updater-select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #ffffff;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.updater-select:focus {
+  border-color: var(--border-color-focus);
+  outline: none;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
 .updater-input {
   width: 100%;
   padding: 0.35rem 0.5rem;
@@ -847,6 +898,26 @@ body {
   outline: none;
   background: #eff6ff;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.mobile-updater-select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #ffffff;
+  outline: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.mobile-updater-select:focus {
+  border-color: var(--evn-primary);
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(10, 50, 106, 0.15);
 }
 
 .mobile-updater-input {
