@@ -751,6 +751,7 @@
         renderApp();
         showLoading(false);
         showToast(`Đã nạp toàn bộ ${allCustomers.length.toLocaleString('vi-VN')} khách hàng từ bộ nhớ!`, 'success');
+        pollFieldUpdates(false);
         return;
       }
     } else {
@@ -807,6 +808,7 @@
           localStorage.setItem(STORAGE_KEY_DATASET_VER, DATASET_VERSION);
           console.log(`Saved all ${allCustomers.length} customers to IndexedDB cache.`);
         }, 100);
+        pollFieldUpdates(false);
         return;
       }
     }
@@ -2057,32 +2059,68 @@ function doGet(e) {
 
     if (logSheet && logSheet.getLastRow() > 1) {
       var data = logSheet.getDataRange().getValues();
-      var numCols = (data[0] && data[0].length) || 0;
-      var isNineCol = (numCols >= 9);
+      var headers = (data[0] || []).map(function(h) { return String(h || '').toLowerCase().trim(); });
+      
+      var idxMaKh = headers.indexOf('mã kh');
+      if (idxMaKh === -1) idxMaKh = 1;
+      
+      var idxIdTram = headers.indexOf('id trạm');
+      if (idxIdTram === -1 && data[0].length >= 9) idxIdTram = 2;
+
+      var idxTenTram = headers.indexOf('tên trạm');
+      if (idxTenTram === -1 && data[0].length >= 9) idxTenTram = 3;
+
+      var idxDanhSo = headers.indexOf('mã danh số') !== -1 ? headers.indexOf('mã danh số') : headers.indexOf('danh số');
+      if (idxDanhSo === -1 && data[0].length >= 9) idxDanhSo = 4;
+
+      var idxNguoi = -1;
+      for (var hi = 0; hi < headers.length; hi++) {
+        if (headers[hi].indexOf('cán bộ') !== -1 || headers[hi].indexOf('người') !== -1 || headers[hi].indexOf('nhóm') !== -1) {
+          idxNguoi = hi;
+          break;
+        }
+      }
+      if (idxNguoi === -1) idxNguoi = (data[0].length >= 9 ? 5 : 2);
+
+      var idxTrangThai = -1;
+      for (var hj = 0; hj < headers.length; hj++) {
+        if (headers[hj].indexOf('trạng thái') !== -1 || headers[hj] === 'x') {
+          idxTrangThai = hj;
+          break;
+        }
+      }
+      if (idxTrangThai === -1) idxTrangThai = (data[0].length >= 9 ? 6 : 3);
+
+      var idxNgay = -1;
+      for (var hk = 0; hk < headers.length; hk++) {
+        if (headers[hk].indexOf('ngày') !== -1) {
+          idxNgay = hk;
+          break;
+        }
+      }
+      if (idxNgay === -1) idxNgay = (data[0].length >= 9 ? 7 : 4);
+
+      var idxGhiChu = headers.indexOf('ghi chú');
+      if (idxGhiChu === -1) idxGhiChu = (data[0].length >= 9 ? 8 : 5);
 
       for (var i = 1; i < data.length; i++) {
-        var rowTime = Number(data[i][0]);
-        if (rowTime > since) {
-          if (isNineCol) {
+        var rawTime = data[i][0];
+        var rowTime = (rawTime instanceof Date) ? rawTime.getTime() : Number(rawTime);
+        if (isNaN(rowTime) || rowTime <= 0) rowTime = Date.now();
+
+        if (since === 0 || rowTime > since) {
+          var uMaKh = String(data[i][idxMaKh] || '').trim();
+          if (uMaKh) {
             updates.push({
               timestamp: rowTime,
-              ma_kh: String(data[i][1]),
-              id_tram: String(data[i][2] || ''),
-              ten_tram: String(data[i][3] || ''),
-              danh_so: String(data[i][4] || ''),
-              nguoi_cap_nhat: String(data[i][5] || ''),
-              trang_thai_x: String(data[i][6] || ''),
-              ngay_kiem_tra: String(data[i][7] || ''),
-              ghi_chu: String(data[i][8] || '')
-            });
-          } else {
-            updates.push({
-              timestamp: rowTime,
-              ma_kh: String(data[i][1]),
-              nguoi_cap_nhat: String(data[i][2]),
-              trang_thai_x: String(data[i][3]),
-              ngay_kiem_tra: String(data[i][4]),
-              ghi_chu: String(data[i][5])
+              ma_kh: uMaKh,
+              id_tram: idxIdTram !== -1 ? String(data[i][idxIdTram] || '').trim() : '',
+              ten_tram: idxTenTram !== -1 ? String(data[i][idxTenTram] || '').trim() : '',
+              danh_so: idxDanhSo !== -1 ? String(data[i][idxDanhSo] || '').trim() : '',
+              nguoi_cap_nhat: String(data[i][idxNguoi] || '').trim(),
+              trang_thai_x: String(data[i][idxTrangThai] || 'X').trim(),
+              ngay_kiem_tra: idxNgay !== -1 ? String(data[i][idxNgay] || '').trim() : '',
+              ghi_chu: idxGhiChu !== -1 ? String(data[i][idxGhiChu] || '').trim() : ''
             });
           }
         }
@@ -2154,9 +2192,22 @@ function donDepLogDongBo() {
 
     const btnQuickScan = document.getElementById('btnManualQuickScan');
     if (btnQuickScan) {
-      btnQuickScan.addEventListener('click', () => {
-        showToast('Đang quét trực tiếp từ Google Sheet...', 'info');
-        pollFieldUpdates(true);
+      btnQuickScan.addEventListener('click', async () => {
+        btnQuickScan.disabled = true;
+        btnQuickScan.classList.add('scanning');
+        showToast('🔍 Đang quét trực tiếp cập nhật từ Google Sheet...', 'info');
+        try {
+          if (navigator.onLine) {
+            processOfflineQueue();
+          }
+          await pollFieldUpdates(true);
+        } catch (scanErr) {
+          console.error('Quick scan error:', scanErr);
+          showToast('Lỗi khi quét cập nhật từ Google Sheet', 'error');
+        } finally {
+          btnQuickScan.disabled = false;
+          btnQuickScan.classList.remove('scanning');
+        }
       });
     }
 
@@ -4174,8 +4225,54 @@ function donDepLogDongBo() {
             isConnected = true;
             if (Array.isArray(json.updates)) {
               json.updates.forEach(u => {
-                if (u.ma_kh && (u.trang_thai_x === 'X' || u.trang_thai === 'Đã kiểm tra')) {
-                  sheetCheckedMap.set(u.ma_kh, u);
+                if (!u || !u.ma_kh) return;
+
+                let isChecked = false;
+                let idTram = String(u.id_tram || '').trim();
+                let tenTram = String(u.ten_tram || '').trim();
+                let danhSo = String(u.danh_so || '').trim();
+                let updater = String(u.nguoi_cap_nhat || '').trim();
+                let inspectDate = String(u.ngay_kiem_tra || '').trim();
+                let note = String(u.ghi_chu || '').trim();
+
+                const rawStatus = String(u.trang_thai_x || u.trang_thai || '').trim();
+
+                // Nhận diện trạng thái đã kiểm tra từ Google Sheet / Apps Script:
+                // 1. Cấu trúc chuẩn có 'X' hoặc 'Đã kiểm tra'
+                if (rawStatus.toUpperCase() === 'X' || rawStatus.toLowerCase() === 'đã kiểm tra' || rawStatus.toLowerCase() === 'da kiem tra') {
+                  isChecked = true;
+                } 
+                // 2. Cấu trúc 9 cột trên Sheet khi Apps Script cũ đọc bị lệch cột:
+                // Col 1: Mã KH, Col 2: ID trạm, Col 3 (u.trang_thai_x): Tên trạm, Col 4 (u.ngay_kiem_tra): Mã danh số, Col 5 (u.ghi_chu): Cán bộ cập nhật / Nhóm
+                else if (rawStatus && rawStatus !== 'Chưa kiểm tra' && rawStatus !== '0' && rawStatus !== 'false') {
+                  isChecked = true;
+                  if (!idTram && updater && note) {
+                    idTram = updater;       // Col 2 là ID trạm (vd "101471")
+                    tenTram = rawStatus;     // Col 3 là Tên trạm (vd "Phước Bình 3")
+                    danhSo = inspectDate;    // Col 4 là Mã danh số (vd "OK-001013")
+                    updater = note;          // Col 5 là Nhóm công tác (vd "Nguyễn Xuân Thắng...")
+                    note = '';
+                    inspectDate = '';
+                  }
+                } 
+                // 3. Mọi bản ghi tồn tại trong Log_DongBo đều là khách hàng đã được kiểm tra từ hiện trường
+                else if (u.timestamp && !rawStatus) {
+                  isChecked = true;
+                }
+
+                if (isChecked) {
+                  sheetCheckedMap.set(u.ma_kh, {
+                    ma_kh: u.ma_kh,
+                    id_tram: idTram,
+                    ten_tram: tenTram,
+                    danh_so: danhSo,
+                    nguoi_cap_nhat: updater,
+                    trang_thai_x: 'X',
+                    trang_thai: 'Đã kiểm tra',
+                    ngay_kiem_tra: inspectDate,
+                    ghi_chu: note,
+                    timestamp: u.timestamp
+                  });
                 }
               });
             }
@@ -4383,9 +4480,15 @@ function donDepLogDongBo() {
           inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
           if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
           if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
-          if (!inspectionsMap[ma_kh].ngay_kiem_tra) {
-            inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra || `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+          if (!inspectionsMap[ma_kh].ngay_kiem_tra || !inspectionsMap[ma_kh].ngay_kiem_tra.includes('/')) {
+            if (item.ngay_kiem_tra && item.ngay_kiem_tra.includes('/')) {
+              inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra;
+            } else {
+              const d = item.timestamp ? new Date(Number(item.timestamp)) : now;
+              inspectionsMap[ma_kh].ngay_kiem_tra = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+            }
           }
+          inspectionsMap[ma_kh].localUpdatedAt = item.timestamp || Date.now();
           hasChanges = true;
           if (isNewCheck) newlyCheckedCount++;
 
@@ -4395,7 +4498,7 @@ function donDepLogDongBo() {
             timeStr: timeStr,
             ma_kh: ma_kh,
             ten_kh: cust.ten_kh || item.ten_kh || 'Khách hàng',
-            station: cust.id_tram || cust.ma_tram || '',
+            station: item.id_tram || cust.id_tram || cust.ma_tram || '',
             nguoi_cap_nhat: item.nguoi_cap_nhat || cust.nguoi_cap_nhat || 'Cán bộ hiện trường'
           });
 
@@ -4447,7 +4550,9 @@ function donDepLogDongBo() {
           showToast(`🔄 [Đồng bộ] Đã chuyển ${revertedCount} KH về "Chưa kiểm tra" theo Google Sheet`, 'info');
         }
       } else if (isManual) {
-        showToast('Dữ liệu trên máy tính đã ở trạng thái mới nhất!', 'info');
+        applyFilters();
+        renderApp();
+        showToast(`✅ Đã đồng bộ hoàn tất! Hiện có ${sheetCheckedMap.size} khách hàng đã kiểm tra trên Google Sheet`, 'success');
       }
     } else if (isManual) {
       showToast('Không thể kết nối đến Webhook Google Sheet để kiểm tra!', 'warning');

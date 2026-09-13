@@ -585,6 +585,24 @@ body {
   color: #334155;
 }
 
+.btn-live-ctrl.scanning {
+  opacity: 0.75;
+  pointer-events: none;
+  background: #e0f2fe !important;
+  border-color: #38bdf8 !important;
+  color: #0369a1 !important;
+}
+
+.btn-live-ctrl.scanning span:first-child {
+  display: inline-block;
+  animation: spinIcon 0.8s linear infinite;
+}
+
+@keyframes spinIcon {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Expandable Live Feed Drawer */
 .live-feed-drawer {
   background: #f8fafc;
