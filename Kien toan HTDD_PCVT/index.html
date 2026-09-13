@@ -67,6 +67,14 @@
           <span>Xuất Excel (.xlsx)</span>
         </button>
 
+        <button class="btn-header" onclick="openModal('modalMultiDeviceSync')" title="Gộp và đồng bộ kết quả giữa điện thoại và máy tính">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+          <span>Gộp Đa Thiết Bị</span>
+        </button>
+
         <button class="btn-header" onclick="openModal('modalSheetGuide')" title="Cài đặt liên kết và hướng dẫn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>
@@ -189,6 +197,9 @@
           </button>
           <button type="button" class="btn-live-ctrl secondary" id="btnToggleFeed" title="Mở danh sách các khách hàng vừa được kiểm tra ngoài hiện trường">
             <span>📋 Nhật ký (<span id="liveFeedBadge">0</span>)</span>
+          </button>
+          <button type="button" class="btn-live-ctrl active" onclick="openModal('modalMultiDeviceSync')" title="Gộp và đồng bộ dữ liệu giữa điện thoại và máy tính">
+            <span>📲 Gộp thiết bị</span>
           </button>
         </div>
       </div>
@@ -459,6 +470,9 @@
             <button type="button" class="btn-secondary" id="btnCopyAppsScriptCode" style="min-height: 40px;">
               📋 Sao chép mã Google Apps Script
             </button>
+            <button type="button" class="btn-secondary" id="btnShareWebhookToPhone" style="min-height: 40px; color: #1e40af; border-color: #93c5fd; background: #eff6ff;" title="Tạo đường link tự động cấu hình Webhook gửi lên Zalo cho điện thoại">
+              📱 Chia sẻ link cho Điện thoại
+            </button>
           </div>
 
           <!-- Collapsible Code Guide -->
@@ -482,6 +496,104 @@
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalSheetGuide')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Multi-Device Sync (Gộp và đồng bộ kết quả giữa các máy) -->
+  <div class="modal-overlay" id="modalMultiDeviceSync">
+    <div class="modal-container" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📲</span>
+          <span>GỘP & ĐỒNG BỘ KẾT QUẢ GIỮA CÁC THIẾT BỊ</span>
+        </div>
+        <button class="btn-modal-close" onclick="closeModal('modalMultiDeviceSync')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="sync-device-intro-box">
+          <strong>💡 Bạn vừa lưu khách hàng trên điện thoại nhưng máy tính chưa có?</strong>
+          <p style="margin-top: 4px; font-size: 0.8rem; color: #334155; line-height: 1.45;">
+            Trình duyệt mỗi máy (điện thoại và máy tính) lưu trữ độc lập. Bạn có thể gộp kết quả ngay lập tức bằng <strong>2 cách</strong> dưới đây:
+          </p>
+        </div>
+
+        <!-- Sync Tabs -->
+        <div class="sync-modal-tabs">
+          <button type="button" class="sync-tab-btn active" id="tabBtnDeviceExport" onclick="window.PCVT.switchSyncTab('export')">
+            📤 1. Máy vừa kiểm tra (Trên Điện thoại)
+          </button>
+          <button type="button" class="sync-tab-btn" id="tabBtnDeviceImport" onclick="window.PCVT.switchSyncTab('import')">
+            📥 2. Máy cần nhận dữ liệu (Trên Máy tính)
+          </button>
+        </div>
+
+        <!-- Tab 1: Xuất từ máy này -->
+        <div id="syncTabContentExport" class="sync-tab-pane">
+          <div class="sync-summary-chip">
+            Thiết bị này hiện đang có: <strong id="syncExportCount">0</strong> khách hàng đã kiểm tra
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:0.75rem;">
+            <div>
+              <label class="form-label">Cách 1: Sao chép Mã Đồng Bộ Nhanh (Dễ nhất):</label>
+              <div style="display:flex; gap:0.5rem; margin-top:4px;">
+                <textarea id="syncExportCodeText" class="form-control" rows="2" readonly style="font-family:monospace; font-size:0.75rem;" placeholder="Bấm nút bên dưới để tạo mã đồng bộ..."></textarea>
+              </div>
+              <button type="button" class="btn-header primary" id="btnCopySyncCode" style="margin-top:6px; width:100%; justify-content:center;">
+                📋 Sao chép mã đồng bộ để gửi sang máy tính
+              </button>
+            </div>
+
+            <div style="padding-top:0.5rem; border-top:1px dashed #cbd5e1;">
+              <label class="form-label">Cách 2: Tải tệp kết quả (.json) siêu nhẹ:</label>
+              <p style="font-size:0.75rem; color:#64748b; margin:2px 0 6px 0;">Gửi tệp này qua Zalo, Email hoặc AirDrop sang máy tính để gộp vào.</p>
+              <button type="button" class="btn-secondary" id="btnDownloadSyncFile" style="width:100%; justify-content:center;">
+                💾 Tải tệp kết quả (KetQua_DongBo.json)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Nhập & Gộp vào máy này -->
+        <div id="syncTabContentImport" class="sync-tab-pane" style="display:none;">
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div>
+              <label class="form-label">Cách 1: Dán Mã Đồng Bộ từ điện thoại vào đây:</label>
+              <textarea id="syncImportCodeText" class="form-control" rows="3" style="font-family:monospace; font-size:0.8rem;" placeholder="Dán mã đồng bộ bạn vừa sao chép từ điện thoại vào đây..."></textarea>
+              <button type="button" class="btn-header primary" id="btnApplySyncCode" style="margin-top:6px; width:100%; justify-content:center;">
+                ⚡ Gộp kết quả vào máy này ngay
+              </button>
+            </div>
+
+            <div style="padding-top:0.5rem; border-top:1px dashed #cbd5e1;">
+              <label class="form-label">Cách 2: Hoặc chọn tệp kết quả (.json) từ điện thoại gửi qua:</label>
+              <input type="file" id="syncImportFileInput" accept=".json" class="form-control" style="padding-left:0.75rem; margin-top:4px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Cloud Auto-Sync Section (Webhook) -->
+        <div class="sync-cloud-hint-box">
+          <div style="font-weight:700; color:#1e40af; font-size:0.85rem; margin-bottom:4px;">
+            ⚡ HOẶC TỰ ĐỘNG 100% QUA GOOGLE SHEET WEBHOOK:
+          </div>
+          <p style="font-size:0.78rem; color:#334155; margin:0 0 6px 0; line-height:1.4;">
+            Để mọi thao tác trên điện thoại <strong>tự động bay sang máy tính trong 1 giây</strong> mà không cần sao chép mã thủ công, bạn chỉ cần cấu hình đường link Webhook Google Sheet 1 lần duy nhất:
+          </p>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="btn-secondary" id="btnShareWebhookFromModal" style="font-size:0.78rem; padding:0.35rem 0.65rem; color:#1e40af; border-color:#93c5fd; background:#eff6ff;">
+              📱 Chia sẻ link tự cấu hình Webhook cho điện thoại
+            </button>
+            <button type="button" class="btn-secondary" onclick="closeModal('modalMultiDeviceSync'); openModal('modalSheetGuide');" style="font-size:0.78rem; padding:0.35rem 0.65rem;">
+              ⚙️ Cài đặt Webhook Google Sheet
+            </button>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalMultiDeviceSync')">Đóng</button>
       </div>
     </div>
   </div>

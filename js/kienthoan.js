@@ -269,7 +269,7 @@
         updateSyncStatus('offline', '💾 Đã lưu trên máy (Chờ gửi)', 'Sẽ tự động đồng bộ khi kết nối mạng ổn định');
       });
     } else {
-      updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Đã lưu an toàn trên máy (Có thể kết nối Webhook để đẩy vào Sheet)');
+      updateSyncStatus('warning', '💾 Đã lưu trên máy này', 'Dùng nút "Gộp Đa Thiết Bị" hoặc cài Webhook để gửi sang máy khác');
     }
   }
 
@@ -349,6 +349,26 @@
   // ==========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
     loadLocalInspections();
+
+    // Tự động nhận link cấu hình Webhook từ URL (chia sẻ từ máy tính qua Zalo sang điện thoại)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const webhookParam = urlParams.get('webhook');
+      if (webhookParam) {
+        const decodedWebhook = decodeURIComponent(webhookParam).trim();
+        if (decodedWebhook.startsWith('http')) {
+          localStorage.setItem(STORAGE_KEY_WEBHOOK_URL, decodedWebhook);
+          const inputWebhook = document.getElementById('inputAppsScriptUrl');
+          if (inputWebhook) inputWebhook.value = decodedWebhook;
+          setTimeout(() => {
+            showToast('✅ Đã tự động kết nối Webhook Google Sheet cho thiết bị này!', 'success');
+          }, 800);
+        }
+      }
+    } catch (e) {
+      console.warn('URL params parsing notice:', e);
+    }
+
     initEventListeners();
     await loadInitialData();
 
@@ -376,9 +396,9 @@
     });
 
     if (savedWebhook) {
-      updateSyncStatus('synced', '🟢 Đã kết nối Google Sheet Webhook', 'Cập nhật tức thì khi thao tác');
+      updateSyncStatus('synced', '🟢 Đã kết nối Google Sheet Webhook', 'Cập nhật tức thì giữa các thiết bị qua Cloud');
     } else {
-      updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Mọi thao tác trên điện thoại được lưu ngay lập tức');
+      updateSyncStatus('warning', '💾 Đang lưu trên máy này (Chưa gửi Sheet)', 'Dùng nút "Gộp Đa Thiết Bị" hoặc cài Webhook để đồng bộ');
     }
 
     if (navigator.onLine) {
@@ -769,6 +789,9 @@
         dia_chi: dia_chi_ddo || dia_chi_kh
       });
     }
+
+    // Lưu các khách hàng có dấu X từ Sheet vào bộ nhớ máy
+    saveLocalInspections();
 
     return result;
   }
@@ -1447,7 +1470,7 @@
           showToast('Đã lưu cấu hình Webhook Google Apps Script thành công!', 'success');
           processOfflineQueue();
         } else {
-          updateSyncStatus('synced', '🟢 Đã đồng bộ tức thì trên thiết bị', 'Mọi thao tác trên điện thoại được lưu ngay lập tức');
+          updateSyncStatus('warning', '💾 Đang lưu trên máy này (Chưa gửi Sheet)', 'Dùng nút "Gộp Đa Thiết Bị" hoặc cài Webhook để đồng bộ');
           showToast('Đã xóa cấu hình Webhook Google Sheet', 'info');
         }
       });
@@ -1625,6 +1648,114 @@ function doGet(e) {
       btnCloseFeed.addEventListener('click', () => {
         feedDrawer.style.display = 'none';
       });
+    }
+
+    // --- Multi-Device Sync & Merge Events (Đồng bộ đa thiết bị) ---
+    const btnCopySync = document.getElementById('btnCopySyncCode');
+    if (btnCopySync) {
+      btnCopySync.addEventListener('click', () => {
+        const code = refreshSyncExportData();
+        if (!code || code === '{}') {
+          showToast('Chưa có khách hàng nào được kiểm tra để sao chép!', 'info');
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(() => {
+            showToast('📋 Đã sao chép mã đồng bộ! Hãy gửi qua Zalo hoặc dán vào máy tính.', 'success');
+          }).catch(() => fallbackCopySync(code));
+        } else {
+          fallbackCopySync(code);
+        }
+      });
+    }
+
+    function fallbackCopySync(text) {
+      const ta = document.getElementById('syncExportCodeText');
+      if (ta) {
+        ta.select();
+        document.execCommand('copy');
+        showToast('📋 Đã sao chép mã đồng bộ!', 'success');
+      }
+    }
+
+    const btnDownSync = document.getElementById('btnDownloadSyncFile');
+    if (btnDownSync) {
+      btnDownSync.addEventListener('click', () => {
+        const code = refreshSyncExportData();
+        const blob = new Blob([code], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const now = new Date();
+        const timeTag = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}`;
+        a.href = url;
+        a.download = `KetQua_DongBo_KienToan_${timeTag}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('💾 Đã tải tệp KetQua_DongBo_KienToan.json!', 'success');
+      });
+    }
+
+    const btnApplySync = document.getElementById('btnApplySyncCode');
+    if (btnApplySync) {
+      btnApplySync.addEventListener('click', () => {
+        const codeArea = document.getElementById('syncImportCodeText');
+        if (codeArea) {
+          mergeSyncPackage(codeArea.value);
+        }
+      });
+    }
+
+    const fileImportSync = document.getElementById('syncImportFileInput');
+    if (fileImportSync) {
+      fileImportSync.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          mergeSyncPackage(evt.target.result);
+          fileImportSync.value = '';
+        };
+        reader.onerror = () => {
+          showToast('Lỗi khi đọc tệp đồng bộ!', 'error');
+          fileImportSync.value = '';
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Share Webhook auto-config link for mobile phone
+    function handleShareWebhook() {
+      const currentWebhook = (localStorage.getItem(STORAGE_KEY_WEBHOOK_URL) || '').trim();
+      if (!currentWebhook) {
+        showToast('Bạn chưa cấu hình Webhook URL! Vui lòng dán link Webhook và bấm Lưu Cấu Hình trước.', 'warning');
+        openModal('modalSheetGuide');
+        return;
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.set('webhook', currentWebhook);
+      const shareUrl = url.toString();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showToast('📲 Đã sao chép link tự động cấu hình! Hãy gửi link này lên Zalo và mở trên điện thoại.', 'success');
+        }).catch(() => {
+          prompt('Sao chép link này và gửi qua Zalo để mở trên điện thoại:', shareUrl);
+        });
+      } else {
+        prompt('Sao chép link này và gửi qua Zalo để mở trên điện thoại:', shareUrl);
+      }
+    }
+
+    const btnSharePhone = document.getElementById('btnShareWebhookToPhone');
+    if (btnSharePhone) {
+      btnSharePhone.addEventListener('click', handleShareWebhook);
+    }
+
+    const btnSharePhoneModal = document.getElementById('btnShareWebhookFromModal');
+    if (btnSharePhoneModal) {
+      btnSharePhoneModal.addEventListener('click', handleShareWebhook);
     }
   }
 
@@ -2044,6 +2175,18 @@ function doGet(e) {
 
     pollFieldUpdates: function(isManual) {
       pollFieldUpdates(isManual);
+    },
+
+    switchSyncTab: function(tab) {
+      switchSyncTab(tab);
+    },
+
+    refreshSyncExportData: function() {
+      return refreshSyncExportData();
+    },
+
+    mergeSyncPackage: function(rawContent) {
+      return mergeSyncPackage(rawContent);
     }
   };
 
@@ -2594,9 +2737,165 @@ function doGet(e) {
     if (pingDot) pingDot.classList.remove('active');
   }
 
+  // ==========================================================================
+  // MULTI-DEVICE SYNC & MERGE (GỘP KẾT QUẢ ĐA THIẾT BỊ)
+  // ==========================================================================
+  function refreshSyncExportData() {
+    const exportCodeArea = document.getElementById('syncExportCodeText');
+    const exportCountBadge = document.getElementById('syncExportCount');
+
+    const compactInspections = {};
+    let count = 0;
+
+    for (const [maKh, insp] of Object.entries(inspectionsMap)) {
+      if (insp && (insp.trang_thai === 'Đã kiểm tra' || insp.ghi_chu || insp.hinh_anh || insp.nguoi_cap_nhat)) {
+        compactInspections[maKh] = {
+          t: insp.trang_thai === 'Đã kiểm tra' ? 'X' : '',
+          u: insp.nguoi_cap_nhat || '',
+          d: insp.ngay_kiem_tra || '',
+          n: insp.ghi_chu || '',
+          p: insp.hinh_anh ? 1 : 0
+        };
+        if (insp.trang_thai === 'Đã kiểm tra') count++;
+      }
+    }
+
+    if (exportCountBadge) {
+      exportCountBadge.textContent = count.toLocaleString('vi-VN');
+    }
+
+    const payload = {
+      app: 'PCVT_KT',
+      ver: 2,
+      exportedAt: new Date().toISOString(),
+      count: count,
+      data: compactInspections
+    };
+
+    const jsonStr = JSON.stringify(payload);
+    if (exportCodeArea) {
+      exportCodeArea.value = jsonStr;
+    }
+    return jsonStr;
+  }
+
+  function switchSyncTab(tab) {
+    const tabExport = document.getElementById('tabBtnDeviceExport');
+    const tabImport = document.getElementById('tabBtnDeviceImport');
+    const contentExport = document.getElementById('syncTabContentExport');
+    const contentImport = document.getElementById('syncTabContentImport');
+
+    if (tab === 'export') {
+      if (tabExport) tabExport.classList.add('active');
+      if (tabImport) tabImport.classList.remove('active');
+      if (contentExport) contentExport.style.display = 'block';
+      if (contentImport) contentImport.style.display = 'none';
+      refreshSyncExportData();
+    } else {
+      if (tabImport) tabImport.classList.add('active');
+      if (tabExport) tabExport.classList.remove('active');
+      if (contentImport) contentImport.style.display = 'block';
+      if (contentExport) contentExport.style.display = 'none';
+      const importInput = document.getElementById('syncImportCodeText');
+      if (importInput) setTimeout(() => importInput.focus(), 150);
+    }
+  }
+
+  function mergeSyncPackage(rawContent) {
+    if (!rawContent || typeof rawContent !== 'string' || !rawContent.trim()) {
+      showToast('Nội dung mã đồng bộ trống hoặc không hợp lệ!', 'error');
+      return false;
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(rawContent.trim());
+    } catch (e) {
+      showToast('Định dạng mã đồng bộ không đúng chuẩn JSON!', 'error');
+      return false;
+    }
+
+    let incomingItems = {};
+    if (parsed.app === 'PCVT_KT' && parsed.data && typeof parsed.data === 'object') {
+      incomingItems = parsed.data;
+    } else if (parsed.items && typeof parsed.items === 'object') {
+      incomingItems = parsed.items;
+    } else if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+      incomingItems = parsed;
+    } else if (Array.isArray(parsed)) {
+      parsed.forEach(item => {
+        if (item && item.ma_kh) {
+          incomingItems[item.ma_kh] = item;
+        }
+      });
+    }
+
+    const keys = Object.keys(incomingItems);
+    if (keys.length === 0) {
+      showToast('Không tìm thấy dữ liệu khách hàng nào trong gói đồng bộ!', 'error');
+      return false;
+    }
+
+    let addedCount = 0;
+    let updatedCount = 0;
+    const now = new Date();
+    const dateStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+    keys.forEach(maKh => {
+      const inc = incomingItems[maKh];
+      if (!inc) return;
+
+      const isCompleted = (inc.t === 'X' || inc.trang_thai === 'Đã kiểm tra' || inc.trang_thai_x === 'X');
+      const updater = inc.u || inc.nguoi_cap_nhat || '';
+      const note = inc.n || inc.ghi_chu || '';
+      const date = inc.d || inc.ngay_kiem_tra || dateStr;
+
+      if (!inspectionsMap[maKh]) {
+        inspectionsMap[maKh] = {
+          trang_thai: isCompleted ? 'Đã kiểm tra' : 'Chưa kiểm tra',
+          nguoi_cap_nhat: updater,
+          ghi_chu: note,
+          ngay_kiem_tra: date
+        };
+        if (isCompleted) addedCount++;
+      } else {
+        const wasCompleted = (inspectionsMap[maKh].trang_thai === 'Đã kiểm tra');
+        if (isCompleted) inspectionsMap[maKh].trang_thai = 'Đã kiểm tra';
+        if (updater) inspectionsMap[maKh].nguoi_cap_nhat = updater;
+        if (note) inspectionsMap[maKh].ghi_chu = note;
+        if (!inspectionsMap[maKh].ngay_kiem_tra && date) inspectionsMap[maKh].ngay_kiem_tra = date;
+
+        if (isCompleted && !wasCompleted) addedCount++;
+        else updatedCount++;
+      }
+
+      // Tự động đẩy lên Google Sheet nếu Webhook đang kết nối
+      syncItemImmediately(maKh);
+    });
+
+    saveLocalInspections();
+    applyFilters();
+    renderApp();
+    playNotificationChime();
+
+    showToast(`✅ Đã gộp thành công ${keys.length.toLocaleString('vi-VN')} khách hàng (${addedCount} khách hàng mới đã kiểm tra)!`, 'success');
+
+    // Xóa nội dung ô nhập
+    const importInput = document.getElementById('syncImportCodeText');
+    if (importInput) importInput.value = '';
+
+    refreshSyncExportData();
+    return true;
+  }
+
   window.openModal = function(id) {
     const modal = document.getElementById(id);
-    if (modal) modal.classList.add('active');
+    if (modal) {
+      modal.classList.add('active');
+      if (id === 'modalMultiDeviceSync') {
+        refreshSyncExportData();
+      }
+    }
   };
 
   window.closeModal = function(id) {
