@@ -1489,7 +1489,7 @@
     const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
     if (btnCopyScript) {
       btnCopyScript.addEventListener('click', () => {
-        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 2 CHIỀU HIỆN TRƯỜNG ➔ Ở NHÀ)
+        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 1 HÀNG DUY NHẤT & TỰ ĐỘNG XÓA KHI HỦY)
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.tryLock(10000);
@@ -1497,44 +1497,70 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getActiveSheet();
     var data = JSON.parse(e.postData.contents);
-    var maKH = data.ma_kh;
-    var nguoiCapNhat = data.nguoi_cap_nhat || '';
+    var maKH = String(data.ma_kh || '').trim();
+    var nguoiCapNhat = String(data.nguoi_cap_nhat || '').trim();
     var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
-    var ghiChu = data.ghi_chu || '';
+    var ghiChu = String(data.ghi_chu || '').trim();
     var ngayKT = data.ngay_kiem_tra || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm");
 
-    var lastRow = sheet.getLastRow();
-    if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({status: 'empty'}));
+    if (!maKH) return ContentService.createTextOutput(JSON.stringify({status: 'no_makh'}));
 
-    // 1. Cập nhật vào trang tính chính (Cột L: Người cập nhật, Cột M: Trạng thái dấu X)
+    // =========================================================================
+    // 1. CẬP NHẬT TRANG CHÍNH (CỘT L: NGƯỜI CẬP NHẬT, CỘT M: TRẠNG THÁI DẤU X)
+    // =========================================================================
     var rowIndex = -1;
     var rangeB = sheet.getRange("B:B");
-    var foundCell = rangeB.createTextFinder(String(maKH).trim()).matchEntireCell(true).findNext();
+    var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
     if (foundCell) {
       rowIndex = foundCell.getRow();
-      sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
-      sheet.getRange(rowIndex, 13).setValue(trangThaiX);
-    } else {
-      var maKHCodes = sheet.getRange(2, 2, Math.min(lastRow - 1, 30000), 1).getValues();
-      for (var i = 0; i < maKHCodes.length; i++) {
-        if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
-          rowIndex = i + 2;
-          sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
-          sheet.getRange(rowIndex, 13).setValue(trangThaiX);
-          break;
-        }
+      if (trangThaiX === 'X') {
+        sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat); // Cột L: Người cập nhật
+        sheet.getRange(rowIndex, 13).setValue('X');          // Cột M: Trạng thái dấu X
+      } else {
+        sheet.getRange(rowIndex, 12).setValue('');           // Xóa Cột L
+        sheet.getRange(rowIndex, 13).setValue('');           // Xóa Cột M (xem như chưa thực hiện)
       }
     }
 
-    // 2. Ghi vào nhật ký đồng bộ để máy ở nhà cập nhật thời gian thực ngay lập tức
+    // =========================================================================
+    // 2. CẬP NHẬT TRANG NHẬT KÝ (Log_DongBo): GHI ĐÚNG 1 HÀNG, XÓA NẾU HỦY
+    // =========================================================================
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
       logSheet.appendRow(['Timestamp', 'Mã KH', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
     }
-    logSheet.appendRow([new Date().getTime(), maKH, nguoiCapNhat, trangThaiX, ngayKT, ghiChu]);
-    if (logSheet.getLastRow() > 3000) {
-      logSheet.deleteRows(2, 500);
+
+    // Tìm tất cả dòng chứa Mã KH này trong trang Log_DongBo
+    var logLastRow = logSheet.getLastRow();
+    var existingRows = [];
+    if (logLastRow > 1) {
+      var logFinder = logSheet.getRange(2, 2, logLastRow - 1, 1).createTextFinder(maKH).matchEntireCell(true).findAll();
+      for (var f = 0; f < logFinder.length; f++) {
+        existingRows.push(logFinder[f].getRow());
+      }
+    }
+
+    if (trangThaiX === 'X') {
+      var rowData = [new Date().getTime(), maKH, nguoiCapNhat, 'X', ngayKT, ghiChu];
+      if (existingRows.length > 0) {
+        // Đã có -> Ghi đè vào đúng 1 hàng duy nhất
+        logSheet.getRange(existingRows[0], 1, 1, 6).setValues([rowData]);
+        // Nếu trước đó lỡ có nhiều dòng trùng thì xóa bỏ các dòng thừa
+        for (var d = existingRows.length - 1; d >= 1; d--) {
+          logSheet.deleteRow(existingRows[d]);
+        }
+      } else {
+        // Chưa có -> Thêm mới 1 hàng duy nhất
+        logSheet.appendRow(rowData);
+      }
+    } else {
+      // Chuyển sang CHƯA THỰC HIỆN -> XÓA DÒNG ĐÓ ĐI (Xem như chưa thực hiện)
+      if (existingRows.length > 0) {
+        for (var r = existingRows.length - 1; r >= 0; r--) {
+          logSheet.deleteRow(existingRows[r]);
+        }
+      }
     }
 
     return ContentService.createTextOutput(JSON.stringify({
@@ -1542,8 +1568,10 @@ function doPost(e) {
       row: rowIndex,
       ma_kh: maKH,
       trang_thai: trangThaiX,
+      action: (trangThaiX === 'X') ? 'saved' : 'deleted',
       server_time: new Date().getTime()
     })).setMimeType(ContentService.MimeType.JSON);
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -1555,7 +1583,7 @@ function doPost(e) {
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var since = Number(e.parameter.since || 0);
+    var since = Number((e && e.parameter && e.parameter.since) || 0);
     var logSheet = ss.getSheetByName('Log_DongBo');
     var updates = [];
 
@@ -1601,6 +1629,31 @@ function doGet(e) {
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// HÀM TIỆN ÍCH: Dọn dẹp sạch sẽ các dòng trùng lặp hiện có trong Log_DongBo (Chạy 1 lần)
+function donDepLogDongBo() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var logSheet = ss.getSheetByName('Log_DongBo');
+  if (!logSheet || logSheet.getLastRow() < 2) return;
+
+  var data = logSheet.getDataRange().getValues();
+  var seen = {};
+  var rowsToDelete = [];
+
+  for (var i = 1; i < data.length; i++) {
+    var maKH = String(data[i][1]).trim();
+    var status = String(data[i][3]).trim();
+    if (status !== 'X' || seen[maKH] || maKH.indexOf('TEST_PING') !== -1) {
+      rowsToDelete.push(i + 1);
+    } else {
+      seen[maKH] = true;
+    }
+  }
+
+  for (var k = rowsToDelete.length - 1; k >= 0; k--) {
+    logSheet.deleteRow(rowsToDelete[k]);
   }
 }`;
         navigator.clipboard.writeText(scriptCode).then(() => {
