@@ -64,7 +64,7 @@
     'Nguyễn Văn Nguyên',
     'Phạm Duy Phương',
     'Lê Gia Quốc Trung',
-    'Hoàng Văn Thắng'
+    'Nguyễn Đức Thành'
   ];
 
   // --- Preset Notes for Field Inspectors ---
