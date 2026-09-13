@@ -159,6 +159,52 @@
       </div>
     </section>
 
+    <!-- Real-time Field Monitor Bar (Đồng bộ trực tiếp hiện trường về nhà) -->
+    <section class="live-field-monitor-bar" id="liveFieldMonitorBar">
+      <div class="live-monitor-main">
+        <div class="live-indicator-wrap">
+          <span class="live-ping-dot active" id="livePingDot" title="Đang kết nối luồng dữ liệu hiện trường"></span>
+          <div>
+            <div class="live-monitor-title">
+              <span>⚡ ĐỒNG BỘ HIỆN TRƯỜNG THỜI GIAN THỰC</span>
+              <span class="live-status-pill online" id="liveStatusPill">🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)</span>
+            </div>
+            <div class="live-monitor-desc" id="liveMonitorDesc">
+              Hôm nay hiện trường đã cập nhật: <strong id="liveCountToday">0</strong> khách hàng &bull; <span id="liveLastActivityText">Đang theo dõi cập nhật mới từ các anh ngoài trạm...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-monitor-controls">
+          <button type="button" class="btn-live-ctrl active" id="btnToggleLiveSync" title="Bật/Tạm dừng tự động quét kết quả từ hiện trường">
+            <span id="btnToggleLiveSyncIcon">⏸️</span>
+            <span id="btnToggleLiveSyncText">Tạm dừng</span>
+          </button>
+          <button type="button" class="btn-live-ctrl" id="btnManualQuickScan" title="Quét ngay lập tức các cập nhật mới từ hiện trường">
+            <span>⚡ Quét ngay</span>
+          </button>
+          <button type="button" class="btn-live-ctrl" id="btnToggleSound" title="Bật/tắt âm thanh chuông báo khi có kết quả mới">
+            <span id="btnToggleSoundIcon">🔔</span>
+            <span id="btnToggleSoundText">Chuông: Bật</span>
+          </button>
+          <button type="button" class="btn-live-ctrl secondary" id="btnToggleFeed" title="Mở danh sách các khách hàng vừa được kiểm tra ngoài hiện trường">
+            <span>📋 Nhật ký (<span id="liveFeedBadge">0</span>)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Expandable Live Activity Feed -->
+      <div class="live-feed-drawer" id="liveFeedDrawer" style="display: none;">
+        <div class="live-feed-header">
+          <strong>📋 DÒNG THỜI GIAN CÁC KHÁCH HÀNG VỪA KIỂM TRA TỪ HIỆN TRƯỜNG</strong>
+          <button type="button" class="btn-close-feed" id="btnCloseFeed">✕ Đóng</button>
+        </div>
+        <div class="live-feed-list" id="liveFeedList">
+          <div class="live-feed-empty">Chưa có bản ghi nào được cập nhật trong phiên làm việc này. Khi các anh ngoài hiện trường thao tác, danh sách sẽ hiển thị ngay tại đây!</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Selected Station Banner (Dynamic) -->
     <section class="station-banner" id="stationBanner" style="display: none;">
       <div class="station-banner-info">

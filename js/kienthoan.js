@@ -15,6 +15,9 @@
   const STORAGE_KEY_INSPECTOR = 'PCVT_CURRENT_INSPECTOR';
   const STORAGE_KEY_WEBHOOK_URL = 'PCVT_APPS_SCRIPT_URL';
   const STORAGE_KEY_OFFLINE_QUEUE = 'PCVT_OFFLINE_QUEUE';
+  const STORAGE_KEY_LIVE_SYNC_ENABLED = 'PCVT_LIVE_SYNC_ENABLED';
+  const STORAGE_KEY_SOUND_ENABLED = 'PCVT_SOUND_ENABLED';
+  const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
   // IndexedDB Constants for 221.038 customers
   const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB';
@@ -47,6 +50,13 @@
   let currentPage = 1;
   const pageSize = 40;             // 40 items per page for ultra fast rendering
   let activeViewMode = 'auto';     // 'auto' | 'cards' | 'table'
+
+  // --- Real-time Field Sync State (Giám sát hiện trường thời gian thực) ---
+  let liveSyncTimer = null;
+  let isLiveSyncRunning = true;
+  let isSoundAlertEnabled = true;
+  let liveActivityLog = [];        // Dòng thời gian các KH vừa kiểm tra ngoài hiện trường
+  let lastLivePollTimestamp = 0;   // Dấu thời gian quét gần nhất
 
   // --- Preset Inspectors List (Thanh sổ chọn) ---
   const PRESET_INSPECTORS = [
@@ -374,6 +384,28 @@
     if (navigator.onLine) {
       processOfflineQueue();
     }
+
+    // Init Live Field Sync Monitor (Đồng bộ thời gian thực từ hiện trường về nhà)
+    const savedLiveSync = localStorage.getItem(STORAGE_KEY_LIVE_SYNC_ENABLED);
+    if (savedLiveSync !== 'false') {
+      startLiveFieldSync();
+    } else {
+      stopLiveFieldSync();
+    }
+
+    const savedSound = localStorage.getItem(STORAGE_KEY_SOUND_ENABLED);
+    if (savedSound === 'false') {
+      isSoundAlertEnabled = false;
+      const soundBtnText = document.getElementById('btnToggleSoundText');
+      const soundBtnIcon = document.getElementById('btnToggleSoundIcon');
+      if (soundBtnText) soundBtnText.textContent = 'Chuông: Tắt';
+      if (soundBtnIcon) soundBtnIcon.textContent = '🔕';
+    }
+
+    // Quét ngay lần đầu sau 2 giây để nạp các KH vừa cập nhật mới nhất
+    setTimeout(() => {
+      pollFieldUpdates(false);
+    }, 2000);
   });
 
   // ==========================================================================
@@ -1424,7 +1456,7 @@
     const btnCopyScript = document.getElementById('btnCopyAppsScriptCode');
     if (btnCopyScript) {
       btnCopyScript.addEventListener('click', () => {
-        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 13 CỘT)
+        const scriptCode = `// GOOGLE APPS SCRIPT CHO HỆ THỐNG KIỆN TOÀN HTĐĐ PC VŨNG TÀU (ĐỒNG BỘ 2 CHIỀU HIỆN TRƯỜNG ➔ Ở NHÀ)
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.tryLock(10000);
@@ -1435,38 +1467,163 @@ function doPost(e) {
     var maKH = data.ma_kh;
     var nguoiCapNhat = data.nguoi_cap_nhat || '';
     var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
+    var ghiChu = data.ghi_chu || '';
+    var ngayKT = data.ngay_kiem_tra || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm");
 
     var lastRow = sheet.getLastRow();
     if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({status: 'empty'}));
 
-    // Quét cột B (Mã KH) để tìm dòng tương ứng
+    // 1. Cập nhật vào trang tính chính (Cột L: Người cập nhật, Cột M: Trạng thái dấu X)
     var maKHCodes = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    var rowIndex = -1;
     for (var i = 0; i < maKHCodes.length; i++) {
       if (String(maKHCodes[i][0]).trim() === String(maKH).trim()) {
-        var rowIndex = i + 2;
-        // Cột L (cột 12): Người cập nhật
+        rowIndex = i + 2;
         sheet.getRange(rowIndex, 12).setValue(nguoiCapNhat);
-        // Cột M (cột 13): Trạng thái - Dấu "X" khi đã kiểm tra, rỗng khi chưa kiểm tra
         sheet.getRange(rowIndex, 13).setValue(trangThaiX);
-
-        return ContentService.createTextOutput(JSON.stringify({ status: 'success', row: rowIndex, trang_thai: trangThaiX }))
-          .setMimeType(ContentService.MimeType.JSON);
+        break;
       }
     }
-    return ContentService.createTextOutput(JSON.stringify({ status: 'not_found', ma_kh: maKH }))
-      .setMimeType(ContentService.MimeType.JSON);
+
+    // 2. Ghi vào nhật ký đồng bộ để máy ở nhà cập nhật thời gian thực ngay lập tức
+    var logSheet = ss.getSheetByName('Log_DongBo');
+    if (!logSheet) {
+      logSheet = ss.insertSheet('Log_DongBo');
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+    }
+    logSheet.appendRow([new Date().getTime(), maKH, nguoiCapNhat, trangThaiX, ngayKT, ghiChu]);
+    if (logSheet.getLastRow() > 3000) {
+      logSheet.deleteRows(2, 500);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      row: rowIndex,
+      ma_kh: maKH,
+      trang_thai: trangThaiX,
+      server_time: new Date().getTime()
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
   }
+}
+
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var since = Number(e.parameter.since || 0);
+    var logSheet = ss.getSheetByName('Log_DongBo');
+    var updates = [];
+
+    if (logSheet && logSheet.getLastRow() > 1) {
+      var data = logSheet.getDataRange().getValues();
+      for (var i = 1; i < data.length; i++) {
+        var rowTime = Number(data[i][0]);
+        if (rowTime > since) {
+          updates.push({
+            timestamp: rowTime,
+            ma_kh: String(data[i][1]),
+            nguoi_cap_nhat: String(data[i][2]),
+            trang_thai_x: String(data[i][3]),
+            ngay_kiem_tra: String(data[i][4]),
+            ghi_chu: String(data[i][5])
+          });
+        }
+      }
+    } else {
+      var sheet = ss.getActiveSheet();
+      var lastRow = sheet.getLastRow();
+      if (lastRow >= 2) {
+        var vals = sheet.getRange(2, 1, lastRow - 1, 13).getValues();
+        for (var j = 0; j < vals.length; j++) {
+          if (String(vals[j][12] || '').trim().toUpperCase() === 'X') {
+            updates.push({
+              ma_kh: String(vals[j][1]),
+              nguoi_cap_nhat: String(vals[j][11] || ''),
+              trang_thai_x: 'X',
+              timestamp: new Date().getTime()
+            });
+          }
+        }
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      count: updates.length,
+      server_time: new Date().getTime(),
+      updates: updates
+    })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }`;
         navigator.clipboard.writeText(scriptCode).then(() => {
-          showToast('Đã sao chép mã Google Apps Script! Hãy dán vào Apps Script của Google Sheet.', 'success');
+          showToast('Đã sao chép mã Google Apps Script đồng bộ 2 chiều! Hãy dán vào Apps Script của Google Sheet.', 'success');
         }).catch(() => {
           showToast('Vui lòng mở rộng phần hướng dẫn để xem mã!', 'info');
         });
+      });
+    }
+
+    // Live Field Monitor Controls
+    const btnToggleLive = document.getElementById('btnToggleLiveSync');
+    if (btnToggleLive) {
+      btnToggleLive.addEventListener('click', () => {
+        if (isLiveSyncRunning) {
+          stopLiveFieldSync();
+          showToast('Đã tạm dừng tự động theo dõi hiện trường', 'info');
+        } else {
+          startLiveFieldSync();
+          pollFieldUpdates(false);
+          showToast('Đã kích hoạt đồng bộ hiện trường thời gian thực!', 'success');
+        }
+      });
+    }
+
+    const btnQuickScan = document.getElementById('btnManualQuickScan');
+    if (btnQuickScan) {
+      btnQuickScan.addEventListener('click', () => {
+        showToast('Đang quét trực tiếp từ Google Sheet...', 'info');
+        pollFieldUpdates(true);
+      });
+    }
+
+    const btnSound = document.getElementById('btnToggleSound');
+    if (btnSound) {
+      btnSound.addEventListener('click', () => {
+        isSoundAlertEnabled = !isSoundAlertEnabled;
+        localStorage.setItem(STORAGE_KEY_SOUND_ENABLED, isSoundAlertEnabled ? 'true' : 'false');
+        const sText = document.getElementById('btnToggleSoundText');
+        const sIcon = document.getElementById('btnToggleSoundIcon');
+        if (sText) sText.textContent = isSoundAlertEnabled ? 'Chuông: Bật' : 'Chuông: Tắt';
+        if (sIcon) sIcon.textContent = isSoundAlertEnabled ? '🔔' : '🔕';
+        if (isSoundAlertEnabled) {
+          playNotificationChime();
+          showToast('Đã bật chuông báo âm thanh khi có KH mới!', 'success');
+        } else {
+          showToast('Đã tắt chuông báo âm thanh', 'info');
+        }
+      });
+    }
+
+    const btnFeed = document.getElementById('btnToggleFeed');
+    const btnCloseFeed = document.getElementById('btnCloseFeed');
+    const feedDrawer = document.getElementById('liveFeedDrawer');
+    if (btnFeed && feedDrawer) {
+      btnFeed.addEventListener('click', () => {
+        const isHidden = feedDrawer.style.display === 'none';
+        feedDrawer.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) renderLiveActivityFeed();
+      });
+    }
+    if (btnCloseFeed && feedDrawer) {
+      btnCloseFeed.addEventListener('click', () => {
+        feedDrawer.style.display = 'none';
       });
     }
   }
@@ -1879,6 +2036,14 @@ function doPost(e) {
 
     exportToCSV: function() {
       exportToCSV();
+    },
+
+    jumpToCustomer: function(ma_kh) {
+      jumpToCustomer(ma_kh);
+    },
+
+    pollFieldUpdates: function(isManual) {
+      pollFieldUpdates(isManual);
     }
   };
 
@@ -2120,6 +2285,313 @@ function doPost(e) {
       };
       reader.readAsText(file, 'utf-8');
     }
+  }
+
+  // ==========================================================================
+  // REAL-TIME FIELD SYNC ENGINE (ĐỒNG BỘ HIỆN TRƯỜNG VỀ NHÀ THỜI GIAN THỰC)
+  // ==========================================================================
+  function playNotificationChime() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.12); // A5
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.38);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.38);
+    } catch (e) {
+      console.warn('Audio chime notice:', e);
+    }
+  }
+
+  function renderLiveActivityFeed() {
+    const container = document.getElementById('liveFeedList');
+    const badge = document.getElementById('liveFeedBadge');
+    const countToday = document.getElementById('liveCountToday');
+    const lastDesc = document.getElementById('liveLastActivityText');
+
+    if (badge) badge.textContent = liveActivityLog.length;
+    if (countToday) countToday.textContent = liveActivityLog.length;
+
+    if (liveActivityLog.length > 0 && lastDesc) {
+      const latest = liveActivityLog[0];
+      lastDesc.innerHTML = `Vừa nhận: KH <strong>${escapeHTML(latest.ma_kh)}</strong> (${escapeHTML(latest.nguoi_cap_nhat)}) lúc <strong>${latest.timeStr}</strong>`;
+    }
+
+    if (!container) return;
+    if (liveActivityLog.length === 0) {
+      container.innerHTML = `<div class="live-feed-empty">Chưa có bản ghi nào được cập nhật trong phiên làm việc này. Khi các anh ngoài hiện trường thao tác, danh sách sẽ hiển thị ngay tại đây!</div>`;
+      return;
+    }
+
+    let html = '';
+    liveActivityLog.forEach(item => {
+      html += `
+        <div class="live-feed-card">
+          <div class="live-feed-left">
+            <span class="live-feed-time">🕒 ${escapeHTML(item.timeStr)}</span>
+            <div>
+              <span class="live-feed-cust-id">KH: ${escapeHTML(item.ma_kh)}</span>
+              <span style="color:#64748b; font-size:0.75rem;"> - ${escapeHTML(item.ten_kh)}</span>
+              ${item.station ? `<span style="font-size:0.72rem; color:#0284c7; margin-left:4px;">⚡ ${escapeHTML(item.station)}</span>` : ''}
+            </div>
+            <span class="live-feed-inspector">👤 ${escapeHTML(item.nguoi_cap_nhat)}</span>
+          </div>
+          <button type="button" class="btn-feed-jump" onclick="window.PCVT.jumpToCustomer('${escapeHTML(item.ma_kh)}')">
+            🔍 Xem KH
+          </button>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function jumpToCustomer(ma_kh) {
+    const globalSearchInput = document.getElementById('globalKeywordInput');
+    if (globalSearchInput) {
+      globalSearchInput.value = ma_kh;
+      currentSearchKeyword = ma_kh;
+      applyFilters();
+      renderApp();
+
+      setTimeout(() => {
+        const row = document.getElementById(`row-${ma_kh}`);
+        const card = document.getElementById(`mcard-${ma_kh}`);
+        if (row) {
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          row.classList.add('row-just-updated');
+          setTimeout(() => row.classList.remove('row-just-updated'), 3500);
+        }
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('row-just-updated');
+          setTimeout(() => card.classList.remove('row-just-updated'), 3500);
+        }
+      }, 150);
+    }
+  }
+
+  async function pollFieldUpdates(isManual = false) {
+    const statusPill = document.getElementById('liveStatusPill');
+
+    if (statusPill) {
+      statusPill.className = 'live-status-pill syncing';
+      statusPill.innerHTML = '🔄 ĐANG QUÉT CẬP NHẬT...';
+    }
+
+    let newUpdates = [];
+    const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK_URL);
+
+    // Chiến lược 1: Nếu có Webhook URL, gọi doGet(e) nhận các thay đổi mới
+    if (webhookUrl) {
+      try {
+        const fetchUrl = `${webhookUrl}${webhookUrl.includes('?') ? '&' : '?'}action=get_updates&since=${lastLivePollTimestamp}`;
+        const resp = await fetch(fetchUrl, { method: 'GET' });
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json && json.updates && Array.isArray(json.updates) && json.updates.length > 0) {
+            newUpdates = json.updates;
+            if (json.server_time) lastLivePollTimestamp = json.server_time;
+          }
+        }
+      } catch (e) {
+        console.warn('Webhook doGet poll notice, falling back to Google Sheet query:', e);
+      }
+    }
+
+    // Chiến lược 2: Trực tiếp quét Google Sheet qua Google Visualization API (cực nhanh, chỉ trả về các dòng có dấu X)
+    if (newUpdates.length === 0) {
+      try {
+        const sheetUrl = localStorage.getItem(STORAGE_KEY_SHEET_URL) || DEFAULT_SHEET_URL;
+        const sheetIdMatch = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        const gidMatch = sheetUrl.match(/[#&?]gid=([0-9]+)/);
+        const sheetId = sheetIdMatch ? sheetIdMatch[1] : '1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4';
+        const gid = gidMatch ? gidMatch[1] : '1392868293';
+
+        const gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}&tq=` + encodeURIComponent("select B, L, M where M is not null and M != ''");
+        const resp = await fetch(gvizUrl);
+        if (resp.ok) {
+          const raw = await resp.text();
+          const start = raw.indexOf('{');
+          const end = raw.lastIndexOf('}');
+          if (start !== -1 && end !== -1) {
+            const gData = JSON.parse(raw.substring(start, end + 1));
+            const rows = (gData.table && gData.table.rows) || [];
+            rows.forEach(r => {
+              const cCells = r.c || [];
+              const ma_kh = (cCells[0] && cCells[0].v != null) ? String(cCells[0].v).trim() : '';
+              const nguoi_cap_nhat = (cCells[1] && cCells[1].v != null) ? String(cCells[1].v).trim() : '';
+              const trang_thai_m = (cCells[2] && cCells[2].v != null) ? String(cCells[2].v).trim() : '';
+
+              if (ma_kh && trang_thai_m.toUpperCase() === 'X') {
+                const currentStatus = inspectionsMap[ma_kh] ? inspectionsMap[ma_kh].trang_thai : '';
+                const currentUpdater = inspectionsMap[ma_kh] ? inspectionsMap[ma_kh].nguoi_cap_nhat : '';
+                
+                if (currentStatus !== 'Đã kiểm tra' || (nguoi_cap_nhat && currentUpdater !== nguoi_cap_nhat)) {
+                  newUpdates.push({
+                    ma_kh: ma_kh,
+                    nguoi_cap_nhat: nguoi_cap_nhat,
+                    trang_thai_x: 'X',
+                    timestamp: Date.now()
+                  });
+                }
+              }
+            });
+          }
+        }
+      } catch (gErr) {
+        console.warn('GViz live poll notice:', gErr);
+      }
+    }
+
+    // Xử lý các bản ghi mới từ hiện trường
+    if (newUpdates.length > 0) {
+      let newlyCheckedCount = 0;
+      const now = new Date();
+      const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+
+      newUpdates.forEach(item => {
+        const ma_kh = item.ma_kh;
+        if (!ma_kh) return;
+
+        if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+        const wasCompleted = inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra';
+        inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
+        if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
+        if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
+        if (!inspectionsMap[ma_kh].ngay_kiem_tra) {
+          inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra || `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+        }
+
+        if (!wasCompleted) newlyCheckedCount++;
+
+        const cust = allCustomers.find(c => c.ma_kh === ma_kh) || {};
+        
+        liveActivityLog.unshift({
+          timestamp: Date.now(),
+          timeStr: timeStr,
+          ma_kh: ma_kh,
+          ten_kh: cust.ten_kh || item.ten_kh || 'Khách hàng',
+          station: cust.id_tram || cust.ma_tram || item.station || '',
+          nguoi_cap_nhat: item.nguoi_cap_nhat || cust.nguoi_cap_nhat || 'Cán bộ hiện trường'
+        });
+
+        // Cập nhật dòng bảng nếu đang mở trang này
+        const row = document.getElementById(`row-${ma_kh}`);
+        if (row) {
+          row.classList.add('row-completed', 'row-just-updated');
+          const stEl = row.querySelector('.col-status');
+          if (stEl) stEl.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+          const chk = row.querySelector('.custom-checkbox input');
+          if (chk) chk.checked = true;
+          const upInput = document.getElementById(`updater-${ma_kh}`);
+          if (upInput && item.nguoi_cap_nhat) upInput.value = item.nguoi_cap_nhat;
+          setTimeout(() => row.classList.remove('row-just-updated'), 3500);
+        }
+
+        // Cập nhật thẻ di động nếu đang mở trang này
+        const card = document.getElementById(`mcard-${ma_kh}`);
+        if (card) {
+          card.classList.add('card-completed', 'row-just-updated');
+          const mstatus = document.getElementById(`mstatus-${ma_kh}`);
+          const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
+          if (mstatus) mstatus.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+          if (mbtn) {
+            mbtn.className = 'btn-mobile-status-toggle completed';
+            mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
+          }
+          const mupdater = document.getElementById(`mupdater-${ma_kh}`);
+          if (mupdater && item.nguoi_cap_nhat) mupdater.value = item.nguoi_cap_nhat;
+          setTimeout(() => card.classList.remove('row-just-updated'), 3500);
+        }
+      });
+
+      if (liveActivityLog.length > 50) {
+        liveActivityLog = liveActivityLog.slice(0, 50);
+      }
+
+      saveLocalInspections();
+      renderKPIs();
+      renderStationBanner();
+      renderMobileStickyBar();
+      renderLiveActivityFeed();
+
+      if (isSoundAlertEnabled) {
+        playNotificationChime();
+      }
+
+      const latest = liveActivityLog[0];
+      showToast(`🔔 [Hiện trường] ${latest.nguoi_cap_nhat} vừa cập nhật KH ${latest.ma_kh} (${newUpdates.length} bản ghi mới)`, 'success');
+    } else if (isManual) {
+      showToast('Dữ liệu hiện trường đã ở trạng thái mới nhất!', 'info');
+    }
+
+    if (statusPill) {
+      if (isLiveSyncRunning) {
+        statusPill.className = 'live-status-pill online';
+        statusPill.innerHTML = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)';
+      } else {
+        statusPill.className = 'live-status-pill paused';
+        statusPill.innerHTML = '⏸️ ĐÃ TẠM DỪNG';
+      }
+    }
+  }
+
+  function startLiveFieldSync() {
+    if (liveSyncTimer) clearInterval(liveSyncTimer);
+    isLiveSyncRunning = true;
+    localStorage.setItem(STORAGE_KEY_LIVE_SYNC_ENABLED, 'true');
+
+    const btnText = document.getElementById('btnToggleLiveSyncText');
+    const btnIcon = document.getElementById('btnToggleLiveSyncIcon');
+    const statusPill = document.getElementById('liveStatusPill');
+    const pingDot = document.getElementById('livePingDot');
+
+    if (btnText) btnText.textContent = 'Tạm dừng';
+    if (btnIcon) btnIcon.textContent = '⏸️';
+    if (statusPill) {
+      statusPill.className = 'live-status-pill online';
+      statusPill.textContent = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)';
+    }
+    if (pingDot) pingDot.classList.add('active');
+
+    liveSyncTimer = setInterval(() => {
+      if (isLiveSyncRunning && navigator.onLine) {
+        pollFieldUpdates(false);
+      }
+    }, LIVE_SYNC_POLL_INTERVAL);
+  }
+
+  function stopLiveFieldSync() {
+    if (liveSyncTimer) {
+      clearInterval(liveSyncTimer);
+      liveSyncTimer = null;
+    }
+    isLiveSyncRunning = false;
+    localStorage.setItem(STORAGE_KEY_LIVE_SYNC_ENABLED, 'false');
+
+    const btnText = document.getElementById('btnToggleLiveSyncText');
+    const btnIcon = document.getElementById('btnToggleLiveSyncIcon');
+    const statusPill = document.getElementById('liveStatusPill');
+    const pingDot = document.getElementById('livePingDot');
+
+    if (btnText) btnText.textContent = 'Bật theo dõi';
+    if (btnIcon) btnIcon.textContent = '▶️';
+    if (statusPill) {
+      statusPill.className = 'live-status-pill paused';
+      statusPill.textContent = '⏸️ ĐÃ TẠM DỪNG';
+    }
+    if (pingDot) pingDot.classList.remove('active');
   }
 
   window.openModal = function(id) {
