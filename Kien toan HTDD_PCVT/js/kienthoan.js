@@ -832,6 +832,11 @@
   }
 
   function buildStationsMetaFromCustomers() {
+    // Reset count = 0 cho tất cả trạm để không bị cộng dồn nhân đôi dữ liệu
+    Object.keys(stationsMeta).forEach(id => {
+      stationsMeta[id].count = 0;
+    });
+
     allCustomers.forEach(c => {
       const id = c.id_tram || c.ma_tram;
       if (id) {
@@ -846,6 +851,8 @@
         stationsMeta[id].count = (stationsMeta[id].count || 0) + 1;
       }
     });
+
+    cachedStationCustStats = null;
   }
 
   // Sync directly from Google Sheet CSV
@@ -2726,6 +2733,7 @@ function donDepLogDongBo() {
       completedCustomerCount: 0
     };
 
+    // 1. Đếm số lượng trạm đã phân công cho từng nhóm
     const stationIds = Object.keys(stationsMeta);
     stationIds.forEach(stId => {
       const meta = stationsMeta[stId] || { count: 0 };
@@ -2734,21 +2742,28 @@ function donDepLogDongBo() {
 
       if (stats[targetKey]) {
         stats[targetKey].stationCount += 1;
-        stats[targetKey].customerCount += meta.count || 0;
-      }
-    });
-
-    allCustomers.forEach(c => {
-      const stId = c.id_tram || c.ma_tram;
-      const assign = stationAssignments[stId];
-      const targetKey = assign ? assign.groupId : 'unassigned';
-      const insp = inspectionsMap[c.ma_kh];
-      if (insp && insp.trang_thai === 'Đã kiểm tra') {
-        if (stats[targetKey]) {
-          stats[targetKey].completedCustomerCount += 1;
+        // Nếu allCustomers chưa nạp xong thì tạm thời dùng meta.count
+        if (allCustomers.length === 0) {
+          stats[targetKey].customerCount += meta.count || 0;
         }
       }
     });
+
+    // 2. Đếm trực tiếp từ mảng allCustomers để số lượng khách hàng luôn chuẩn xác 100% (không bao giờ bị nhân đôi)
+    if (allCustomers.length > 0) {
+      allCustomers.forEach(c => {
+        const stId = c.id_tram || c.ma_tram;
+        const assign = stationAssignments[stId];
+        const targetKey = assign ? assign.groupId : 'unassigned';
+        if (stats[targetKey]) {
+          stats[targetKey].customerCount += 1;
+          const insp = inspectionsMap[c.ma_kh];
+          if (insp && insp.trang_thai === 'Đã kiểm tra') {
+            stats[targetKey].completedCustomerCount += 1;
+          }
+        }
+      });
+    }
 
     return stats;
   }
