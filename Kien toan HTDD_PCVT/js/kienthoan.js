@@ -23,8 +23,9 @@
   const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
   // IndexedDB Constants for Customer Database (210.123 customers)
-  const DATASET_VERSION = '20260913_210123KH';
+  const DATASET_VERSION = '20260914_SONO_UPDATE';
   const STORAGE_KEY_DATASET_VER = 'PCVT_DATASET_VERSION';
+  const STORAGE_KEY_CUSTOM_METER_NO = 'PCVT_CUSTOM_METER_NO';
   const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB_V2';
   const IDB_VERSION = 2;
   const IDB_STORE_CHUNKS = 'customer_chunks';
@@ -188,11 +189,13 @@
   const PRESET_NOTES = PRESET_CONDITIONS; // Alias tương thích ngược
 
   // ==========================================================================
-  // NUMBER NORMALIZATION (CONVERT 2,21E+14 -> 221000000000000)
+  // NUMBER NORMALIZATION (CONVERT 2,21E+14 -> 221000000000000 & STRIP ,00)
   // ==========================================================================
   function formatMeterNo(val) {
     if (!val) return '';
     let s = String(val).trim();
+    // Làm sạch phần đuôi ,00 hoặc .00 thừa do Google Sheet định dạng số
+    s = s.replace(/,00$/, '').replace(/\.00$/, '');
     // Check if scientific notation like 2,21E+14, 2.51E+14, 2.21e14
     if (/[eE]/.test(s)) {
       try {
@@ -206,6 +209,29 @@
       }
     }
     return s;
+  }
+
+  // ==========================================================================
+  // CUSTOM METER NO OVERRIDES (CHỈNH SỬA SỐ NO TRỰC TIẾP TRÊN APP)
+  // ==========================================================================
+  let customMeterNoMap = {};
+
+  function loadCustomMeterNos() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_CUSTOM_METER_NO);
+      if (stored) customMeterNoMap = JSON.parse(stored);
+    } catch (e) {
+      console.warn('Could not parse custom meter nos:', e);
+      customMeterNoMap = {};
+    }
+  }
+
+  function saveCustomMeterNos() {
+    try {
+      localStorage.setItem(STORAGE_KEY_CUSTOM_METER_NO, JSON.stringify(customMeterNoMap));
+    } catch (e) {
+      console.error('LocalStorage error saving custom meter nos:', e);
+    }
   }
 
   // ==========================================================================
@@ -349,7 +375,8 @@
         syncChannel.postMessage({
           type: 'sync_customer',
           ma_kh: ma_kh,
-          inspection: inspectionsMap[ma_kh]
+          inspection: inspectionsMap[ma_kh],
+          so_no: custObj ? custObj.so_no : undefined
         });
       } catch (e) {}
     }
@@ -372,6 +399,7 @@
       id_tram: itemStation,
       ten_tram: itemStationName,
       danh_so: itemDanhSo,
+      so_no: custObj ? (custObj.so_no || '') : '',
       nguoi_cap_nhat: insp.nguoi_cap_nhat || currentInsp || '',
       trang_thai: insp.trang_thai || 'Chưa kiểm tra',
       trang_thai_x: isCompleted ? 'X' : '',
@@ -408,6 +436,18 @@
   function handleSyncMessage(data) {
     if (data && data.type === 'sync_customer' && data.ma_kh) {
       inspectionsMap[data.ma_kh] = data.inspection;
+      if (data.so_no !== undefined) {
+        customMeterNoMap[data.ma_kh] = data.so_no;
+        saveCustomMeterNos();
+        const cObj = allCustomers.find(c => c.ma_kh === data.ma_kh);
+        if (cObj) cObj.so_no = data.so_no;
+        const bDesk = document.getElementById(`meter-val-${data.ma_kh}`);
+        if (bDesk) bDesk.textContent = data.so_no || '---';
+        const bMobHead = document.getElementById(`m-header-meter-${data.ma_kh}`);
+        if (bMobHead) bMobHead.textContent = data.so_no || '---';
+        const bMobVal = document.getElementById(`m-meter-val-${data.ma_kh}`);
+        if (bMobVal) bMobVal.textContent = data.so_no || 'Chưa có số No';
+      }
       renderKPIs();
       renderStationBanner();
       renderMobileStickyBar();
@@ -527,6 +567,7 @@
   // ==========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
     loadLocalInspections();
+    loadCustomMeterNos();
 
     // Tự động nhận link cấu hình Webhook từ URL (chia sẻ từ máy tính qua Zalo sang điện thoại)
     try {
@@ -746,6 +787,11 @@
       const cachedCustomers = await getCustomersFromIDB();
       if (cachedCustomers && cachedCustomers.length >= 100000) {
         allCustomers = cachedCustomers;
+        // Áp dụng số No đã chỉnh sửa & làm sạch định dạng
+        allCustomers.forEach(c => {
+          if (customMeterNoMap[c.ma_kh]) c.so_no = customMeterNoMap[c.ma_kh];
+          else c.so_no = formatMeterNo(c.so_no);
+        });
         buildStationsMetaFromCustomers();
         applyFilters();
         renderApp();
@@ -1017,7 +1063,7 @@
       const ten_tram = cols[idxTenTram] || '';
       const danh_so = cols[idxDanhSo] || '';
       const sdt = cols[idxSdt] || '';
-      const so_no = formatMeterNo(cols[idxSoNo] || '');
+      const so_no = customMeterNoMap[ma_kh] || formatMeterNo(cols[idxSoNo] || '');
       const khu_vuc = cols[idxKhuVuc] || '';
       const nguoi_cap_nhat = cols[idxUpdater] || '';
       const trang_thai_sheet = (cols[idxTrangThai] || '').trim();
@@ -1094,6 +1140,7 @@
 
       // Global search across all 12 fields
       if (kw) {
+        const kwNoDot = kw.replace(/\./g, '');
         const stationName = (stationsMeta[itemStation] && stationsMeta[itemStation].name) || item.ten_tram || '';
         const match = 
           (item.ma_kh && item.ma_kh.toLowerCase().includes(kw)) ||
@@ -1102,7 +1149,7 @@
           (stationName && stationName.toLowerCase().includes(kw)) ||
           (item.dia_chi_ddo && item.dia_chi_ddo.toLowerCase().includes(kw)) ||
           (item.dia_chi_kh && item.dia_chi_kh.toLowerCase().includes(kw)) ||
-          (item.so_no && item.so_no.toLowerCase().includes(kw)) ||
+          (item.so_no && (item.so_no.toLowerCase().includes(kw) || item.so_no.replace(/\./g, '').toLowerCase().includes(kwNoDot))) ||
           (item.danh_so && item.danh_so.toLowerCase().includes(kw)) ||
           (item.sdt && item.sdt.toLowerCase().includes(kw)) ||
           (item.khu_vuc && item.khu_vuc.toLowerCase().includes(kw));
@@ -1344,7 +1391,10 @@
           </td>
           <td class="col-cust-name">${escapeHTML(c.ten_kh || '---')}</td>
           <td class="col-meter">
-            <span class="badge-meter" title="Số No công tơ">${escapeHTML(formatMeterNo(c.so_no) || '---')}</span>
+            <div class="meter-cell-wrap">
+              <span class="badge-meter" id="meter-val-${escapeHTML(c.ma_kh)}" title="Số No công tơ">${escapeHTML(formatMeterNo(c.so_no) || '---')}</span>
+              <button type="button" class="btn-edit-meter" onclick="window.PCVT.editMeterNo('${escapeHTML(c.ma_kh)}')" title="Chỉnh sửa số No công tơ">✏️</button>
+            </div>
           </td>
           <td class="col-station" title="${escapeHTML(stationDisplay)}">
             <strong>${escapeHTML(itemStation || '---')}</strong>
@@ -1442,13 +1492,24 @@
                 <span>Mã KH: <strong>${escapeHTML(c.ma_kh)}</strong></span>
                 <span style="font-size:0.75rem; opacity:0.8;">📋</span>
               </div>
-              ${c.so_no ? `<span class="badge-meter" title="Số No công tơ">🔢 Số No: <strong>${escapeHTML(formatMeterNo(c.so_no))}</strong></span>` : ''}
+              <span class="badge-meter" title="Số No công tơ (Chạm để chỉnh sửa)" onclick="window.PCVT.editMeterNo('${escapeHTML(c.ma_kh)}')" style="cursor:pointer;">
+                🔢 Số No: <strong id="m-header-meter-${escapeHTML(c.ma_kh)}">${escapeHTML(formatMeterNo(c.so_no) || '---')}</strong> <span style="font-size:0.72rem; opacity:0.85;">✏️</span>
+              </span>
               ${c.danh_so ? `<span style="font-size:0.72rem; background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#475569;">DS: ${escapeHTML(c.danh_so)}</span>` : ''}
             </div>
           </div>
 
           <!-- Technical & Address Details -->
           <div class="mobile-meta-grid">
+            <div class="mobile-meta-item">
+              <strong>🔢 Số No công tơ:</strong>
+              <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                <span class="badge-meter" id="m-meter-val-${escapeHTML(c.ma_kh)}">${escapeHTML(formatMeterNo(c.so_no) || 'Chưa có')}</span>
+                <button type="button" class="btn-edit-meter-mobile" onclick="window.PCVT.editMeterNo('${escapeHTML(c.ma_kh)}')" title="Chỉnh sửa số No công tơ">
+                  ✏️ Sửa
+                </button>
+              </div>
+            </div>
             <div class="mobile-meta-item">
               <strong>⚡ Trạm:</strong>
               <div>
@@ -1800,6 +1861,30 @@
           const name = setCurrentInspector(inputInspector.value);
           showToast(name ? `Đã lưu cán bộ kiểm tra: "${name}"` : 'Đã xóa tên cán bộ kiểm tra', 'success');
           inputInspector.blur();
+        }
+      });
+    }
+
+    // Modal Edit Meter Number event handlers
+    const btnSaveMeter = document.getElementById('btnSaveMeterNoModal');
+    const inputEditMeter = document.getElementById('inputEditMeterVal');
+    if (btnSaveMeter) {
+      btnSaveMeter.addEventListener('click', () => {
+        const maKh = (document.getElementById('editMeterMaKh') ? document.getElementById('editMeterMaKh').value : '').trim();
+        const newVal = inputEditMeter ? inputEditMeter.value.trim() : '';
+        if (maKh) {
+          saveEditedMeterNo(maKh, newVal);
+        }
+      });
+    }
+    if (inputEditMeter) {
+      inputEditMeter.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const maKh = (document.getElementById('editMeterMaKh') ? document.getElementById('editMeterMaKh').value : '').trim();
+          if (maKh) {
+            saveEditedMeterNo(maKh, inputEditMeter.value.trim());
+          }
         }
       });
     }
@@ -3382,9 +3467,89 @@ function donDepLogDongBo() {
   }
 
   // ==========================================================================
+  // EDIT METER NO HANDLERS (CHỈNH SỬA SỐ NO TRỰC TIẾP TRÊN APP)
+  // ==========================================================================
+  function editMeterNo(ma_kh) {
+    if (!ma_kh) return;
+    const cust = allCustomers.find(c => c.ma_kh === ma_kh);
+    if (!cust) {
+      showToast('Không tìm thấy thông tin khách hàng!', 'error');
+      return;
+    }
+
+    const currentVal = customMeterNoMap[ma_kh] || formatMeterNo(cust.so_no) || '';
+
+    const hMaKh = document.getElementById('editMeterMaKh');
+    const hCode = document.getElementById('editMeterCustomerCode');
+    const hName = document.getElementById('editMeterCustomerName');
+    const hStation = document.getElementById('editMeterStationInfo');
+    const inputVal = document.getElementById('inputEditMeterVal');
+
+    if (hMaKh) hMaKh.value = ma_kh;
+    if (hCode) hCode.textContent = ma_kh;
+    if (hName) hName.textContent = cust.ten_kh || '---';
+    if (hStation) {
+      const stId = cust.id_tram || cust.ma_tram || '';
+      const stName = cust.ten_tram || (stationsMeta[stId] && stationsMeta[stId].name) || '';
+      hStation.textContent = `${stId} ${stName ? '(' + stName + ')' : ''} ${cust.danh_so ? '• DS: ' + cust.danh_so : ''}`;
+    }
+    if (inputVal) {
+      inputVal.value = currentVal;
+      setTimeout(() => {
+        inputVal.focus();
+        inputVal.select();
+      }, 80);
+    }
+
+    openModal('modalEditMeterNo');
+  }
+
+  function saveEditedMeterNo(ma_kh, new_val) {
+    if (!ma_kh) return;
+    const cleaned = formatMeterNo(new_val);
+    customMeterNoMap[ma_kh] = cleaned;
+    saveCustomMeterNos();
+
+    // Cập nhật mảng bộ nhớ allCustomers
+    const cust = allCustomers.find(c => c.ma_kh === ma_kh);
+    if (cust) {
+      cust.so_no = cleaned;
+    }
+
+    // Cập nhật DOM bảng Desktop và thẻ Mobile nếu đang hiển thị
+    const badgeDesk = document.getElementById(`meter-val-${ma_kh}`);
+    if (badgeDesk) badgeDesk.textContent = cleaned || '---';
+
+    const badgeMobileHeader = document.getElementById(`m-header-meter-${ma_kh}`);
+    if (badgeMobileHeader) badgeMobileHeader.textContent = cleaned || '---';
+
+    const badgeMobileVal = document.getElementById(`m-meter-val-${ma_kh}`);
+    if (badgeMobileVal) badgeMobileVal.textContent = cleaned || 'Chưa có';
+
+    // Lưu IndexedDB ngầm
+    setTimeout(async () => {
+      await saveCustomersToIDB(allCustomers);
+    }, 100);
+
+    // Kích hoạt đồng bộ realtime Webhook & BroadcastChannel
+    syncItemImmediately(ma_kh);
+
+    closeModal('modalEditMeterNo');
+    showToast(`Đã cập nhật Số No KH ${ma_kh}: "${cleaned || '(trống)'}"`, 'success');
+  }
+
+  // ==========================================================================
   // CUSTOMER INTERACTION HANDLERS (EXPOSED ON window.PCVT)
   // ==========================================================================
   window.PCVT = {
+    editMeterNo: function(ma_kh) {
+      editMeterNo(ma_kh);
+    },
+
+    saveEditedMeterNo: function(ma_kh, val) {
+      saveEditedMeterNo(ma_kh, val);
+    },
+
     selectStation: function(id, name) {
       currentStationFilter = id;
       const sInput = document.getElementById('searchStationInput');

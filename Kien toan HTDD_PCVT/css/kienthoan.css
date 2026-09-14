@@ -1253,6 +1253,57 @@ body {
   font-weight: 700;
 }
 
+.meter-cell-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.btn-edit-meter {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 1px 4px;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: #6b7280;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+}
+
+.btn-edit-meter:hover {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+  color: #9d174d;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-edit-meter-mobile {
+  background: #fce7f3;
+  color: #9d174d;
+  border: 1px solid #fbcfe8;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+}
+
+.btn-edit-meter-mobile:active {
+  background: #fbcfe8;
+  transform: scale(0.96);
+}
+
 /* Custom Checkbox */
 .custom-checkbox {
   position: relative;
