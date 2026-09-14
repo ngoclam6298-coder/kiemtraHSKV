@@ -3679,9 +3679,6 @@ function caiDatCotAnh() {
     const curInsp = getCurrentInspector();
     const upVal = ((deskUp && deskUp.value) || (mobUp && mobUp.value) || insp.nguoi_cap_nhat || curInsp || '').trim();
 
-    // 4. Trạng thái kiểm tra
-    const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
-
     const missingItems = [];
 
     if (!noteVal) {
@@ -3700,31 +3697,9 @@ function caiDatCotAnh() {
         type: 'photo',
         icon: '📸',
         title: 'Ảnh chụp công tơ hiện trường:',
-        desc: 'Chưa chụp hoặc tải ảnh công tơ hiện trường (khuyến nghị chụp làm bằng chứng nghiệm thu).',
+        desc: 'Chưa chụp hoặc tải ảnh công tơ hiện trường (bắt buộc chụp làm bằng chứng nghiệm thu).',
         badge: 'Chưa có ảnh',
-        level: 'warning'
-      });
-    }
-
-    if (!upVal) {
-      missingItems.push({
-        type: 'inspector',
-        icon: '👤',
-        title: 'Cán bộ / Nhóm kiểm tra:',
-        desc: 'Chưa chọn cán bộ hoặc tổ nhóm kiểm tra thực hiện.',
-        badge: 'Chưa chọn người KT',
-        level: 'warning'
-      });
-    }
-
-    if (!isCompleted) {
-      missingItems.push({
-        type: 'status',
-        icon: '⏳',
-        title: 'Trạng thái kiểm tra:',
-        desc: 'Khách hàng này hiện vẫn có trạng thái là "Chưa kiểm tra".',
-        badge: 'Chưa kiểm tra',
-        level: 'info'
+        level: 'error'
       });
     }
 
@@ -3737,7 +3712,7 @@ function caiDatCotAnh() {
       noteVal,
       upVal,
       hasPhoto,
-      isCompleted
+      isCompleted: (insp.trang_thai === 'Đã kiểm tra')
     };
   }
 
@@ -3777,7 +3752,7 @@ function caiDatCotAnh() {
     }
   }
 
-  function showIncompleteWarningModal(ma_kh, check, onProceed, onCompleteAndSave) {
+  function showIncompleteWarningModal(ma_kh, check) {
     const c = check.customer || {};
     const cardEl = document.getElementById('incompleteWarnCustomerCard');
     if (cardEl) {
@@ -3804,17 +3779,13 @@ function caiDatCotAnh() {
     const listEl = document.getElementById('incompleteWarnItemsList');
     if (listEl) {
       listEl.innerHTML = check.missingItems.map(item => {
-        const bg = item.level === 'error' ? '#fef2f2' : (item.level === 'warning' ? '#fffbeb' : '#f0f9ff');
-        const border = item.level === 'error' ? '#fecaca' : (item.level === 'warning' ? '#fde68a' : '#bae6fd');
-        const color = item.level === 'error' ? '#991b1b' : (item.level === 'warning' ? '#92400e' : '#0369a1');
-        const badgeBg = item.level === 'error' ? '#ef4444' : (item.level === 'warning' ? '#f59e0b' : '#0284c7');
         return `
-          <div style="display: flex; gap: 10px; align-items: flex-start; background: ${bg}; border: 1px solid ${border}; border-radius: 6px; padding: 8px 10px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 10px;">
             <div style="font-size: 1.15rem; line-height: 1;">${item.icon}</div>
             <div style="flex: 1; min-width: 0;">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-                <strong style="font-size: 0.82rem; color: ${color};">${item.title}</strong>
-                <span style="background: ${badgeBg}; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; white-space: nowrap;">
+                <strong style="font-size: 0.82rem; color: #991b1b;">${item.title}</strong>
+                <span style="background: #ef4444; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; white-space: nowrap;">
                   ${item.badge}
                 </span>
               </div>
@@ -3827,32 +3798,12 @@ function caiDatCotAnh() {
       }).join('');
     }
 
+    // Nút duy nhất: Chưa đầy đủ thông tin kiểm tra, quay lại nhập tiếp (Không cho lưu)
     const btnBack = document.getElementById('btnIncompleteBack');
-    const btnForceSave = document.getElementById('btnIncompleteForceSave');
-    const btnCompleteAndSave = document.getElementById('btnIncompleteMarkCompleteAndSave');
-
     if (btnBack) {
       btnBack.onclick = function() {
         closeModal('modalIncompleteWarning');
         focusMissingField(check.cleanMaKh, check.missingItems);
-      };
-    }
-
-    if (btnForceSave) {
-      btnForceSave.onclick = function() {
-        closeModal('modalIncompleteWarning');
-        if (typeof onProceed === 'function') {
-          onProceed();
-        }
-      };
-    }
-
-    if (btnCompleteAndSave) {
-      btnCompleteAndSave.onclick = function() {
-        closeModal('modalIncompleteWarning');
-        if (typeof onCompleteAndSave === 'function') {
-          onCompleteAndSave();
-        }
       };
     }
 
@@ -3883,34 +3834,22 @@ function caiDatCotAnh() {
       renderApp();
     },
 
-    toggleStatus: function(ma_kh, isChecked, force = false) {
+    toggleStatus: function(ma_kh, isChecked) {
       const cleanMaKh = String(ma_kh || '').trim();
 
-      // Kiểm tra cảnh báo thông tin chưa đầy đủ khi đánh dấu hoàn thành
-      if (isChecked && !force && isIncompleteWarningEnabled()) {
+      // Khi người dùng bấm hoàn thành: Kiểm tra đầy đủ thông tin (Không đủ KHÔNG CHO HOÀN THÀNH)
+      if (isChecked) {
         const check = checkInspectionIncomplete(cleanMaKh);
-        // Nếu thiếu ghi chú hoặc thiếu ảnh hiện trường
-        if (!check.noteVal || !check.hasPhoto) {
-          showIncompleteWarningModal(
-            cleanMaKh,
-            check,
-            // Tiếp tục đánh dấu hoàn thành (không bổ sung)
-            () => {
-              window.PCVT.toggleStatus(cleanMaKh, true, true);
-            },
-            // Đánh dấu hoàn thành và lưu đồng bộ
-            () => {
-              window.PCVT.toggleStatus(cleanMaKh, true, true);
-              window.PCVT.saveRow(cleanMaKh, true);
-            }
-          );
-          // Trả lại checkbox chưa tick trên bảng nếu người dùng chưa bấm xác nhận
+        if (check.isIncomplete) {
+          showIncompleteWarningModal(cleanMaKh, check);
+          showToast('⚠️ Không thể lưu: Chưa đầy đủ hiện trạng hoặc ảnh công tơ!', 'error');
+
           const row = document.getElementById(`row-${cleanMaKh}`);
           if (row) {
             const chk = row.querySelector('.custom-checkbox input');
             if (chk) chk.checked = false;
           }
-          return;
+          return; // Chặn hoàn toàn!
         }
       }
 
@@ -4234,7 +4173,7 @@ function caiDatCotAnh() {
       openModal('modalPhotoZoom');
     },
 
-    saveRow: function(ma_kh, forceSave = false) {
+    saveRow: function(ma_kh) {
       const cleanMaKh = String(ma_kh || '').trim();
       const deskInput = document.getElementById(`note-${cleanMaKh}`);
       const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
@@ -4244,30 +4183,18 @@ function caiDatCotAnh() {
       const mobUp = document.getElementById(`mupdater-${cleanMaKh}`);
       const upVal = (deskUp && deskUp.value) || (mobUp && mobUp.value) || '';
 
-      // Kiểm tra thông tin chưa đầy đủ trước khi lưu
-      if (!forceSave && isIncompleteWarningEnabled()) {
-        const check = checkInspectionIncomplete(cleanMaKh);
-        if (check.isIncomplete) {
-          showIncompleteWarningModal(
-            cleanMaKh,
-            check,
-            // Hành động 1: Vẫn lưu (Giữ nguyên)
-            () => {
-              window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
-            },
-            // Hành động 2: Đánh dấu Đã kiểm tra & Lưu
-            () => {
-              window.PCVT.markCompletedAndSave(cleanMaKh, val, upVal);
-            }
-          );
-          return;
-        }
+      // Kiểm tra thông tin bắt buộc trước khi lưu (Không đầy đủ KHÔNG CHO LƯU)
+      const check = checkInspectionIncomplete(cleanMaKh);
+      if (check.isIncomplete) {
+        showIncompleteWarningModal(cleanMaKh, check);
+        showToast('⚠️ Không thể lưu: Chưa đầy đủ hiện trạng hoặc ảnh công tơ!', 'error');
+        return; // Chặn hoàn toàn!
       }
 
-      window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
+      window.PCVT.executeFullSave(cleanMaKh, val, upVal);
     },
 
-    doActualSaveRow: function(cleanMaKh, val, upVal) {
+    executeFullSave: function(cleanMaKh, val, upVal) {
       if (!inspectionsMap[cleanMaKh]) inspectionsMap[cleanMaKh] = {};
       inspectionsMap[cleanMaKh].ghi_chu = val;
       if (upVal) {
@@ -4277,14 +4204,45 @@ function caiDatCotAnh() {
         if (curInsp) inspectionsMap[cleanMaKh].nguoi_cap_nhat = curInsp;
       }
 
-      syncItemImmediately(cleanMaKh);
-      showToast(`Đã lưu và đồng bộ kết quả kiểm tra KH ${cleanMaKh}`, 'success');
-    },
+      // Đã đủ hiện trạng và ảnh -> Tự động chuyển thành Đã kiểm tra
+      const now = new Date();
+      const timeStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+      inspectionsMap[cleanMaKh].trang_thai = 'Đã kiểm tra';
+      if (!inspectionsMap[cleanMaKh].ngay_kiem_tra) {
+        inspectionsMap[cleanMaKh].ngay_kiem_tra = timeStr;
+      }
+      inspectionsMap[cleanMaKh].localUpdatedAt = Date.now();
 
-    markCompletedAndSave: function(cleanMaKh, val, upVal) {
-      window.PCVT.toggleStatus(cleanMaKh, true, true);
-      window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
-      showToast(`✅ Đã hoàn thành và lưu kết quả KH ${cleanMaKh}`, 'success');
+      renderKPIs();
+      renderStationBanner();
+      renderMobileStickyBar();
+
+      // Cập nhật giao diện desktop
+      const row = document.getElementById(`row-${cleanMaKh}`);
+      if (row) {
+        row.classList.add('row-completed');
+        const stCol = row.querySelector('.col-status');
+        if (stCol) stCol.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+        const chk = row.querySelector('.custom-checkbox input');
+        if (chk) chk.checked = true;
+      }
+
+      // Cập nhật giao diện mobile card
+      const card = document.getElementById(`mcard-${cleanMaKh}`);
+      const mstatus = document.getElementById(`mstatus-${cleanMaKh}`);
+      const mbtn = document.getElementById(`mbtn-toggle-${cleanMaKh}`);
+      if (card) {
+        card.classList.add('card-completed');
+        if (mstatus) mstatus.innerHTML = '<span class="badge-status completed">✅ Đã kiểm tra</span>';
+        if (mbtn) {
+          mbtn.className = 'btn-mobile-status-toggle completed';
+          mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
+          mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${cleanMaKh}', false)`);
+        }
+      }
+
+      syncItemImmediately(cleanMaKh);
+      showToast(`✅ Đã lưu và đồng bộ kết quả kiểm tra KH ${cleanMaKh}`, 'success');
     },
 
     copyText: function(text) {
