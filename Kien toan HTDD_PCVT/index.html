@@ -90,11 +90,11 @@
           <span>Sao lưu</span>
         </button>
 
-        <button class="btn-header" id="btnConfigGSheet" title="Cấu hình Google Sheet URL và Webhook thời gian thực">
+        <button class="btn-header" id="btnConfigGSheet" title="Cấu hình Google Sheet URL và Webhook thời gian thực" style="background: #0284c7; color: #ffffff; border-color: #0369a1; font-weight: 700;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>
           </svg>
-          <span>Cài đặt & Link</span>
+          <span>⚙️ Cài đặt Webhook & Sheet</span>
         </button>
       </div>
     </div>
@@ -278,7 +278,7 @@
         </div>
       </div>
       <div class="sync-realtime-box">
-        <div class="sync-realtime-status" id="syncRealtimeStatus" title="Trạng thái đồng bộ dữ liệu">
+        <div class="sync-realtime-status" id="syncRealtimeStatus" title="Bấm vào đây để mở Cài đặt Webhook" style="cursor: pointer;" onclick="openModal('modalSheetGuide')">
           <span class="sync-pulse"></span>
           <span id="syncRealtimeText">🟢 Đã đồng bộ tức thì</span>
         </div>
@@ -319,6 +319,9 @@
           </button>
           <button type="button" class="btn-live-ctrl active" onclick="openModal('modalMultiDeviceSync')" title="Gộp và đồng bộ dữ liệu giữa điện thoại và máy tính">
             <span>📲 Gộp thiết bị</span>
+          </button>
+          <button type="button" class="btn-live-ctrl" onclick="openModal('modalSheetGuide')" title="Cài đặt đường link Webhook Google Sheet" style="background: #0284c7; color: #ffffff; font-weight: 700;">
+            <span>⚙️ Cài đặt Webhook</span>
           </button>
         </div>
       </div>
