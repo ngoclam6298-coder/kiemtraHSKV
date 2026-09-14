@@ -2144,7 +2144,7 @@ function doPost(e) {
       }
     }
 
-    // 2. Cập nhật trang tính dữ liệu chính (Sheet đầu tiên)
+    // 2. Cập nhật trang tính dữ liệu chính (Sheet đầu tiên: Cột Người cập nhật, Trạng thái, và Cột Ảnh)
     var rowIndex = -1;
     try {
       var sheet = ss.getSheets()[0];
@@ -2152,17 +2152,29 @@ function doPost(e) {
       var foundCell = rangeB.createTextFinder(maKH).matchEntireCell(true).findNext();
       if (foundCell) {
         rowIndex = foundCell.getRow();
-        var headerVals = sheet.getRange(1, 1, 1, Math.min(sheet.getLastColumn(), 25)).getValues()[0];
+        var maxCol = Math.max(sheet.getLastColumn(), 22);
+        var headerVals = sheet.getRange(1, 1, 1, maxCol).getValues()[0];
         var colUpdaterIdx = 19;
         var colStatusIdx = 20;
+        var colPhotoIdx = -1;
         for (var c = 0; c < headerVals.length; c++) {
           var hName = String(headerVals[c] || '').toLowerCase().trim();
           if (hName.indexOf('người cập nhật') !== -1 || hName.indexOf('nguoi cap nhat') !== -1) colUpdaterIdx = c + 1;
           if (hName.indexOf('trạng thái') !== -1 || hName.indexOf('trang thai') !== -1) colStatusIdx = c + 1;
+          if (hName.indexOf('ảnh') !== -1 || hName.indexOf('link') !== -1) colPhotoIdx = c + 1;
         }
+        if (colPhotoIdx === -1) {
+          colPhotoIdx = 22; // Cột 22 nằm ngay sau Cột 21 "đã thay định kỳ"
+          sheet.getRange(1, colPhotoIdx).setValue('Ảnh chụp công tơ');
+          sheet.getRange(1, colPhotoIdx).setBackground('#e0f2fe').setFontWeight('bold');
+        }
+
         if (trangThaiX === 'X') {
           sheet.getRange(rowIndex, colUpdaterIdx).setValue(nguoiCapNhat);
           sheet.getRange(rowIndex, colStatusIdx).setValue('X');
+          if (photoUrl) {
+            sheet.getRange(rowIndex, colPhotoIdx).setValue(photoUrl);
+          }
         } else {
           sheet.getRange(rowIndex, colUpdaterIdx).setValue('');
           sheet.getRange(rowIndex, colStatusIdx).setValue('');
@@ -2348,6 +2360,57 @@ function donDepLogDongBo() {
   for (var k = rowsToDelete.length - 1; k >= 0; k--) {
     logSheet.deleteRow(rowsToDelete[k]);
   }
+}
+
+// TẠO MENU TIỆN ÍCH TRÊN GOOGLE SHEETS
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('⚡ Kiện Toàn HTĐĐ')
+    .addItem('➕ Cài đặt cột Ảnh chụp công tơ', 'caiDatCotAnh')
+    .addItem('🧹 Dọn dẹp Log_DongBo trùng lặp', 'donDepLogDongBo')
+    .addToUi();
+}
+
+// HÀM CÀI ĐẶT CỘT ẢNH CHỤP VÀ THƯ MỤC DRIVE (CHẠY 1 LẦN)
+function caiDatCotAnh() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 1. Cập nhật Sheet chính (Sheet đầu tiên): Tạo tiêu đề Cột 22 "Ảnh chụp công tơ"
+  var mainSheet = ss.getSheets()[0];
+  var lastCol = mainSheet.getLastColumn();
+  var maxCol = Math.max(lastCol, 22);
+  var headers = mainSheet.getRange(1, 1, 1, maxCol).getValues()[0];
+  var photoColIdx = -1;
+  for (var c = 0; c < headers.length; c++) {
+    var h = String(headers[c] || '').toLowerCase().trim();
+    if (h.indexOf('ảnh') !== -1 || h.indexOf('link') !== -1) {
+      photoColIdx = c + 1;
+      break;
+    }
+  }
+  if (photoColIdx === -1) {
+    photoColIdx = 22; // Cột 22 ngay sau Cột 21 "đã thay định kỳ"
+    mainSheet.getRange(1, photoColIdx).setValue('Ảnh chụp công tơ');
+    mainSheet.getRange(1, photoColIdx).setBackground('#e0f2fe').setFontWeight('bold');
+  }
+
+  // 2. Cập nhật Sheet Log_DongBo: Cột 10 là "Ảnh chụp công tơ"
+  var logSheet = ss.getSheetByName('Log_DongBo');
+  if (!logSheet) {
+    logSheet = ss.insertSheet('Log_DongBo');
+    logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
+    logSheet.getRange(1, 1, 1, 10).setBackground('#0284c7').setFontColor('#ffffff').setFontWeight('bold');
+  } else {
+    logSheet.getRange(1, 10).setValue('Ảnh chụp công tơ');
+    logSheet.getRange(1, 10).setBackground('#0284c7').setFontColor('#ffffff').setFontWeight('bold');
+  }
+
+  // 3. Khởi tạo thư mục Google Drive để sẵn sàng lưu ảnh
+  var folderIterator = DriveApp.getFoldersByName('Anh_KiemTra_HTDD');
+  var folder = folderIterator.hasNext() ? folderIterator.next() : DriveApp.createFolder('Anh_KiemTra_HTDD');
+  folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  SpreadsheetApp.getUi().alert('✅ CÀI ĐẶT CỘT ẢNH THÀNH CÔNG!\\n\\n1. Đã thêm cột "Ảnh chụp công tơ" vào Sheet chính (Cột 22).\\n2. Đã kiểm tra cột 10 trên Sheet Log_DongBo.\\n3. Đã sẵn sàng thư mục "Anh_KiemTra_HTDD" trên Google Drive.');
 }`;
         navigator.clipboard.writeText(scriptCode).then(() => {
           showToast('Đã sao chép mã Google Apps Script đồng bộ 2 chiều! Hãy dán vào Apps Script của Google Sheet.', 'success');
