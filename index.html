@@ -805,7 +805,7 @@
         <!-- Tab 1: Xuất từ máy này -->
         <div id="syncTabContentExport" class="sync-tab-pane">
           <div class="sync-summary-chip">
-            Thiết bị này hiện đang có: <strong id="syncExportCount">0</strong> khách hàng đã kiểm tra
+            Thiết bị này hiện đang có: <strong id="syncExportCount">0</strong> khách hàng đã kiểm tra (<strong id="syncExportPhotoCount" style="color:#059669;">0</strong> ảnh hiện trường)
           </div>
 
           <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:0.75rem;">
@@ -820,10 +820,10 @@
             </div>
 
             <div style="padding-top:0.5rem; border-top:1px dashed #cbd5e1;">
-              <label class="form-label">Cách 2: Tải tệp kết quả (.json) siêu nhẹ:</label>
-              <p style="font-size:0.75rem; color:#64748b; margin:2px 0 6px 0;">Gửi tệp này qua Zalo, Email hoặc AirDrop sang máy tính để gộp vào.</p>
+              <label class="form-label">Cách 2: Tải tệp kết quả kèm ảnh (.json) để gửi Zalo:</label>
+              <p style="font-size:0.75rem; color:#64748b; margin:2px 0 6px 0;">Gửi tệp này qua Zalo hoặc AirDrop sang máy tính để nạp toàn bộ ảnh chụp công tơ.</p>
               <button type="button" class="btn-secondary" id="btnDownloadSyncFile" style="width:100%; justify-content:center;">
-                💾 Tải tệp kết quả (KetQua_DongBo.json)
+                💾 Tải tệp kết quả kèm ảnh (KetQua_DongBo.json)
               </button>
             </div>
           </div>
@@ -832,17 +832,22 @@
         <!-- Tab 2: Nhập & Gộp vào máy này -->
         <div id="syncTabContentImport" class="sync-tab-pane" style="display:none;">
           <div style="display:flex; flex-direction:column; gap:0.75rem;">
-            <div>
-              <label class="form-label">Cách 1: Dán Mã Đồng Bộ từ điện thoại vào đây:</label>
-              <textarea id="syncImportCodeText" class="form-control" rows="3" style="font-family:monospace; font-size:0.8rem;" placeholder="Dán mã đồng bộ bạn vừa sao chép từ điện thoại vào đây..."></textarea>
-              <button type="button" class="btn-header primary" id="btnApplySyncCode" style="margin-top:6px; width:100%; justify-content:center;">
-                ⚡ Gộp kết quả vào máy này ngay
-              </button>
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:0.75rem;">
+              <label class="form-label" style="color:#166534; font-weight:700;">
+                📁 Cách 1 (Khuyên dùng khi có ảnh): Chọn tệp kết quả (.json) từ Zalo gửi sang:
+              </label>
+              <p style="font-size:0.75rem; color:#15803d; margin:2px 0 6px 0;">
+                Tệp này chứa đầy đủ 100% ảnh chụp công tơ và kết quả kiểm tra của các anh ngoài hiện trường.
+              </p>
+              <input type="file" id="syncImportFileInput" accept=".json" class="form-control" style="padding:0.5rem; background:#fff;">
             </div>
 
-            <div style="padding-top:0.5rem; border-top:1px dashed #cbd5e1;">
-              <label class="form-label">Cách 2: Hoặc chọn tệp kết quả (.json) từ điện thoại gửi qua:</label>
-              <input type="file" id="syncImportFileInput" accept=".json" class="form-control" style="padding-left:0.75rem; margin-top:4px;">
+            <div>
+              <label class="form-label">Cách 2: Hoặc dán Mã Đồng Bộ dạng chữ từ điện thoại vào đây:</label>
+              <textarea id="syncImportCodeText" class="form-control" rows="3" style="font-family:monospace; font-size:0.8rem;" placeholder="Dán mã đồng bộ bạn vừa sao chép từ điện thoại vào đây..."></textarea>
+              <button type="button" class="btn-header primary" id="btnApplySyncCode" style="margin-top:6px; width:100%; justify-content:center;">
+                ⚡ Gộp kết quả & ảnh vào máy này ngay
+              </button>
             </div>
           </div>
         </div>
@@ -879,12 +884,12 @@
   <footer class="app-footer">
     <div><strong>CÔNG TY ĐIỆN LỰC VŨNG TÀU</strong> &bull; Tổng công ty Điện lực TP. Hồ Chí Minh (EVNHCMC)</div>
     <div style="margin-top: 4px; color: var(--text-light); font-size: 0.75rem;">
-      Hệ Thống Kiện Toàn Đo Đếm &bull; Phiên bản 13 cột dữ liệu Google Sheet 2026 (Đồng bộ dấu X)
+      Hệ Thống Kiện Toàn Đo Đếm &bull; Phiên bản 13 cột dữ liệu Google Sheet 2026 (Đồng bộ dấu X & Ảnh)
     </div>
   </footer>
 
   <!-- Scripts -->
   <script src="js/vendor/xlsx.full.min.js"></script>
-  <script src="js/kienthoan.js?v=20260914_SONO_NODOT"></script>
+  <script src="js/kienthoan.js?v=20260914_PHOTO_V2"></script>
 </body>
 </html>

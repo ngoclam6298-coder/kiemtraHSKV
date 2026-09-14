@@ -359,7 +359,94 @@
     }
   }
 
+  // --- Photo DOM Updating Helper ---
+  function updatePhotoCellInDOM(ma_kh, photoUrl) {
+    const cleanMaKh = String(ma_kh || '').trim();
+    if (!cleanMaKh) return;
+
+    const deskCell = document.getElementById(`photo-cell-${cleanMaKh}`);
+    if (deskCell) {
+      if (photoUrl) {
+        deskCell.innerHTML = `
+          <div class="photo-box">
+            <div class="photo-preview-wrap" onclick="window.PCVT.viewPhoto('${escapeHTML(cleanMaKh)}')">
+              <img src="${photoUrl}" class="photo-thumbnail" alt="Ảnh HTĐĐ">
+              <button type="button" class="btn-remove-photo" onclick="event.stopPropagation(); window.PCVT.removePhoto('${escapeHTML(cleanMaKh)}')" title="Xóa ảnh">✕</button>
+            </div>
+          </div>
+        `;
+      } else {
+        deskCell.innerHTML = `
+          <div class="photo-box">
+            <label class="btn-upload-photo" title="Tải ảnh hoặc chụp từ camera">
+              <input type="file" accept="image/*" capture="environment" style="display:none" onchange="window.PCVT.handlePhotoUpload(this, '${escapeHTML(cleanMaKh)}')">
+              📷 Thêm ảnh
+            </label>
+          </div>
+        `;
+      }
+    }
+
+    const mobCell = document.getElementById(`mphoto-cell-${cleanMaKh}`);
+    if (mobCell) {
+      if (photoUrl) {
+        mobCell.innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="photo-preview-wrap" onclick="window.PCVT.viewPhoto('${escapeHTML(cleanMaKh)}')">
+              <img src="${photoUrl}" style="width:54px; height:54px; border-radius:8px; object-fit:cover; border:1px solid #cbd5e1;" alt="Ảnh công tơ">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <span style="font-size:0.75rem; color:#059669; font-weight:700;">✅ Đã chụp ảnh</span>
+              <button type="button" style="background:#fee2e2; color:#dc2626; border:none; padding:3px 8px; border-radius:4px; font-size:0.75rem; font-weight:600; cursor:pointer;" onclick="window.PCVT.removePhoto('${escapeHTML(cleanMaKh)}')">✕ Xóa ảnh</button>
+            </div>
+          </div>
+          <button type="button" class="btn-row-save" style="min-height:42px; padding:0 1rem; border-radius:8px;" onclick="window.PCVT.saveRow('${escapeHTML(cleanMaKh)}')">
+            💾 Lưu
+          </button>
+        `;
+      } else {
+        mobCell.innerHTML = `
+          <label class="btn-mobile-camera">
+            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="window.PCVT.handlePhotoUpload(this, '${escapeHTML(cleanMaKh)}')">
+            📷 Chụp ảnh công tơ
+          </label>
+          <button type="button" class="btn-row-save" style="min-height:42px; padding:0 1rem; border-radius:8px;" onclick="window.PCVT.saveRow('${escapeHTML(cleanMaKh)}')">
+            💾 Lưu
+          </button>
+        `;
+      }
+    }
+  }
+
+  function autoSyncLocalPhotos() {
+    const webhookUrl = getWebhookUrl();
+    if (!webhookUrl || !navigator.onLine) return;
+
+    const list = Object.keys(inspectionsMap).filter(m => {
+      const it = inspectionsMap[m];
+      return it && it.hinh_anh && it.hinh_anh.startsWith('data:image');
+    });
+
+    if (list.length === 0) return;
+    console.log(`[Photo Sync] Tìm thấy ${list.length} ảnh hiện trường trên máy cần đồng bộ...`);
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < list.length) {
+        syncItemImmediately(list[i]);
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 400);
+  }
+
   function syncItemImmediately(ma_kh) {
+    const custObj = allCustomers.find(c => c.ma_kh === ma_kh);
+    const insp = inspectionsMap[ma_kh] || {};
+    const currentInsp = getCurrentInspector();
+    const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
+
     // 1. Instant local persistence
     if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
     inspectionsMap[ma_kh].localUpdatedAt = Date.now();
@@ -379,12 +466,6 @@
 
     // 3. Webhook Real-time Sync to Google Sheet
     const webhookUrl = getWebhookUrl();
-    const insp = inspectionsMap[ma_kh] || {};
-    const currentInsp = getCurrentInspector();
-    const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
-
-    // Retrieve station & customer metadata for Log_DongBo 9 columns
-    const custObj = allCustomers.find(c => c.ma_kh === ma_kh);
     const itemStation = (custObj && (custObj.id_tram || custObj.ma_tram)) || '';
     const itemStationName = (custObj && custObj.ten_tram) || (stationsMeta[itemStation] && stationsMeta[itemStation].name) || '';
     const itemDanhSo = (custObj && custObj.danh_so) || '';
@@ -401,6 +482,7 @@
       trang_thai_x: isCompleted ? 'X' : '',
       ngay_kiem_tra: insp.ngay_kiem_tra || '',
       ghi_chu: insp.ghi_chu || '',
+      hinh_anh: insp.hinh_anh || '',
       timestamp: Date.now()
     };
 
@@ -432,6 +514,8 @@
   function handleSyncMessage(data) {
     if (data && data.type === 'sync_customer' && data.ma_kh) {
       inspectionsMap[data.ma_kh] = data.inspection;
+      const photoUrl = (data.inspection && data.inspection.hinh_anh) || '';
+      updatePhotoCellInDOM(data.ma_kh, photoUrl);
       if (data.so_no !== undefined) {
         customMeterNoMap[data.ma_kh] = data.so_no;
         saveCustomMeterNos();
@@ -618,6 +702,7 @@
     window.addEventListener('online', () => {
       showToast('Đã kết nối Internet trở lại, đang đồng bộ dữ liệu...', 'info');
       processOfflineQueue();
+      autoSyncLocalPhotos();
     });
 
     window.addEventListener('offline', () => {
@@ -632,6 +717,7 @@
 
     if (navigator.onLine) {
       processOfflineQueue();
+      autoSyncLocalPhotos();
     }
 
     // Init Live Field Sync Monitor (Đồng bộ thời gian thực từ hiện trường về nhà)
@@ -1988,7 +2074,7 @@ function doPost(e) {
     }
 
     // -------------------------------------------------------------------------
-    // B. XỬ LÝ ĐỒNG BỘ KHÁCH HÀNG (Log_DongBo 9 CỘT & Trang tính chính)
+    // B. XỬ LÝ ĐỒNG BỘ KHÁCH HÀNG (Log_DongBo 10 CỘT KÈM ẢNH & Trang tính chính)
     // -------------------------------------------------------------------------
     var sheet = ss.getActiveSheet();
     var maKH = String(data.ma_kh || '').trim();
@@ -1999,16 +2085,33 @@ function doPost(e) {
     var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
     var ghiChu = String(data.ghi_chu || '').trim();
     var ngayKT = data.ngay_kiem_tra || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm");
+    var photoUrl = String(data.hinh_anh || data.photo || '').trim();
 
     if (!maKH) return ContentService.createTextOutput(JSON.stringify({status: 'no_makh'}));
 
-    // 1. Cập nhật trang nhật ký Log_DongBo 9 cột TRƯỚC TIÊN (Siêu tốc < 100ms, đảm bảo đồng bộ tức thời)
+    // Tự động lưu ảnh vào Google Drive nếu gửi dạng Base64
+    if (photoUrl && photoUrl.indexOf('data:image') === 0) {
+      try {
+        var base64Data = photoUrl.split(',')[1];
+        var contentType = photoUrl.substring(5, photoUrl.indexOf(';'));
+        var decodedBlob = Utilities.newBlob(Utilities.base64Decode(base64Data), contentType, maKH + '_' + nowTime + '.jpg');
+        var folderIterator = DriveApp.getFoldersByName('Anh_KiemTra_HTDD');
+        var folder = folderIterator.hasNext() ? folderIterator.next() : DriveApp.createFolder('Anh_KiemTra_HTDD');
+        var file = folder.createFile(decodedBlob);
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        photoUrl = 'https://lh3.googleusercontent.com/d/' + file.getId();
+      } catch (driveErr) {
+        // Nếu Drive đầy hoặc không có quyền ghi, giữ nguyên base64 nếu cần
+      }
+    }
+
+    // 1. Cập nhật trang nhật ký Log_DongBo 10 cột TRƯỚC TIÊN (Siêu tốc < 100ms, đảm bảo đồng bộ tức thời)
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
-      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
     } else if (logSheet.getLastRow() === 0) {
-      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú']);
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
     }
 
     var logLastRow = logSheet.getLastRow();
@@ -2021,13 +2124,16 @@ function doPost(e) {
     }
 
     if (trangThaiX === 'X') {
-      var rowData = [nowTime, maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu];
       if (existingRows.length > 0) {
-        logSheet.getRange(existingRows[0], 1, 1, 9).setValues([rowData]);
+        var oldRow = logSheet.getRange(existingRows[0], 1, 1, 10).getValues()[0];
+        if (!photoUrl && oldRow[9]) photoUrl = oldRow[9];
+        var rowData = [nowTime, maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu, photoUrl];
+        logSheet.getRange(existingRows[0], 1, 1, 10).setValues([rowData]);
         for (var d = existingRows.length - 1; d >= 1; d--) {
           logSheet.deleteRow(existingRows[d]);
         }
       } else {
+        var rowData = [nowTime, maKH, idTram, tenTram, danhSo, nguoiCapNhat, 'X', ngayKT, ghiChu, photoUrl];
         logSheet.appendRow(rowData);
       }
     } else {
@@ -2073,6 +2179,142 @@ function doPost(e) {
       trang_thai: trangThaiX,
       action: (trangThaiX === 'X') ? 'saved' : 'deleted',
       server_time: nowTime
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var action = String((e && e.parameter && e.parameter.action) || 'get_updates').trim();
+    var nowTime = new Date().getTime();
+
+    // 1. ĐỌC DANH SÁCH TRẠM ĐÃ PHÂN CÔNG (PhanCong_Tram)
+    var stationAssignments = [];
+    var assignSheet = ss.getSheetByName('PhanCong_Tram');
+    if (assignSheet && assignSheet.getLastRow() > 1) {
+      var assignData = assignSheet.getDataRange().getValues();
+      for (var a = 1; a < assignData.length; a++) {
+        var aStId = String(assignData[a][1] || '').trim();
+        if (aStId) {
+          stationAssignments.push({
+            timestamp: Number(assignData[a][0] || 0),
+            stId: aStId,
+            stName: String(assignData[a][2] || '').trim(),
+            groupId: String(assignData[a][3] || '').trim(),
+            groupName: String(assignData[a][4] || '').trim(),
+            leader: String(assignData[a][5] || '').trim(),
+            assignedAt: String(assignData[a][6] || '').trim()
+          });
+        }
+      }
+    }
+
+    if (action === 'get_station_assignments') {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        server_time: nowTime,
+        station_assignments: stationAssignments
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. ĐỌC CẬP NHẬT KIỂM TRA KHÁCH HÀNG (Log_DongBo)
+    var since = Number((e && e.parameter && e.parameter.since) || 0);
+    var logSheet = ss.getSheetByName('Log_DongBo');
+    var updates = [];
+
+    if (logSheet && logSheet.getLastRow() > 1) {
+      var data = logSheet.getDataRange().getValues();
+      var headers = (data[0] || []).map(function(h) { return String(h || '').toLowerCase().trim(); });
+      
+      var idxMaKh = headers.indexOf('mã kh');
+      if (idxMaKh === -1) idxMaKh = 1;
+      
+      var idxIdTram = headers.indexOf('id trạm');
+      if (idxIdTram === -1 && data[0].length >= 9) idxIdTram = 2;
+
+      var idxTenTram = headers.indexOf('tên trạm');
+      if (idxTenTram === -1 && data[0].length >= 9) idxTenTram = 3;
+
+      var idxDanhSo = headers.indexOf('mã danh số') !== -1 ? headers.indexOf('mã danh số') : headers.indexOf('danh số');
+      if (idxDanhSo === -1 && data[0].length >= 9) idxDanhSo = 4;
+
+      var idxNguoi = -1;
+      for (var hi = 0; hi < headers.length; hi++) {
+        if (headers[hi].indexOf('cán bộ') !== -1 || headers[hi].indexOf('người') !== -1 || headers[hi].indexOf('nhóm') !== -1) {
+          idxNguoi = hi;
+          break;
+        }
+      }
+      if (idxNguoi === -1) idxNguoi = (data[0].length >= 9 ? 5 : 2);
+
+      var idxTrangThai = -1;
+      for (var hj = 0; hj < headers.length; hj++) {
+        if (headers[hj].indexOf('trạng thái') !== -1 || headers[hj] === 'x') {
+          idxTrangThai = hj;
+          break;
+        }
+      }
+      if (idxTrangThai === -1) idxTrangThai = (data[0].length >= 9 ? 6 : 3);
+
+      var idxNgay = -1;
+      for (var hk = 0; hk < headers.length; hk++) {
+        if (headers[hk].indexOf('ngày') !== -1) {
+          idxNgay = hk;
+          break;
+        }
+      }
+      if (idxNgay === -1) idxNgay = (data[0].length >= 9 ? 7 : 4);
+
+      var idxGhiChu = headers.indexOf('ghi chú');
+      if (idxGhiChu === -1) idxGhiChu = (data[0].length >= 9 ? 8 : 5);
+
+      var idxHinhAnh = -1;
+      for (var hx = 0; hx < headers.length; hx++) {
+        if (headers[hx].indexOf('ảnh') !== -1 || headers[hx].indexOf('hinh') !== -1) {
+          idxHinhAnh = hx;
+          break;
+        }
+      }
+      if (idxHinhAnh === -1 && data[0].length >= 10) idxHinhAnh = 9;
+
+      for (var i = 1; i < data.length; i++) {
+        var rawTime = data[i][0];
+        var rowTime = (rawTime instanceof Date) ? rawTime.getTime() : Number(rawTime);
+        if (isNaN(rowTime) || rowTime <= 0) rowTime = Date.now();
+
+        if (since === 0 || rowTime > since) {
+          var uMaKh = String(data[i][idxMaKh] || '').trim();
+          if (uMaKh) {
+            updates.push({
+              timestamp: rowTime,
+              ma_kh: uMaKh,
+              id_tram: idxIdTram !== -1 ? String(data[i][idxIdTram] || '').trim() : '',
+              ten_tram: idxTenTram !== -1 ? String(data[i][idxTenTram] || '').trim() : '',
+              danh_so: idxDanhSo !== -1 ? String(data[i][idxDanhSo] || '').trim() : '',
+              nguoi_cap_nhat: String(data[i][idxNguoi] || '').trim(),
+              trang_thai_x: String(data[i][idxTrangThai] || 'X').trim(),
+              ngay_kiem_tra: idxNgay !== -1 ? String(data[i][idxNgay] || '').trim() : '',
+              ghi_chu: idxGhiChu !== -1 ? String(data[i][idxGhiChu] || '').trim() : '',
+              hinh_anh: idxHinhAnh !== -1 ? String(data[i][idxHinhAnh] || '').trim() : ''
+            });
+          }
+        }
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      count: updates.length,
+      server_time: nowTime,
+      updates: updates,
+      station_assignments: stationAssignments
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
@@ -3730,39 +3972,13 @@ function donDepLogDongBo() {
 
           if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
           inspectionsMap[ma_kh].hinh_anh = compressedBase64;
+          inspectionsMap[ma_kh].localUpdatedAt = Date.now();
           saveLocalInspections();
 
-          const deskCell = document.getElementById(`photo-cell-${ma_kh}`);
-          if (deskCell) {
-            deskCell.innerHTML = `
-              <div class="photo-box">
-                <div class="photo-preview-wrap" onclick="window.PCVT.viewPhoto('${escapeHTML(ma_kh)}')">
-                  <img src="${compressedBase64}" class="photo-thumbnail" alt="Ảnh HTĐĐ">
-                  <button type="button" class="btn-remove-photo" onclick="event.stopPropagation(); window.PCVT.removePhoto('${escapeHTML(ma_kh)}')" title="Xóa ảnh">✕</button>
-                </div>
-              </div>
-            `;
-          }
+          updatePhotoCellInDOM(ma_kh, compressedBase64);
+          syncItemImmediately(ma_kh);
 
-          const mobCell = document.getElementById(`mphoto-cell-${ma_kh}`);
-          if (mobCell) {
-            mobCell.innerHTML = `
-              <div style="display:flex; align-items:center; gap:0.75rem;">
-                <div class="photo-preview-wrap" onclick="window.PCVT.viewPhoto('${escapeHTML(ma_kh)}')">
-                  <img src="${compressedBase64}" style="width:54px; height:54px; border-radius:8px; object-fit:cover; border:1px solid #cbd5e1;" alt="Ảnh công tơ">
-                </div>
-                <div style="display:flex; flex-direction:column; gap:4px;">
-                  <span style="font-size:0.75rem; color:#059669; font-weight:700;">✅ Đã chụp ảnh</span>
-                  <button type="button" style="background:#fee2e2; color:#dc2626; border:none; padding:3px 8px; border-radius:4px; font-size:0.75rem; font-weight:600; cursor:pointer;" onclick="window.PCVT.removePhoto('${escapeHTML(ma_kh)}')">✕ Xóa ảnh</button>
-                </div>
-              </div>
-              <button type="button" class="btn-row-save" style="min-height:42px; padding:0 1rem; border-radius:8px;" onclick="window.PCVT.saveRow('${escapeHTML(ma_kh)}')">
-                💾 Lưu
-              </button>
-            `;
-          }
-
-          showToast(`Đã lưu ảnh hiện trường KH ${ma_kh}`, 'success');
+          showToast(`Đã lưu và đồng bộ ảnh hiện trường KH ${ma_kh}`, 'success');
         };
         img.src = e.target.result;
       };
@@ -3773,33 +3989,12 @@ function donDepLogDongBo() {
       if (confirm('Bạn có chắc chắn muốn xóa ảnh này không?')) {
         if (inspectionsMap[ma_kh]) {
           delete inspectionsMap[ma_kh].hinh_anh;
+          inspectionsMap[ma_kh].localUpdatedAt = Date.now();
           saveLocalInspections();
         }
 
-        const deskCell = document.getElementById(`photo-cell-${ma_kh}`);
-        if (deskCell) {
-          deskCell.innerHTML = `
-            <div class="photo-box">
-              <label class="btn-upload-photo" title="Tải ảnh hoặc chụp từ camera">
-                <input type="file" accept="image/*" capture="environment" style="display:none" onchange="window.PCVT.handlePhotoUpload(this, '${escapeHTML(ma_kh)}')">
-                📷 Thêm ảnh
-              </label>
-            </div>
-          `;
-        }
-
-        const mobCell = document.getElementById(`mphoto-cell-${ma_kh}`);
-        if (mobCell) {
-          mobCell.innerHTML = `
-            <label class="btn-mobile-camera">
-              <input type="file" accept="image/*" capture="environment" style="display:none" onchange="window.PCVT.handlePhotoUpload(this, '${escapeHTML(ma_kh)}')">
-              📷 Chụp ảnh công tơ
-            </label>
-            <button type="button" class="btn-row-save" style="min-height:42px; padding:0 1rem; border-radius:8px;" onclick="window.PCVT.saveRow('${escapeHTML(ma_kh)}')">
-              💾 Lưu
-            </button>
-          `;
-        }
+        updatePhotoCellInDOM(ma_kh, '');
+        syncItemImmediately(ma_kh);
 
         showToast('Đã xóa ảnh hiện trường', 'info');
       }
@@ -3893,6 +4088,10 @@ function donDepLogDongBo() {
 
     pollFieldUpdates: function(isManual) {
       pollFieldUpdates(isManual);
+    },
+
+    updatePhotoCellInDOM: function(ma_kh, photoUrl) {
+      updatePhotoCellInDOM(ma_kh, photoUrl);
     },
 
     switchSyncTab: function(tab) {
@@ -4324,6 +4523,7 @@ function donDepLogDongBo() {
                 let updater = String(u.nguoi_cap_nhat || '').trim();
                 let inspectDate = String(u.ngay_kiem_tra || '').trim();
                 let note = String(u.ghi_chu || '').trim();
+                let photo = String(u.hinh_anh || u.photo || '').trim();
 
                 const rawStatus = String(u.trang_thai_x || u.trang_thai || '').trim();
 
@@ -4332,7 +4532,7 @@ function donDepLogDongBo() {
                 if (rawStatus.toUpperCase() === 'X' || rawStatus.toLowerCase() === 'đã kiểm tra' || rawStatus.toLowerCase() === 'da kiem tra') {
                   isChecked = true;
                 } 
-                // 2. Cấu trúc 9 cột trên Sheet khi Apps Script cũ đọc bị lệch cột:
+                // 2. Cấu trúc 9/10 cột trên Sheet khi Apps Script cũ đọc bị lệch cột:
                 // Col 1: Mã KH, Col 2: ID trạm, Col 3 (u.trang_thai_x): Tên trạm, Col 4 (u.ngay_kiem_tra): Mã danh số, Col 5 (u.ghi_chu): Cán bộ cập nhật / Nhóm
                 else if (rawStatus && rawStatus !== 'Chưa kiểm tra' && rawStatus !== '0' && rawStatus !== 'false') {
                   isChecked = true;
@@ -4361,6 +4561,7 @@ function donDepLogDongBo() {
                     trang_thai: 'Đã kiểm tra',
                     ngay_kiem_tra: inspectDate,
                     ghi_chu: note,
+                    hinh_anh: photo,
                     timestamp: u.timestamp
                   });
                 }
@@ -4385,7 +4586,7 @@ function donDepLogDongBo() {
         const sheetIdMatch = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
         const sheetId = sheetIdMatch ? sheetIdMatch[1] : '1unVxNXZkTO_ps_HqlNIOnP05FIbU9DT4';
         
-        // Quét trang Log_DongBo qua GViz (Hỗ trợ cả bảng 9 cột mới và 6 cột cũ)
+        // Quét trang Log_DongBo qua GViz (Hỗ trợ bảng 10 cột có ảnh, 9 cột mới và 6 cột cũ)
         const gvizLogUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=Log_DongBo&tq=` + encodeURIComponent("select *");
         const resp = await fetch(gvizLogUrl);
         if (resp.ok) {
@@ -4414,9 +4615,21 @@ function donDepLogDongBo() {
                 let trang_thai = '';
                 let ngay_kt = '';
                 let ghi_chu = '';
+                let hinh_anh = '';
 
-                if (rawVals.length >= 9) {
-                  // Định dạng 9 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú
+                if (rawVals.length >= 10) {
+                  // Định dạng 10 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú, Ảnh chụp công tơ
+                  ma_kh = rawVals[1];
+                  id_tram = rawVals[2];
+                  ten_tram = rawVals[3];
+                  danh_so = rawVals[4];
+                  nguoi_cap_nhat = rawVals[5];
+                  trang_thai = rawVals[6];
+                  ngay_kt = rawVals[7];
+                  ghi_chu = rawVals[8];
+                  hinh_anh = rawVals[9];
+                } else if (rawVals.length >= 9) {
+                  // Định dạng 9 cột chuẩn
                   ma_kh = rawVals[1];
                   id_tram = rawVals[2];
                   ten_tram = rawVals[3];
@@ -4442,8 +4655,10 @@ function donDepLogDongBo() {
                     danh_so: danh_so,
                     nguoi_cap_nhat: nguoi_cap_nhat,
                     trang_thai_x: 'X',
+                    trang_thai: 'Đã kiểm tra',
                     ngay_kiem_tra: ngay_kt,
-                    ghi_chu: ghi_chu
+                    ghi_chu: ghi_chu,
+                    hinh_anh: hinh_anh
                   });
                 }
               });
@@ -4502,6 +4717,7 @@ function donDepLogDongBo() {
       let hasChanges = false;
       let newlyCheckedCount = 0;
       let revertedCount = 0;
+      let photoSyncedCount = 0;
       const now = new Date();
       const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
       const nowTs = Date.now();
@@ -4558,18 +4774,24 @@ function donDepLogDongBo() {
         });
       }
 
-      // 2. CẬP NHẬT CÁC KHÁCH HÀNG MỚI ĐƯỢC KIỂM TRA TỪ HIỆN TRƯỜNG
+      // 2. CẬP NHẬT CÁC KHÁCH HÀNG MỚI ĐƯỢC KIỂM TRA TỪ HIỆN TRƯỜNG & ẢNH CHỤP
       sheetCheckedMap.forEach((item, ma_kh) => {
         if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
         const wasCompleted = inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra';
         const curUpdater = inspectionsMap[ma_kh].nguoi_cap_nhat || '';
         const isNewCheck = !wasCompleted;
         const isNewInfo = isNewCheck || (item.nguoi_cap_nhat && item.nguoi_cap_nhat !== curUpdater);
+        const hasNewPhoto = Boolean(item.hinh_anh && (!inspectionsMap[ma_kh].hinh_anh || inspectionsMap[ma_kh].hinh_anh !== item.hinh_anh));
 
-        if (isNewInfo) {
+        if (isNewInfo || hasNewPhoto) {
           inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
           if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
           if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
+          if (hasNewPhoto) {
+            inspectionsMap[ma_kh].hinh_anh = item.hinh_anh;
+            updatePhotoCellInDOM(ma_kh, item.hinh_anh);
+            photoSyncedCount++;
+          }
           if (!inspectionsMap[ma_kh].ngay_kiem_tra || !inspectionsMap[ma_kh].ngay_kiem_tra.includes('/')) {
             if (item.ngay_kiem_tra && item.ngay_kiem_tra.includes('/')) {
               inspectionsMap[ma_kh].ngay_kiem_tra = item.ngay_kiem_tra;
@@ -4712,9 +4934,11 @@ function donDepLogDongBo() {
   function refreshSyncExportData() {
     const exportCodeArea = document.getElementById('syncExportCodeText');
     const exportCountBadge = document.getElementById('syncExportCount');
+    const exportPhotoBadge = document.getElementById('syncExportPhotoCount');
 
     const compactInspections = {};
     let count = 0;
+    let photoCount = 0;
 
     for (const [maKh, insp] of Object.entries(inspectionsMap)) {
       if (insp && (insp.trang_thai === 'Đã kiểm tra' || insp.ghi_chu || insp.hinh_anh || insp.nguoi_cap_nhat)) {
@@ -4723,14 +4947,19 @@ function donDepLogDongBo() {
           u: insp.nguoi_cap_nhat || '',
           d: insp.ngay_kiem_tra || '',
           n: insp.ghi_chu || '',
+          img: insp.hinh_anh || '',
           p: insp.hinh_anh ? 1 : 0
         };
         if (insp.trang_thai === 'Đã kiểm tra') count++;
+        if (insp.hinh_anh) photoCount++;
       }
     }
 
     if (exportCountBadge) {
       exportCountBadge.textContent = count.toLocaleString('vi-VN');
+    }
+    if (exportPhotoBadge) {
+      exportPhotoBadge.textContent = photoCount.toLocaleString('vi-VN');
     }
 
     const payload = {
@@ -4738,6 +4967,7 @@ function donDepLogDongBo() {
       ver: 2,
       exportedAt: new Date().toISOString(),
       count: count,
+      photoCount: photoCount,
       data: compactInspections
     };
 
@@ -4807,6 +5037,7 @@ function donDepLogDongBo() {
 
     let addedCount = 0;
     let updatedCount = 0;
+    let photoAddedCount = 0;
     const now = new Date();
     const dateStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
 
@@ -4818,6 +5049,7 @@ function donDepLogDongBo() {
       const updater = inc.u || inc.nguoi_cap_nhat || '';
       const note = inc.n || inc.ghi_chu || '';
       const date = inc.d || inc.ngay_kiem_tra || dateStr;
+      const photo = inc.img || inc.hinh_anh || '';
 
       if (!inspectionsMap[maKh]) {
         inspectionsMap[maKh] = {
@@ -4826,6 +5058,10 @@ function donDepLogDongBo() {
           ghi_chu: note,
           ngay_kiem_tra: date
         };
+        if (photo) {
+          inspectionsMap[maKh].hinh_anh = photo;
+          photoAddedCount++;
+        }
         if (isCompleted) addedCount++;
       } else {
         const wasCompleted = (inspectionsMap[maKh].trang_thai === 'Đã kiểm tra');
@@ -4833,9 +5069,17 @@ function donDepLogDongBo() {
         if (updater) inspectionsMap[maKh].nguoi_cap_nhat = updater;
         if (note) inspectionsMap[maKh].ghi_chu = note;
         if (!inspectionsMap[maKh].ngay_kiem_tra && date) inspectionsMap[maKh].ngay_kiem_tra = date;
+        if (photo) {
+          inspectionsMap[maKh].hinh_anh = photo;
+          photoAddedCount++;
+        }
 
         if (isCompleted && !wasCompleted) addedCount++;
         else updatedCount++;
+      }
+
+      if (photo) {
+        updatePhotoCellInDOM(maKh, photo);
       }
 
       // Tự động đẩy lên Google Sheet nếu Webhook đang kết nối
@@ -4847,7 +5091,7 @@ function donDepLogDongBo() {
     renderApp();
     playNotificationChime();
 
-    showToast(`✅ Đã gộp thành công ${keys.length.toLocaleString('vi-VN')} khách hàng (${addedCount} khách hàng mới đã kiểm tra)!`, 'success');
+    showToast(`✅ Đã gộp thành công ${keys.length.toLocaleString('vi-VN')} khách hàng (${addedCount} KH mới kiểm tra, ${photoAddedCount} ảnh hiện trường)!`, 'success');
 
     // Xóa nội dung ô nhập
     const importInput = document.getElementById('syncImportCodeText');
