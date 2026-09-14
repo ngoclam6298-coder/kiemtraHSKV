@@ -3212,4 +3212,463 @@ body {
   border: 1px solid #e2e8f0;
 }
 
+/* ==========================================================================
+   PRINTABLE EXCEL & A4 WORK ORDER EXPORT STYLES
+   ========================================================================== */
+
+/* Station Banner Export & Print Buttons */
+.btn-station-action.export-excel {
+  background: #0d9488;
+  border-color: #14b8a6;
+}
+.btn-station-action.export-excel:hover {
+  background: #0f766e;
+}
+.btn-station-action.print-doc {
+  background: #d97706;
+  border-color: #f59e0b;
+}
+.btn-station-action.print-doc:hover {
+  background: #b45309;
+}
+
+/* Group Filter Banner */
+.group-filter-banner {
+  background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem;
+}
+.group-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.group-banner-icon {
+  font-size: 1.5rem;
+}
+.group-banner-title {
+  font-size: 0.95rem;
+  color: #a7f3d0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.group-banner-title strong {
+  color: #ffffff;
+  font-size: 1.05rem;
+}
+.group-banner-sub {
+  font-size: 0.8rem;
+  color: #d1fae5;
+  margin-top: 0.2rem;
+}
+.group-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.btn-group-export-excel,
+.btn-group-print,
+.btn-clear-group-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 36px;
+}
+.btn-group-export-excel {
+  background: #0284c7;
+  color: #ffffff;
+  border: 1px solid #38bdf8;
+}
+.btn-group-export-excel:hover {
+  background: #0369a1;
+}
+.btn-group-print {
+  background: #ea580c;
+  color: #ffffff;
+  border: 1px solid #fb923c;
+}
+.btn-group-print:hover {
+  background: #c2410c;
+}
+.btn-clear-group-banner {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.btn-clear-group-banner:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Table Header Actions */
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.btn-table-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 32px;
+}
+.btn-table-action.export-excel {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+.btn-table-action.export-excel:hover {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+}
+.btn-table-action.print-doc {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.btn-table-action.print-doc:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+/* Quick Row Action in Station Assignment Modal */
+.btn-quick-export-row {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #6ee7b7;
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn-quick-export-row:hover {
+  background: #059669;
+  color: #ffffff;
+  border-color: #059669;
+}
+.btn-quick-print-row {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn-quick-print-row:hover {
+  background: #ea580c;
+  color: #ffffff;
+  border-color: #ea580c;
+}
+
+/* ==========================================================================
+   PRINT PREVIEW MODAL & A4 PAPER SHEET
+   ========================================================================== */
+.modal-print-overlay .modal-print-container {
+  max-width: 1100px;
+  width: 96vw;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+}
+.print-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-print-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+}
+.btn-print-action.primary {
+  background: #1e40af;
+  color: #ffffff;
+}
+.btn-print-action.primary:hover {
+  background: #1d4ed8;
+}
+.btn-print-action.success {
+  background: #059669;
+  color: #ffffff;
+}
+.btn-print-action.success:hover {
+  background: #047857;
+}
+.print-preview-body {
+  background: #cbd5e1;
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.print-preview-toolbar {
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.print-tip-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1e3a8a;
+  background: #dbeafe;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+.print-summary-tag {
+  background: #ffffff;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+}
+
+/* Paper Sheet Layout */
+.print-paper-sheet {
+  background: #ffffff;
+  color: #000000;
+  width: 100%;
+  max-width: 980px;
+  padding: 16mm 14mm;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  font-family: 'Times New Roman', Times, serif;
+  box-sizing: border-box;
+}
+.print-doc-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  text-align: center;
+  margin-bottom: 1rem;
+  line-height: 1.35;
+}
+.print-doc-header-left {
+  font-size: 9.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.print-doc-header-left-sub {
+  font-size: 8.5pt;
+  font-weight: 400;
+  text-decoration: underline;
+}
+.print-doc-header-right {
+  font-size: 9.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.print-doc-header-right-sub {
+  font-size: 9pt;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.print-doc-title {
+  text-align: center;
+  font-size: 13.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0.6rem 0 0.4rem 0;
+  color: #000;
+  line-height: 1.3;
+}
+.print-doc-subtitle {
+  text-align: center;
+  font-size: 10.5pt;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+  color: #000;
+}
+.print-meta-box {
+  border: 1px solid #000;
+  border-radius: 3px;
+  padding: 6px 12px;
+  font-size: 9pt;
+  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  line-height: 1.45;
+}
+.print-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Printable Table */
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 8.5pt;
+}
+.print-table th,
+.print-table td {
+  border: 1px solid #000;
+  padding: 4px 5px;
+  vertical-align: middle;
+  line-height: 1.25;
+}
+.print-table th {
+  background: #f1f5f9;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 8pt;
+}
+.print-table td.col-c { text-align: center; }
+.print-table td.col-r { text-align: right; }
+.print-table td.col-bold { font-weight: 700; }
+.print-table .hand-write-cell {
+  min-width: 90px;
+  height: 24px;
+  font-family: Arial, sans-serif;
+  font-size: 7.5pt;
+  color: #475569;
+}
+
+/* Signatures */
+.print-signature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1.5rem;
+  text-align: center;
+  page-break-inside: avoid;
+  font-size: 9.5pt;
+}
+.print-sig-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.print-sig-date {
+  font-style: italic;
+  font-size: 9pt;
+  margin-bottom: 0.35rem;
+}
+.print-sig-role {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.print-sig-hint {
+  font-size: 8pt;
+  font-style: italic;
+  margin-bottom: 50px;
+}
+.print-sig-name {
+  font-weight: 700;
+  font-size: 9.5pt;
+}
+
+/* Print Media Rules */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm 8mm 8mm 8mm;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .modal-print-overlay,
+  .modal-print-overlay * {
+    visibility: visible;
+  }
+  .modal-print-overlay {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    z-index: 99999 !important;
+  }
+  .modal-print-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .print-preview-body {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  .print-paper-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .print-no-print {
+    display: none !important;
+  }
+  .print-meta-box {
+    background: #ffffff !important;
+  }
+  .print-table th {
+    background: #e2e8f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+
 

@@ -192,9 +192,19 @@
           </div>
         </div>
       </div>
-      <button class="btn-clear-group-banner" id="btnClearGroupBanner" title="Bỏ lọc theo nhóm công tác">
-        ✕ Xem tất cả khách hàng
-      </button>
+      <div class="group-banner-actions">
+        <button type="button" class="btn-group-export-excel" id="btnExportGroupExcel" title="Xuất toàn bộ khách hàng của các trạm nhóm phụ trách ra file Excel mẫu in">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Xuất Excel KH Nhóm (.xlsx)
+        </button>
+        <button type="button" class="btn-group-print" id="btnPrintGroupDoc" title="In phiếu giao việc toàn bộ KH của nhóm khổ A4">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          In Phiếu Nhóm (A4)
+        </button>
+        <button type="button" class="btn-clear-group-banner" id="btnClearGroupBanner" title="Bỏ lọc theo nhóm công tác">
+          ✕ Xem tất cả
+        </button>
+      </div>
     </section>
 
     <!-- KPI Cards Row -->
@@ -341,11 +351,19 @@
         </div>
       </div>
       <div class="station-banner-actions">
-        <button class="btn-station-action check-all" id="btnCheckAllStation">
+        <button type="button" class="btn-station-action check-all" id="btnCheckAllStation">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           Kiểm tra tất cả KH trong trạm này
+        </button>
+        <button type="button" class="btn-station-action export-excel" id="btnExportStationExcel" title="Xuất file Excel danh sách khách hàng trong trạm chuẩn mẫu in ấn và giao việc">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Xuất Excel In Trạm (.xlsx)
+        </button>
+        <button type="button" class="btn-station-action print-doc" id="btnPrintStationDoc" title="Xem trước và in phiếu giao việc hiện trường khổ A4">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          In Phiếu Giao Việc (A4)
         </button>
       </div>
     </section>
@@ -485,6 +503,16 @@
         <div class="table-title">
           <span>📋 DANH SÁCH KIỆN TOÀN ĐO ĐẾM (12 CỘT GOOGLE SHEET)</span>
           <span class="table-count-badge" id="tableCountInfo">(Đang tải...)</span>
+        </div>
+        <div class="table-header-actions">
+          <button type="button" class="btn-table-action export-excel" id="btnExportFilteredExcel" title="Xuất danh sách khách hàng đang xem ra file Excel mẫu in ấn và giao việc">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Xuất Excel Mẫu In (.xlsx)
+          </button>
+          <button type="button" class="btn-table-action print-doc" id="btnPrintFilteredDoc" title="Xem trước và in danh sách khách hàng đang xem khổ A4">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            In Danh Sách (A4)
+          </button>
         </div>
       </div>
 
@@ -648,9 +676,13 @@
         <span class="assign-footer-hint" style="font-size: 0.8rem; color: var(--text-muted); margin-right: auto;">
           💡 Dữ liệu phân công trạm được lưu tự động trên hệ thống và hiển thị huy hiệu trên bảng kiểm tra.
         </span>
-        <button type="button" class="btn-secondary btn-export-assign-xlsx" onclick="window.PCVT.exportAssignments()" style="display:inline-flex; align-items:center; gap:6px; color:#15803d; border-color:#86efac; font-weight:600;" title="Xuất toàn bộ bảng phân công trạm ra file Excel (.xlsx)">
+        <button type="button" class="btn-secondary btn-export-assigned-cust-xlsx" onclick="window.PCVT.exportAssignedStationsToExcel()" style="display:inline-flex; align-items:center; gap:6px; color:#047857; border-color:#6ee7b7; font-weight:600;" title="Xuất toàn bộ khách hàng của các trạm đã giao ra file Excel mẫu in ấn và phiếu giao việc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Xuất Excel KH Đã Giao Việc
+        </button>
+        <button type="button" class="btn-secondary btn-export-assign-xlsx" onclick="window.PCVT.exportAssignments()" style="display:inline-flex; align-items:center; gap:6px; color:#15803d; border-color:#86efac; font-weight:600;" title="Xuất toàn bộ bảng danh mục trạm ra file Excel (.xlsx)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Xuất Excel (.xlsx)
+          Xuất Danh Sách Trạm (.xlsx)
         </button>
         <button class="btn-secondary btn-close-assign-modal" onclick="closeModal('modalStationAssignment')">Đóng</button>
       </div>
@@ -857,10 +889,47 @@
             </button>
           </div>
         </div>
-        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalMultiDeviceSync')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Print Preview (Xem trước & In Phiếu Giao Việc Hiện Trường Khổ A4) -->
+  <div class="modal-overlay modal-print-overlay" id="modalPrintPreview">
+    <div class="modal-container modal-print-container">
+      <div class="modal-header print-no-print">
+        <div class="modal-title">
+          <span>🖨️</span>
+          <span id="printPreviewTitle">XEM TRƯỚC PHIẾU GIAO VIỆC & DANH SÁCH KHÁCH HÀNG HIỆN TRƯỜNG</span>
+        </div>
+        <div class="print-header-actions">
+          <button type="button" class="btn-print-action primary" id="btnPrintNow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            In Phiếu / Xuất PDF (A4)
+          </button>
+          <button type="button" class="btn-print-action success" id="btnPrintModalExportExcel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Tải File Excel (.xlsx)
+          </button>
+          <button class="btn-modal-close" onclick="closeModal('modalPrintPreview')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body print-preview-body">
+        <div class="print-preview-toolbar print-no-print">
+          <div class="print-tip-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Mẹo in: Khổ <strong>A4 Ngang (Landscape)</strong>, Tỷ lệ: <strong>Vừa trang (Fit to page/100%)</strong>, Bật <strong>"Đồ họa nền"</strong>.
+          </div>
+          <div class="print-summary-tag" id="printDocSummaryTag">Đang hiển thị: 0 khách hàng</div>
+        </div>
+        <div class="print-paper-sheet" id="printSheetContent">
+          <!-- Phiếu in A4 được render động ở đây -->
+        </div>
+      </div>
+      <div class="modal-footer print-no-print">
+        <button class="btn-secondary" onclick="closeModal('modalPrintPreview')">Đóng</button>
       </div>
     </div>
   </div>
