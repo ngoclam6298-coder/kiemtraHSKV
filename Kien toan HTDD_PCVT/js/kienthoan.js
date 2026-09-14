@@ -23,7 +23,7 @@
   const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
   // IndexedDB Constants for Customer Database (210.123 customers)
-  const DATASET_VERSION = '20260914_SONO_UPDATE';
+  const DATASET_VERSION = '20260914_SONO_V5';
   const STORAGE_KEY_DATASET_VER = 'PCVT_DATASET_VERSION';
   const STORAGE_KEY_CUSTOM_METER_NO = 'PCVT_CUSTOM_METER_NO';
   const IDB_NAME = 'PCVT_KIENTHOAN_FULL_DB_V2';
@@ -194,8 +194,8 @@
   function formatMeterNo(val) {
     if (!val) return '';
     let s = String(val).trim();
-    // Làm sạch phần đuôi ,00 hoặc .00 thừa do Google Sheet định dạng số
-    s = s.replace(/,00$/, '').replace(/\.00$/, '');
+    // Làm sạch phần đuôi ,00 hoặc .00 hoặc ,0 thừa do Google Sheet định dạng số
+    s = s.replace(/,00$/, '').replace(/\.00$/, '').replace(/,0$/, '').replace(/\.0$/, '');
     // Check if scientific notation like 2,21E+14, 2.51E+14, 2.21e14
     if (/[eE]/.test(s)) {
       try {
@@ -788,10 +788,21 @@
       if (cachedCustomers && cachedCustomers.length >= 100000) {
         allCustomers = cachedCustomers;
         // Áp dụng số No đã chỉnh sửa & làm sạch định dạng
+        let hasFixed = false;
         allCustomers.forEach(c => {
-          if (customMeterNoMap[c.ma_kh]) c.so_no = customMeterNoMap[c.ma_kh];
-          else c.so_no = formatMeterNo(c.so_no);
+          if (customMeterNoMap[c.ma_kh]) {
+            c.so_no = customMeterNoMap[c.ma_kh];
+          } else {
+            const oldNo = c.so_no;
+            c.so_no = formatMeterNo(c.so_no);
+            if (oldNo !== c.so_no) hasFixed = true;
+          }
         });
+        if (hasFixed) {
+          setTimeout(async () => {
+            await saveCustomersToIDB(allCustomers);
+          }, 100);
+        }
         buildStationsMetaFromCustomers();
         applyFilters();
         renderApp();
@@ -803,6 +814,7 @@
     } else {
       // Xóa bộ đệm cũ của tập dữ liệu trước để nạp mới 210.123 khách hàng
       await clearCustomersInIDB();
+      localStorage.removeItem(STORAGE_KEY_DATASET_VER);
     }
 
     // 3. Load full dataset from data/kienthoan_sheet.csv.gz (6.8MB) or .csv
@@ -810,9 +822,9 @@
     let csvText = '';
 
     try {
-      // Try gzipped CSV first (super fast 6.8MB download)
+      // Try gzipped CSV first (super fast 6.8MB download) with cache-busting
       if (typeof DecompressionStream !== 'undefined') {
-        const gzResp = await fetch('data/kienthoan_sheet.csv.gz');
+        const gzResp = await fetch('data/kienthoan_sheet.csv.gz?v=' + DATASET_VERSION);
         if (gzResp.ok) {
           const ds = new DecompressionStream('gzip');
           const decompressedStream = gzResp.body.pipeThrough(ds);
@@ -825,7 +837,7 @@
 
     if (!csvText) {
       try {
-        const rawResp = await fetch('data/kienthoan_sheet.csv');
+        const rawResp = await fetch('data/kienthoan_sheet.csv?v=' + DATASET_VERSION);
         if (rawResp.ok) {
           csvText = await rawResp.text();
         }
@@ -861,7 +873,7 @@
 
     // 4. Fallback to sample if files not available
     try {
-      const resp = await fetch('data/kienthoan_sample.json');
+      const resp = await fetch('data/kienthoan_sample.json?v=' + DATASET_VERSION);
       if (resp.ok) {
         const json = await resp.json();
         allCustomers = json.customers || [];
@@ -3963,7 +3975,19 @@ function donDepLogDongBo() {
       window.scrollTo({ top: 320, behavior: 'smooth' });
     },
 
-    resetFilters: resetFilters,
+    forceReloadFreshData: async function() {
+      showLoading(true, 'Đang làm mới dữ liệu & số No từ Google Sheet...');
+      try {
+        await clearCustomersInIDB();
+        localStorage.removeItem(STORAGE_KEY_DATASET_VER);
+        await loadInitialData();
+        showToast('Đã làm mới thành công toàn bộ số No theo dữ liệu mới nhất!', 'success');
+      } catch (err) {
+        console.error('forceReloadFreshData error:', err);
+        showToast('Lỗi khi làm mới dữ liệu: ' + err.message, 'error');
+        showLoading(false);
+      }
+    },
 
     scrollToTop: function() {
       window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -13,7 +13,7 @@
   
   <!-- Favicon & Stylesheet -->
   <link rel="icon" type="image/png" href="avph472lv.png">
-  <link rel="stylesheet" href="css/kienthoan.css">
+  <link rel="stylesheet" href="css/kienthoan.css?v=20260914_SONO_V5">
 </head>
 <body>
 
@@ -57,6 +57,13 @@
             <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
           </svg>
           <span>Đồng bộ Sheet</span>
+        </button>
+
+        <button class="btn-header" id="btnReloadFreshDataset" title="Làm mới và làm sạch toàn bộ số No theo dữ liệu Google Sheet mới nhất" onclick="window.PCVT.forceReloadFreshData()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38l-5.67-5.67"/>
+          </svg>
+          <span>Làm mới số No</span>
         </button>
 
         <label class="btn-header" title="Nạp dữ liệu từ file Excel (.xlsx) hoặc CSV tải về">
@@ -937,6 +944,6 @@
 
   <!-- Scripts -->
   <script src="js/vendor/xlsx.full.min.js"></script>
-  <script src="js/kienthoan.js"></script>
+  <script src="js/kienthoan.js?v=20260914_SONO_V5"></script>
 </body>
 </html>
