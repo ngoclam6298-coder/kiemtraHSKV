@@ -20,6 +20,7 @@
   const STORAGE_KEY_SOUND_ENABLED = 'PCVT_SOUND_ENABLED';
   const STORAGE_KEY_STATION_ASSIGNMENTS = 'PCVT_STATION_ASSIGNMENTS_V1';
   const STORAGE_KEY_SIDEBAR_OPEN = 'PCVT_SIDEBAR_OPEN';
+  const STORAGE_KEY_INCOMPLETE_WARN = 'PCVT_INCOMPLETE_WARN_ENABLED';
   const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
   
   // IndexedDB Constants for Customer Database (210.123 customers)
@@ -736,6 +737,9 @@
       if (soundBtnText) soundBtnText.textContent = 'Chuông: Tắt';
       if (soundBtnIcon) soundBtnIcon.textContent = '🔕';
     }
+
+    // Khởi tạo nút cảnh báo thông tin chưa đầy đủ
+    updateIncompleteWarningButtonUI();
 
     // Quét ngay lần đầu sau 2 giây để nạp các KH vừa cập nhật mới nhất
     setTimeout(() => {
@@ -3620,9 +3624,248 @@ function caiDatCotAnh() {
   }
 
   // ==========================================================================
+  // INCOMPLETE INSPECTION WARNING SYSTEM (CẢNH BÁO THÔNG TIN CHƯA ĐẦY ĐỦ)
+  // ==========================================================================
+  function isIncompleteWarningEnabled() {
+    const val = localStorage.getItem(STORAGE_KEY_INCOMPLETE_WARN);
+    return val === null ? true : (val !== 'false');
+  }
+
+  function toggleIncompleteWarning() {
+    const next = !isIncompleteWarningEnabled();
+    localStorage.setItem(STORAGE_KEY_INCOMPLETE_WARN, next ? 'true' : 'false');
+    updateIncompleteWarningButtonUI();
+    showToast(next ? '⚠️ Đã BẬT cảnh báo khi thiếu thông tin kiểm tra' : 'ℹ️ Đã TẮT cảnh báo thiếu thông tin kiểm tra', next ? 'warning' : 'info');
+  }
+
+  function updateIncompleteWarningButtonUI() {
+    const btn = document.getElementById('btnToggleIncompleteWarn');
+    const label = document.getElementById('labelToggleIncompleteWarn');
+    const isEnabled = isIncompleteWarningEnabled();
+    if (btn) {
+      if (isEnabled) {
+        btn.style.background = '#f59e0b';
+        btn.style.borderColor = '#d97706';
+        btn.style.color = '#ffffff';
+        btn.title = 'Cảnh báo thông tin chưa đầy đủ đang BẬT. Bấm để Tắt.';
+      } else {
+        btn.style.background = '#64748b';
+        btn.style.borderColor = '#475569';
+        btn.style.color = '#ffffff';
+        btn.title = 'Cảnh báo thông tin chưa đầy đủ đang TẮT. Bấm để Bật.';
+      }
+    }
+    if (label) {
+      label.textContent = isEnabled ? '⚠️ Cảnh báo: BẬT' : '⚠️ Cảnh báo: TẮT';
+    }
+  }
+
+  function checkInspectionIncomplete(ma_kh) {
+    const cleanMaKh = String(ma_kh || '').trim();
+    const insp = inspectionsMap[cleanMaKh] || {};
+    const customer = allCustomers.find(c => String(c.ma_kh).trim() === cleanMaKh) || {};
+
+    // 1. Ghi chú / Hiện trạng đo đếm
+    const deskInput = document.getElementById(`note-${cleanMaKh}`);
+    const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
+    const noteVal = ((deskInput && deskInput.value) || (mobInput && mobInput.value) || insp.ghi_chu || '').trim();
+
+    // 2. Ảnh công tơ hiện trường
+    const hasPhoto = !!(insp.hinh_anh || insp.link_anh || customer.link_anh);
+
+    // 3. Cán bộ / Nhóm kiểm tra
+    const deskUp = document.getElementById(`updater-${cleanMaKh}`);
+    const mobUp = document.getElementById(`mupdater-${cleanMaKh}`);
+    const curInsp = getCurrentInspector();
+    const upVal = ((deskUp && deskUp.value) || (mobUp && mobUp.value) || insp.nguoi_cap_nhat || curInsp || '').trim();
+
+    // 4. Trạng thái kiểm tra
+    const isCompleted = (insp.trang_thai === 'Đã kiểm tra');
+
+    const missingItems = [];
+
+    if (!noteVal) {
+      missingItems.push({
+        type: 'note',
+        icon: '📝',
+        title: 'Hiện trạng / Ghi chú:',
+        desc: 'Chưa chọn 1 trong 12 hiện trạng đo đếm hoặc chưa nhập ghi chú kiểm tra.',
+        badge: 'Chưa có hiện trạng',
+        level: 'error'
+      });
+    }
+
+    if (!hasPhoto) {
+      missingItems.push({
+        type: 'photo',
+        icon: '📸',
+        title: 'Ảnh chụp công tơ hiện trường:',
+        desc: 'Chưa chụp hoặc tải ảnh công tơ hiện trường (khuyến nghị chụp làm bằng chứng nghiệm thu).',
+        badge: 'Chưa có ảnh',
+        level: 'warning'
+      });
+    }
+
+    if (!upVal) {
+      missingItems.push({
+        type: 'inspector',
+        icon: '👤',
+        title: 'Cán bộ / Nhóm kiểm tra:',
+        desc: 'Chưa chọn cán bộ hoặc tổ nhóm kiểm tra thực hiện.',
+        badge: 'Chưa chọn người KT',
+        level: 'warning'
+      });
+    }
+
+    if (!isCompleted) {
+      missingItems.push({
+        type: 'status',
+        icon: '⏳',
+        title: 'Trạng thái kiểm tra:',
+        desc: 'Khách hàng này hiện vẫn có trạng thái là "Chưa kiểm tra".',
+        badge: 'Chưa kiểm tra',
+        level: 'info'
+      });
+    }
+
+    return {
+      isIncomplete: missingItems.length > 0,
+      missingItems,
+      customer,
+      insp,
+      cleanMaKh,
+      noteVal,
+      upVal,
+      hasPhoto,
+      isCompleted
+    };
+  }
+
+  function focusMissingField(ma_kh, missingItems) {
+    const hasMissingNote = missingItems.some(it => it.type === 'note');
+    const hasMissingPhoto = missingItems.some(it => it.type === 'photo');
+
+    if (hasMissingNote) {
+      const deskInput = document.getElementById(`note-${ma_kh}`);
+      const mobInput = document.getElementById(`mnote-${ma_kh}`);
+      if (mobInput && window.innerWidth < 1200) {
+        mobInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        mobInput.focus();
+      } else if (deskInput) {
+        deskInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        deskInput.focus();
+      }
+      showToast('Vui lòng chọn hiện trạng hoặc nhập ghi chú cho khách hàng', 'info');
+      return;
+    }
+
+    if (hasMissingPhoto) {
+      const deskPhoto = document.getElementById(`photo-upload-${ma_kh}`);
+      const mobPhoto = document.getElementById(`mphoto-upload-${ma_kh}`);
+      if (mobPhoto && window.innerWidth < 1200) {
+        mobPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (deskPhoto) {
+        deskPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      showToast('Vui lòng bấm nút chụp hoặc đính kèm ảnh công tơ', 'info');
+      return;
+    }
+
+    const row = document.getElementById(`row-${ma_kh}`) || document.getElementById(`mcard-${ma_kh}`);
+    if (row) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function showIncompleteWarningModal(ma_kh, check, onProceed, onCompleteAndSave) {
+    const c = check.customer || {};
+    const cardEl = document.getElementById('incompleteWarnCustomerCard');
+    if (cardEl) {
+      cardEl.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+          <div>
+            <span style="display: inline-block; background: #0284c7; color: #fff; font-weight: 700; font-size: 0.78rem; padding: 2px 7px; border-radius: 4px;">
+              ${escapeHTML(check.cleanMaKh)}
+            </span>
+            <strong style="margin-left: 6px; font-size: 0.95rem; color: #0f172a;">${escapeHTML(c.ten_kh || 'Chưa rõ tên KH')}</strong>
+          </div>
+          <div style="font-size: 0.8rem; color: #475569;">
+            Trạm: <strong style="color: #0369a1;">${escapeHTML(c.id_tram || c.ma_tram || '---')}</strong>
+          </div>
+        </div>
+        <div style="font-size: 0.8rem; color: #334155; line-height: 1.45;">
+          ${c.so_no ? `<div>Số No công tơ: <strong style="font-family: monospace; font-size: 0.9rem; color: #b91c1c; letter-spacing: 0.5px;">${escapeHTML(c.so_no)}</strong></div>` : ''}
+          <div>Địa chỉ điểm đo: <span>${escapeHTML(c.dia_chi_ddo || c.dia_chi || '---')}</span></div>
+          ${c.sdt ? `<div>SĐT: <span>${escapeHTML(c.sdt)}</span></div>` : ''}
+        </div>
+      `;
+    }
+
+    const listEl = document.getElementById('incompleteWarnItemsList');
+    if (listEl) {
+      listEl.innerHTML = check.missingItems.map(item => {
+        const bg = item.level === 'error' ? '#fef2f2' : (item.level === 'warning' ? '#fffbeb' : '#f0f9ff');
+        const border = item.level === 'error' ? '#fecaca' : (item.level === 'warning' ? '#fde68a' : '#bae6fd');
+        const color = item.level === 'error' ? '#991b1b' : (item.level === 'warning' ? '#92400e' : '#0369a1');
+        const badgeBg = item.level === 'error' ? '#ef4444' : (item.level === 'warning' ? '#f59e0b' : '#0284c7');
+        return `
+          <div style="display: flex; gap: 10px; align-items: flex-start; background: ${bg}; border: 1px solid ${border}; border-radius: 6px; padding: 8px 10px;">
+            <div style="font-size: 1.15rem; line-height: 1;">${item.icon}</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                <strong style="font-size: 0.82rem; color: ${color};">${item.title}</strong>
+                <span style="background: ${badgeBg}; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; white-space: nowrap;">
+                  ${item.badge}
+                </span>
+              </div>
+              <div style="font-size: 0.77rem; color: #475569; margin-top: 2px; line-height: 1.35;">
+                ${item.desc}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const btnBack = document.getElementById('btnIncompleteBack');
+    const btnForceSave = document.getElementById('btnIncompleteForceSave');
+    const btnCompleteAndSave = document.getElementById('btnIncompleteMarkCompleteAndSave');
+
+    if (btnBack) {
+      btnBack.onclick = function() {
+        closeModal('modalIncompleteWarning');
+        focusMissingField(check.cleanMaKh, check.missingItems);
+      };
+    }
+
+    if (btnForceSave) {
+      btnForceSave.onclick = function() {
+        closeModal('modalIncompleteWarning');
+        if (typeof onProceed === 'function') {
+          onProceed();
+        }
+      };
+    }
+
+    if (btnCompleteAndSave) {
+      btnCompleteAndSave.onclick = function() {
+        closeModal('modalIncompleteWarning');
+        if (typeof onCompleteAndSave === 'function') {
+          onCompleteAndSave();
+        }
+      };
+    }
+
+    openModal('modalIncompleteWarning');
+  }
+
+  // ==========================================================================
   // CUSTOMER INTERACTION HANDLERS (EXPOSED ON window.PCVT)
   // ==========================================================================
   window.PCVT = {
+    toggleIncompleteWarning: toggleIncompleteWarning,
+    isIncompleteWarningEnabled: isIncompleteWarningEnabled,
+    checkInspectionIncomplete: checkInspectionIncomplete,
     editMeterNo: function() {},
 
     saveEditedMeterNo: function() {},
@@ -3640,30 +3883,60 @@ function caiDatCotAnh() {
       renderApp();
     },
 
-    toggleStatus: function(ma_kh, isChecked) {
-      if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+    toggleStatus: function(ma_kh, isChecked, force = false) {
+      const cleanMaKh = String(ma_kh || '').trim();
+
+      // Kiểm tra cảnh báo thông tin chưa đầy đủ khi đánh dấu hoàn thành
+      if (isChecked && !force && isIncompleteWarningEnabled()) {
+        const check = checkInspectionIncomplete(cleanMaKh);
+        // Nếu thiếu ghi chú hoặc thiếu ảnh hiện trường
+        if (!check.noteVal || !check.hasPhoto) {
+          showIncompleteWarningModal(
+            cleanMaKh,
+            check,
+            // Tiếp tục đánh dấu hoàn thành (không bổ sung)
+            () => {
+              window.PCVT.toggleStatus(cleanMaKh, true, true);
+            },
+            // Đánh dấu hoàn thành và lưu đồng bộ
+            () => {
+              window.PCVT.toggleStatus(cleanMaKh, true, true);
+              window.PCVT.saveRow(cleanMaKh, true);
+            }
+          );
+          // Trả lại checkbox chưa tick trên bảng nếu người dùng chưa bấm xác nhận
+          const row = document.getElementById(`row-${cleanMaKh}`);
+          if (row) {
+            const chk = row.querySelector('.custom-checkbox input');
+            if (chk) chk.checked = false;
+          }
+          return;
+        }
+      }
+
+      if (!inspectionsMap[cleanMaKh]) inspectionsMap[cleanMaKh] = {};
 
       const now = new Date();
       const timeStr = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
 
       if (isChecked) {
-        inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
-        inspectionsMap[ma_kh].ngay_kiem_tra = timeStr;
-        inspectionsMap[ma_kh].localUpdatedAt = Date.now();
-        if (!inspectionsMap[ma_kh].nguoi_cap_nhat) {
+        inspectionsMap[cleanMaKh].trang_thai = 'Đã kiểm tra';
+        inspectionsMap[cleanMaKh].ngay_kiem_tra = timeStr;
+        inspectionsMap[cleanMaKh].localUpdatedAt = Date.now();
+        if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) {
           const curInsp = getCurrentInspector();
           if (curInsp) {
-            inspectionsMap[ma_kh].nguoi_cap_nhat = curInsp;
+            inspectionsMap[cleanMaKh].nguoi_cap_nhat = curInsp;
             const isPreset = isPresetInspector(curInsp);
             const selVal = isPreset ? getInspectorPresetValue(curInsp) : '__custom__';
 
-            const dSel = document.getElementById(`sel-updater-${ma_kh}`);
-            const mSel = document.getElementById(`msel-updater-${ma_kh}`);
+            const dSel = document.getElementById(`sel-updater-${cleanMaKh}`);
+            const mSel = document.getElementById(`msel-updater-${cleanMaKh}`);
             if (dSel) dSel.value = selVal;
             if (mSel) mSel.value = selVal;
 
-            const dUp = document.getElementById(`updater-${ma_kh}`);
-            const mUp = document.getElementById(`mupdater-${ma_kh}`);
+            const dUp = document.getElementById(`updater-${cleanMaKh}`);
+            const mUp = document.getElementById(`mupdater-${cleanMaKh}`);
             if (dUp) {
               dUp.value = curInsp;
               dUp.style.display = (!isPreset && curInsp) ? 'block' : 'none';
@@ -3675,15 +3948,15 @@ function caiDatCotAnh() {
           }
         }
       } else {
-        inspectionsMap[ma_kh].trang_thai = 'Chưa kiểm tra';
-        inspectionsMap[ma_kh].localUpdatedAt = Date.now();
+        inspectionsMap[cleanMaKh].trang_thai = 'Chưa kiểm tra';
+        inspectionsMap[cleanMaKh].localUpdatedAt = Date.now();
       }
 
       renderKPIs();
       renderStationBanner();
       renderMobileStickyBar();
 
-      const row = document.getElementById(`row-${ma_kh}`);
+      const row = document.getElementById(`row-${cleanMaKh}`);
       if (row) {
         if (isChecked) {
           row.classList.add('row-completed');
@@ -3698,9 +3971,9 @@ function caiDatCotAnh() {
         }
       }
 
-      const card = document.getElementById(`mcard-${ma_kh}`);
-      const mstatus = document.getElementById(`mstatus-${ma_kh}`);
-      const mbtn = document.getElementById(`mbtn-toggle-${ma_kh}`);
+      const card = document.getElementById(`mcard-${cleanMaKh}`);
+      const mstatus = document.getElementById(`mstatus-${cleanMaKh}`);
+      const mbtn = document.getElementById(`mbtn-toggle-${cleanMaKh}`);
       if (card) {
         if (isChecked) {
           card.classList.add('card-completed');
@@ -3708,7 +3981,7 @@ function caiDatCotAnh() {
           if (mbtn) {
             mbtn.className = 'btn-mobile-status-toggle completed';
             mbtn.innerHTML = '✅ ĐÃ HOÀN THÀNH KIỂM TRA';
-            mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', false)`);
+            mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${cleanMaKh}', false)`);
           }
         } else {
           card.classList.remove('card-completed');
@@ -3716,13 +3989,13 @@ function caiDatCotAnh() {
           if (mbtn) {
             mbtn.className = 'btn-mobile-status-toggle';
             mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
-            mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${ma_kh}', true)`);
+            mbtn.setAttribute('onclick', `window.PCVT.toggleStatus('${cleanMaKh}', true)`);
           }
         }
       }
 
-      syncItemImmediately(ma_kh);
-      showToast(isChecked ? `Đã hoàn thành kiểm tra KH ${ma_kh}` : `Đã chuyển KH ${ma_kh} về Chưa kiểm tra`, 'success');
+      syncItemImmediately(cleanMaKh);
+      showToast(isChecked ? `Đã hoàn thành kiểm tra KH ${cleanMaKh}` : `Đã chuyển KH ${cleanMaKh} về Chưa kiểm tra`, 'success');
     },
 
     onUpdaterSelectChange: function(ma_kh, val) {
@@ -3961,21 +4234,57 @@ function caiDatCotAnh() {
       openModal('modalPhotoZoom');
     },
 
-    saveRow: function(ma_kh) {
-      const deskInput = document.getElementById(`note-${ma_kh}`);
-      const mobInput = document.getElementById(`mnote-${ma_kh}`);
+    saveRow: function(ma_kh, forceSave = false) {
+      const cleanMaKh = String(ma_kh || '').trim();
+      const deskInput = document.getElementById(`note-${cleanMaKh}`);
+      const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
       const val = (deskInput && deskInput.value) || (mobInput && mobInput.value) || '';
 
-      const deskUp = document.getElementById(`updater-${ma_kh}`);
-      const mobUp = document.getElementById(`mupdater-${ma_kh}`);
+      const deskUp = document.getElementById(`updater-${cleanMaKh}`);
+      const mobUp = document.getElementById(`mupdater-${cleanMaKh}`);
       const upVal = (deskUp && deskUp.value) || (mobUp && mobUp.value) || '';
 
-      if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
-      inspectionsMap[ma_kh].ghi_chu = val;
-      if (upVal) inspectionsMap[ma_kh].nguoi_cap_nhat = upVal.trim();
+      // Kiểm tra thông tin chưa đầy đủ trước khi lưu
+      if (!forceSave && isIncompleteWarningEnabled()) {
+        const check = checkInspectionIncomplete(cleanMaKh);
+        if (check.isIncomplete) {
+          showIncompleteWarningModal(
+            cleanMaKh,
+            check,
+            // Hành động 1: Vẫn lưu (Giữ nguyên)
+            () => {
+              window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
+            },
+            // Hành động 2: Đánh dấu Đã kiểm tra & Lưu
+            () => {
+              window.PCVT.markCompletedAndSave(cleanMaKh, val, upVal);
+            }
+          );
+          return;
+        }
+      }
 
-      syncItemImmediately(ma_kh);
-      showToast(`Đã lưu và đồng bộ kết quả kiểm tra KH ${ma_kh}`, 'success');
+      window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
+    },
+
+    doActualSaveRow: function(cleanMaKh, val, upVal) {
+      if (!inspectionsMap[cleanMaKh]) inspectionsMap[cleanMaKh] = {};
+      inspectionsMap[cleanMaKh].ghi_chu = val;
+      if (upVal) {
+        inspectionsMap[cleanMaKh].nguoi_cap_nhat = upVal.trim();
+      } else if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) {
+        const curInsp = getCurrentInspector();
+        if (curInsp) inspectionsMap[cleanMaKh].nguoi_cap_nhat = curInsp;
+      }
+
+      syncItemImmediately(cleanMaKh);
+      showToast(`Đã lưu và đồng bộ kết quả kiểm tra KH ${cleanMaKh}`, 'success');
+    },
+
+    markCompletedAndSave: function(cleanMaKh, val, upVal) {
+      window.PCVT.toggleStatus(cleanMaKh, true, true);
+      window.PCVT.doActualSaveRow(cleanMaKh, val, upVal);
+      showToast(`✅ Đã hoàn thành và lưu kết quả KH ${cleanMaKh}`, 'success');
     },
 
     copyText: function(text) {
