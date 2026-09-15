@@ -21,7 +21,7 @@
   const STORAGE_KEY_STATION_ASSIGNMENTS = 'PCVT_STATION_ASSIGNMENTS_V1';
   const STORAGE_KEY_SIDEBAR_OPEN = 'PCVT_SIDEBAR_OPEN';
   const STORAGE_KEY_INCOMPLETE_WARN = 'PCVT_INCOMPLETE_WARN_ENABLED';
-  const LIVE_SYNC_POLL_INTERVAL = 15000; // Quét tự động mỗi 15 giây
+  const LIVE_SYNC_POLL_INTERVAL = 10 * 60 * 1000; // Quét tự động mỗi 10 phút (600.000 ms)
   
   // IndexedDB Constants for Customer Database (210.123 customers)
   const DATASET_VERSION = '20260914_SONO_NODOT';
@@ -1201,7 +1201,7 @@
   // ==========================================================================
   // FILTERING & SEARCH
   // ==========================================================================
-  function applyFilters() {
+  function applyFilters(preservePage = false) {
     const kw = currentSearchKeyword.toLowerCase().trim();
     const stationFilter = currentStationFilter.trim();
     const areaFilter = currentAreaFilter.trim();
@@ -1253,13 +1253,25 @@
       return true;
     });
 
-    currentPage = 1;
+    if (!preservePage) {
+      currentPage = 1;
+    } else {
+      const maxPage = Math.max(1, Math.ceil(filteredCustomers.length / pageSize));
+      if (currentPage > maxPage) {
+        currentPage = maxPage;
+      }
+    }
   }
 
   // ==========================================================================
   // RENDERING (DUAL ENGINE: TABLE & MOBILE CARDS)
   // ==========================================================================
   function renderApp() {
+    const activeEl = document.activeElement;
+    const activeId = (activeEl && activeEl.id) ? activeEl.id : null;
+    const selStart = (activeEl && typeof activeEl.selectionStart === 'number') ? activeEl.selectionStart : null;
+    const selEnd = (activeEl && typeof activeEl.selectionEnd === 'number') ? activeEl.selectionEnd : null;
+
     renderKPIs();
     renderStationBanner();
     renderAreaDropdown();
@@ -1267,6 +1279,18 @@
     renderDataList();
     renderPagination();
     renderMobileStickyBar();
+
+    if (activeId) {
+      const restored = document.getElementById(activeId);
+      if (restored) {
+        try {
+          restored.focus();
+          if (selStart !== null && selEnd !== null && typeof restored.setSelectionRange === 'function') {
+            restored.setSelectionRange(selStart, selEnd);
+          }
+        } catch (e) {}
+      }
+    }
   }
 
   function renderKPIs() {
@@ -5050,11 +5074,11 @@ function caiDatCotAnh() {
         }
       });
 
-      // 3. NẾU CÓ THAY ĐỔI -> LƯU VÀ LÀM MỚI TOÀN BỘ GIAO DIỆN
+      // 3. NẾU CÓ THAY ĐỔI -> LƯU VÀ LÀM MỚI TOÀN BỘ GIAO DIỆN (GIỮ NGUYÊN TRANG ĐANG XEM)
       if (hasChanges) {
         if (liveActivityLog.length > 50) liveActivityLog = liveActivityLog.slice(0, 50);
         saveLocalInspections();
-        applyFilters();
+        applyFilters(true); // Giữ nguyên trang hiện tại của người dùng (trang 3, 4, ...)
         renderApp();
         renderLiveActivityFeed();
 
@@ -5066,7 +5090,7 @@ function caiDatCotAnh() {
           showToast(`🔄 [Đồng bộ] Đã chuyển ${revertedCount} KH về "Chưa kiểm tra" theo Google Sheet`, 'info');
         }
       } else if (isManual) {
-        applyFilters();
+        applyFilters(true); // Giữ nguyên trang hiện tại khi người dùng bấm quét thủ công
         renderApp();
         showToast(`✅ Đã đồng bộ hoàn tất! Hiện có ${sheetCheckedMap.size} khách hàng đã kiểm tra trên Google Sheet`, 'success');
       }
@@ -5077,7 +5101,7 @@ function caiDatCotAnh() {
     if (statusPill) {
       if (isLiveSyncRunning) {
         statusPill.className = 'live-status-pill online';
-        statusPill.innerHTML = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)';
+        statusPill.innerHTML = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 10 PHÚT)';
       } else {
         statusPill.className = 'live-status-pill paused';
         statusPill.innerHTML = '⏸️ ĐÃ TẠM DỪNG';
@@ -5099,7 +5123,7 @@ function caiDatCotAnh() {
     if (btnIcon) btnIcon.textContent = '⏸️';
     if (statusPill) {
       statusPill.className = 'live-status-pill online';
-      statusPill.textContent = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)';
+      statusPill.textContent = '🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 10 PHÚT)';
     }
     if (pingDot) pingDot.classList.add('active');
 
