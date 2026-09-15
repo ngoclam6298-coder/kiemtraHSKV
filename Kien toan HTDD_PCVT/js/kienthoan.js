@@ -172,14 +172,44 @@
     return '__custom__';
   }
 
+  // --- 12 Hiện trạng hệ thống đo đếm chuẩn (PC Vũng Tàu) ---
+  const PRESET_CONDITIONS = [
+    'Hoạt động bình thường',
+    'Hoạt động bình thường ( nhưng không có chì niêm)',
+    'Cài đặt sai hệ số nhân',
+    'Điện kế quá hạn kiểm định',
+    'Điện kế mờ, đen màn hình',
+    'Đã cô lập hoặc đã thu hồi',
+    'Bị lỏng dây trên hệ thống đo đếm',
+    'Mất dòng, mất áp',
+    'Thùng điện kế, CB,... bị mục đáy, khe hở lớn, ....',
+    'Sai giờ thực tế',
+    'Điện kế hư, hỏng',
+    'Không kiểm tra được do nhiều lý do (khóa cửa, kh vắng nhà, ...)'
+  ];
+  const PRESET_NOTES = PRESET_CONDITIONS; // Alias tương thích ngược
+
   // --- Kiểm tra chuỗi có phải là Tên Nhóm công tác hoặc Cán bộ kiểm tra hay không ---
   function isWorkgroupOrInspectorName(val) {
     if (!val) return false;
     const str = String(val).trim().toLowerCase();
     if (!str) return false;
 
+    // Nếu chuỗi này là 1 trong 12 hiện trạng đo đếm chuẩn -> Chắc chắn KHÔNG PHẢI tên nhóm
+    if (PRESET_CONDITIONS.some(c => c.toLowerCase() === str)) {
+      return false;
+    }
+
     // Các từ khóa đặc trưng của nhóm công tác
-    if (str.includes('nhóm ') || str.includes('trưởng nhóm') || str.includes('tn:') || str.includes('tổ ') || str.includes('+')) {
+    if (
+      str.includes('nhóm') || 
+      str.includes('trưởng nhóm') || 
+      str.includes('tn:') || 
+      str.includes('tổ ') || 
+      str.includes('+') ||
+      str.includes('cán bộ') ||
+      str.includes('công tác')
+    ) {
       return true;
     }
 
@@ -207,23 +237,6 @@
     ];
     return workerNames.some(w => str.includes(w));
   }
-
-  // --- 12 Hiện trạng hệ thống đo đếm chuẩn (PC Vũng Tàu) ---
-  const PRESET_CONDITIONS = [
-    'Hoạt động bình thường',
-    'Hoạt động bình thường ( nhưng không có chì niêm)',
-    'Cài đặt sai hệ số nhân',
-    'Điện kế quá hạn kiểm định',
-    'Điện kế mờ, đen màn hình',
-    'Đã cô lập hoặc đã thu hồi',
-    'Bị lỏng dây trên hệ thống đo đếm',
-    'Mất dòng, mất áp',
-    'Thùng điện kế, CB,... bị mục đáy, khe hở lớn, ....',
-    'Sai giờ thực tế',
-    'Điện kế hư, hỏng',
-    'Không kiểm tra được do nhiều lý do (khóa cửa, kh vắng nhà, ...)'
-  ];
-  const PRESET_NOTES = PRESET_CONDITIONS; // Alias tương thích ngược
 
   // ==========================================================================
   // NUMBER NORMALIZATION (SỐ NO CỐ ĐỊNH - VIẾT LIỀN KHÔNG CÓ DẤU CHẤM)
@@ -594,7 +607,10 @@
           if (chk) chk.checked = false;
         }
         const noteInput = document.getElementById(`note-${data.ma_kh}`);
-        const noteVal = (data.inspection && data.inspection.ghi_chu) || '';
+        let noteVal = (data.inspection && data.inspection.ghi_chu) || '';
+        if (isWorkgroupOrInspectorName(noteVal)) {
+          noteVal = '';
+        }
         if (noteInput && data.inspection) noteInput.value = noteVal;
 
         // Đồng bộ thanh xổ chọn hiện trạng trên bảng
@@ -644,18 +660,21 @@
             mbtn.innerHTML = '🔘 CHẠM ĐỂ ĐÁNH DẤU HOÀN THÀNH';
           }
         }
-        const noteVal = (data.inspection && data.inspection.ghi_chu) || '';
-        if (mnote && data.inspection) mnote.value = noteVal;
+        let mNoteVal = (data.inspection && data.inspection.ghi_chu) || '';
+        if (isWorkgroupOrInspectorName(mNoteVal)) {
+          mNoteVal = '';
+        }
+        if (mnote && data.inspection) mnote.value = mNoteVal;
 
         // Đồng bộ thanh xổ chọn hiện trạng trên thẻ di động
-        const isPresetCond = PRESET_CONDITIONS.includes(noteVal);
-        const selCondVal = isPresetCond ? noteVal : (noteVal ? '__custom__' : '');
+        const isPresetCond = PRESET_CONDITIONS.includes(mNoteVal);
+        const selCondVal = isPresetCond ? mNoteVal : (mNoteVal ? '__custom__' : '');
         const mselCond = document.getElementById(`msel-cond-${data.ma_kh}`);
         if (mselCond) mselCond.value = selCondVal;
 
         // Đồng bộ các ô tick chọn hiện trạng trên thẻ di động
         PRESET_CONDITIONS.forEach((cond, cIdx) => {
-          const isTicked = noteVal.includes(cond);
+          const isTicked = mNoteVal.includes(cond);
           const chk = document.getElementById(`chk-cond-m-${data.ma_kh}-${cIdx}`);
           if (chk) {
             chk.checked = isTicked;
@@ -1509,6 +1528,8 @@
       // Chuẩn bị thanh xổ xuống hiện trạng (12 mục chuẩn)
       let currentNote = (insp.ghi_chu || '').trim();
       if (isWorkgroupOrInspectorName(currentNote)) {
+        if (!insp.nguoi_cap_nhat) insp.nguoi_cap_nhat = currentNote;
+        insp.ghi_chu = '';
         currentNote = '';
       }
       let conditionOptions = `<option value="">-- Chọn hiện trạng đo đếm (12 mục) --</option>`;
@@ -2205,12 +2226,14 @@ function doPost(e) {
     }
 
     // 1. Cập nhật trang nhật ký Log_DongBo 10 cột TRƯỚC TIÊN (Siêu tốc < 100ms, đảm bảo đồng bộ tức thời)
+    // Cột 5 (Col F, tiêu đề "Ghi chú"): NHÓM CẬP NHẬT / NGƯỜI CẬP NHẬT
+    // Cột 8 (Col I, tiêu đề "Hiện trạng"): HIỆN TRẠNG CÔNG TƠ ĐO ĐẾM
     var logSheet = ss.getSheetByName('Log_DongBo');
     if (!logSheet) {
       logSheet = ss.insertSheet('Log_DongBo');
-      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Ghi chú', 'Trạng thái', 'Ngày KT', 'Hiện trạng', 'Ảnh chụp công tơ']);
     } else if (logSheet.getLastRow() === 0) {
-      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
+      logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Ghi chú', 'Trạng thái', 'Ngày KT', 'Hiện trạng', 'Ảnh chụp công tơ']);
     }
 
     var logLastRow = logSheet.getLastRow();
@@ -2356,9 +2379,26 @@ function doGet(e) {
       var idxDanhSo = headers.indexOf('mã danh số') !== -1 ? headers.indexOf('mã danh số') : headers.indexOf('danh số');
       if (idxDanhSo === -1 && data[0].length >= 9) idxDanhSo = 4;
 
+      // A. Cột Hiện trạng công tơ: Luôn tìm theo tiêu đề 'hiện trạng' (Cột 8 / Col I)
+      var idxHienTrang = -1;
+      for (var hg = 0; hg < headers.length; hg++) {
+        var hName = headers[hg];
+        if (hName === 'hiện trạng' || hName === 'hien trang' || hName.indexOf('hiện trạng') !== -1 || hName.indexOf('hien trang') !== -1) {
+          idxHienTrang = hg;
+          break;
+        }
+      }
+      if (idxHienTrang === -1) idxHienTrang = (data[0].length >= 9 ? 8 : 5);
+
+      // B. Cột Nhóm / Người cập nhật:
+      // Trong sheet Log_DongBo, cột "Ghi chú" (Cột F / Col 5) chính là Nhóm cập nhật.
       var idxNguoi = -1;
       for (var hi = 0; hi < headers.length; hi++) {
-        if (headers[hi].indexOf('cán bộ') !== -1 || headers[hi].indexOf('người') !== -1 || headers[hi].indexOf('nhóm') !== -1) {
+        var hName = headers[hi];
+        if (hName === 'ghi chú' || hName === 'ghi chu') {
+          idxNguoi = hi;
+          break;
+        } else if (hName.indexOf('cán bộ') !== -1 || hName.indexOf('người') !== -1 || hName.indexOf('nhóm') !== -1) {
           idxNguoi = hi;
           break;
         }
@@ -2383,20 +2423,6 @@ function doGet(e) {
       }
       if (idxNgay === -1) idxNgay = (data[0].length >= 9 ? 7 : 4);
 
-      var idxGhiChu = -1;
-      for (var hg = 0; hg < headers.length; hg++) {
-        if (headers[hg].indexOf('hiện trạng') !== -1 || headers[hg].indexOf('hien trang') !== -1) {
-          idxGhiChu = hg;
-          break;
-        }
-      }
-      if (idxGhiChu === -1) {
-        idxGhiChu = (data[0].length >= 9 ? 8 : 5);
-      }
-      if (idxGhiChu === 5 && data[0].length >= 9) {
-        idxGhiChu = 8;
-      }
-
       var idxHinhAnh = -1;
       for (var hx = 0; hx < headers.length; hx++) {
         if (headers[hx].indexOf('ảnh') !== -1 || headers[hx].indexOf('hinh') !== -1) {
@@ -2414,11 +2440,13 @@ function doGet(e) {
         if (since === 0 || rowTime > since) {
           var uMaKh = String(data[i][idxMaKh] || '').trim();
           if (uMaKh) {
-            var rawNote = idxGhiChu !== -1 ? String(data[i][idxGhiChu] || '').trim() : '';
-            var rawUpdater = String(data[i][idxNguoi] || '').trim();
-            if (rawNote && (rawNote.indexOf('Nhóm') !== -1 || rawNote.indexOf('nhóm') !== -1 || rawNote.indexOf('Trưởng nhóm') !== -1 || rawNote.indexOf('+') !== -1)) {
-              if (!rawUpdater) rawUpdater = rawNote;
-              rawNote = '';
+            var rawCondition = idxHienTrang !== -1 ? String(data[i][idxHienTrang] || '').trim() : '';
+            var rawUpdater = idxNguoi !== -1 ? String(data[i][idxNguoi] || '').trim() : '';
+
+            // Nếu rawCondition vô tình dính tên nhóm, hoán đổi sang updater và xóa condition
+            if (rawCondition && (rawCondition.indexOf('Nhóm') !== -1 || rawCondition.indexOf('nhóm') !== -1 || rawCondition.indexOf('Trưởng nhóm') !== -1 || rawCondition.indexOf('+') !== -1)) {
+              if (!rawUpdater) rawUpdater = rawCondition;
+              rawCondition = '';
             }
 
             updates.push({
@@ -2427,14 +2455,16 @@ function doGet(e) {
               id_tram: idxIdTram !== -1 ? String(data[i][idxIdTram] || '').trim() : '',
               ten_tram: idxTenTram !== -1 ? String(data[i][idxTenTram] || '').trim() : '',
               danh_so: idxDanhSo !== -1 ? String(data[i][idxDanhSo] || '').trim() : '',
-              nguoi_cap_nhat: rawUpdater,
+              nguoi_cap_nhat: rawUpdater, // Cột "Ghi chú" trên sheet Log_DongBo -> Nhóm cập nhật
               trang_thai_x: String(data[i][idxTrangThai] || 'X').trim(),
               ngay_kiem_tra: idxNgay !== -1 ? String(data[i][idxNgay] || '').trim() : '',
-              ghi_chu: rawNote,
+              ghi_chu: rawCondition,     // Cột "Hiện trạng" trên sheet Log_DongBo -> Hiện trạng công tơ
+              hien_trang: rawCondition,  // Cung cấp trường hien_trang
               hinh_anh: idxHinhAnh !== -1 ? String(data[i][idxHinhAnh] || '').trim() : ''
             });
           }
         }
+      }
       }
     }
 
@@ -2515,7 +2545,7 @@ function caiDatCotAnh() {
   var logSheet = ss.getSheetByName('Log_DongBo');
   if (!logSheet) {
     logSheet = ss.insertSheet('Log_DongBo');
-    logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Người cập nhật', 'Trạng thái', 'Ngày KT', 'Ghi chú', 'Ảnh chụp công tơ']);
+    logSheet.appendRow(['Timestamp', 'Mã KH', 'ID trạm', 'Tên trạm', 'Mã danh số', 'Ghi chú', 'Trạng thái', 'Ngày KT', 'Hiện trạng', 'Ảnh chụp công tơ']);
     logSheet.getRange(1, 1, 1, 10).setBackground('#0284c7').setFontColor('#ffffff').setFontWeight('bold');
   } else {
     logSheet.getRange(1, 10).setValue('Ảnh chụp công tơ');
@@ -3798,6 +3828,14 @@ function caiDatCotAnh() {
 
     if (isWorkgroupOrInspectorName(noteVal)) {
       noteVal = ''; // Tên cán bộ/nhóm công tác không phải là hiện trạng đo đếm!
+      if (deskInput) deskInput.value = '';
+      if (mobInput) mobInput.value = '';
+      if (dSelCond && dSelCond.value === '__custom__') dSelCond.value = '';
+      if (mSelCond && mSelCond.value === '__custom__') mSelCond.value = '';
+      if (insp.ghi_chu && isWorkgroupOrInspectorName(insp.ghi_chu)) {
+        if (!insp.nguoi_cap_nhat) insp.nguoi_cap_nhat = insp.ghi_chu;
+        insp.ghi_chu = '';
+      }
     }
 
     // 2. Ảnh công tơ hiện trường
@@ -3992,6 +4030,10 @@ function caiDatCotAnh() {
         inspectionsMap[cleanMaKh].trang_thai = 'Đã kiểm tra';
         inspectionsMap[cleanMaKh].ngay_kiem_tra = timeStr;
         inspectionsMap[cleanMaKh].localUpdatedAt = Date.now();
+        if (isWorkgroupOrInspectorName(inspectionsMap[cleanMaKh].ghi_chu)) {
+          if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) inspectionsMap[cleanMaKh].nguoi_cap_nhat = inspectionsMap[cleanMaKh].ghi_chu;
+          inspectionsMap[cleanMaKh].ghi_chu = '';
+        }
         if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) {
           const curInsp = getCurrentInspector();
           if (curInsp) {
@@ -4330,6 +4372,14 @@ function caiDatCotAnh() {
       }
       if (isWorkgroupOrInspectorName(val)) {
         val = ''; // Tuyệt đối không lấy tên nhóm công tác làm hiện trạng
+        if (deskInput) deskInput.value = '';
+        if (mobInput) mobInput.value = '';
+        if (dSelCond && dSelCond.value === '__custom__') dSelCond.value = '';
+        if (mSelCond && mSelCond.value === '__custom__') mSelCond.value = '';
+        if (inspectionsMap[cleanMaKh] && isWorkgroupOrInspectorName(inspectionsMap[cleanMaKh].ghi_chu)) {
+          if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) inspectionsMap[cleanMaKh].nguoi_cap_nhat = inspectionsMap[cleanMaKh].ghi_chu;
+          inspectionsMap[cleanMaKh].ghi_chu = '';
+        }
       }
 
       const deskUp = document.getElementById(`updater-${cleanMaKh}`);
@@ -4918,7 +4968,7 @@ function caiDatCotAnh() {
                 let danhSo = String(u.danh_so || '').trim();
                 let updater = String(u.nguoi_cap_nhat || '').trim();
                 let inspectDate = String(u.ngay_kiem_tra || '').trim();
-                let note = String(u.ghi_chu || '').trim();
+                let note = String(u.hien_trang || u.ghi_chu || '').trim();
                 let photo = String(u.hinh_anh || u.photo || '').trim();
 
                 const rawStatus = String(u.trang_thai_x || u.trang_thai || '').trim();
@@ -4950,6 +5000,10 @@ function caiDatCotAnh() {
                 if (isWorkgroupOrInspectorName(note)) {
                   if (!updater || updater === idTram) updater = note;
                   note = '';
+                }
+                if (PRESET_CONDITIONS.includes(updater) && !note) {
+                  note = updater;
+                  updater = '';
                 }
 
                 if (isChecked) {
@@ -5009,18 +5063,34 @@ function caiDatCotAnh() {
 
               // Xác định vị trí cột theo schema gCols (Tránh lỗi GViz bỏ cell rỗng khiến số lượng cell trong hàng bị ngắn)
               // Bảng Log_DongBo 10 cột chuẩn:
-              // Col 0: Timestamp | Col 1: Mã KH | Col 2: ID trạm | Col 3: Tên trạm | Col 4: Danh số | Col 5: Người cập nhật / Nhóm
-              // Col 6: Trạng thái (X) | Col 7: Ngày giờ KT | Col 8: Ghi chú / Hiện trạng | Col 9: Ảnh chụp công tơ
+              // Col 0: Timestamp | Col 1: Mã KH | Col 2: ID trạm | Col 3: Tên trạm | Col 4: Danh số
+              // Col 5 (Col F, tiêu đề "Ghi chú"): Luôn là Người cập nhật / Nhóm công tác
+              // Col 6 (Col G): Trạng thái (X) | Col 7 (Col H): Ngày giờ KT
+              // Col 8 (Col I, tiêu đề "Hiện trạng"): Luôn là Hiện trạng công tơ đo đếm
+              // Col 9 (Col J): Ảnh chụp công tơ
               const isOld6Col = (gCols.length <= 6);
               const colIdxMaKh = 1;
               const colIdxIdTram = isOld6Col ? -1 : 2;
               const colIdxTenTram = isOld6Col ? -1 : 3;
               const colIdxDanhSo = isOld6Col ? -1 : 4;
-              const colIdxUpdater = isOld6Col ? 2 : 5; // Cột 5 (Col F) LUÔN LUÔN là Người cập nhật / Nhóm công tác
-              const colIdxTrangThai = isOld6Col ? 3 : 6;
-              const colIdxNgayKt = isOld6Col ? 4 : 7;
-              const colIdxNote = isOld6Col ? 5 : 8;   // Cột 8 (Col I) LUÔN LUÔN là Hiện trạng đo đếm / Ghi chú
-              const colIdxPhoto = isOld6Col ? -1 : (gCols.length >= 10 ? 9 : -1);
+              let colIdxUpdater = isOld6Col ? 2 : 5; // Cột 5 (Col F, "Ghi chú") là Nhóm cập nhật
+              let colIdxTrangThai = isOld6Col ? 3 : 6;
+              let colIdxNgayKt = isOld6Col ? 4 : 7;
+              let colIdxNote = isOld6Col ? 5 : 8;    // Cột 8 (Col I, "Hiện trạng") là Hiện trạng công tơ
+              let colIdxPhoto = isOld6Col ? -1 : (gCols.length >= 10 ? 9 : -1);
+
+              // Tự động kiểm tra khớp theo tiêu đề cột thực tế nếu GViz cung cấp:
+              gCols.forEach((col, idx) => {
+                const lbl = String(col.label || '').toLowerCase().trim();
+                if (lbl === 'hiện trạng' || lbl === 'hien trang') {
+                  colIdxNote = idx;
+                } else if (lbl === 'ghi chú' || lbl === 'ghi chu') {
+                  // Cột "Ghi chú" trên Log_DongBo chứa Nhóm cập nhật
+                  colIdxUpdater = idx;
+                } else if (lbl.indexOf('cán bộ') !== -1 || lbl.indexOf('người') !== -1 || lbl.indexOf('nhóm') !== -1) {
+                  colIdxUpdater = idx;
+                }
+              });
 
               rows.forEach(r => {
                 const cCells = r.c || [];
@@ -5176,8 +5246,14 @@ function caiDatCotAnh() {
         if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
         const wasCompleted = inspectionsMap[ma_kh].trang_thai === 'Đã kiểm tra';
         const curUpdater = inspectionsMap[ma_kh].nguoi_cap_nhat || '';
+        const curNote = inspectionsMap[ma_kh].ghi_chu || '';
+        const isCorruptNote = isWorkgroupOrInspectorName(curNote);
+        const incomingNote = String(item.ghi_chu || '').trim();
         const isNewCheck = !wasCompleted;
-        const isNewInfo = isNewCheck || (item.nguoi_cap_nhat && item.nguoi_cap_nhat !== curUpdater);
+        const isNewInfo = isNewCheck || 
+                          (item.nguoi_cap_nhat && item.nguoi_cap_nhat !== curUpdater) ||
+                          isCorruptNote ||
+                          (incomingNote && incomingNote !== curNote);
         const hasNewPhoto = Boolean(item.hinh_anh && (!inspectionsMap[ma_kh].hinh_anh || inspectionsMap[ma_kh].hinh_anh !== item.hinh_anh));
 
         if (isNewInfo || hasNewPhoto) {
@@ -5186,17 +5262,11 @@ function caiDatCotAnh() {
 
           // BẢO VỆ HIỆN TRẠNG (GHI CHÚ):
           // 1. Tuyệt đối không nhận tên nhóm/cán bộ vào trường ghi chú
-          // 2. Nếu thiết bị này vừa lưu hoặc sửa hiện trạng trong vòng 30 phút -> Ưu tiên giữ hiện trạng của thiết bị, không bị cloud ghi đè
-          const localAge = nowTs - (inspectionsMap[ma_kh].localUpdatedAt || 0);
-          const hasFreshLocalNote = Boolean(inspectionsMap[ma_kh].ghi_chu && localAge < 30 * 60 * 1000 && !isWorkgroupOrInspectorName(inspectionsMap[ma_kh].ghi_chu));
-          const incomingNote = String(item.ghi_chu || '').trim();
-
+          // 2. Nếu incomingNote hợp lệ, cập nhật vào inspectionsMap
+          // 3. Nếu inspectionsMap[ma_kh].ghi_chu dính tên nhóm cũ, xóa sạch ngay
           if (incomingNote && !isWorkgroupOrInspectorName(incomingNote)) {
-            if (!hasFreshLocalNote || !inspectionsMap[ma_kh].ghi_chu) {
-              inspectionsMap[ma_kh].ghi_chu = incomingNote;
-            }
+            inspectionsMap[ma_kh].ghi_chu = incomingNote;
           } else if (isWorkgroupOrInspectorName(inspectionsMap[ma_kh].ghi_chu)) {
-            // Tự động làm sạch nếu dữ liệu cũ còn sót tên nhóm
             if (!inspectionsMap[ma_kh].nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = inspectionsMap[ma_kh].ghi_chu;
             inspectionsMap[ma_kh].ghi_chu = '';
           }
@@ -5238,6 +5308,32 @@ function caiDatCotAnh() {
             if (chk) chk.checked = true;
             const upInput = document.getElementById(`updater-${ma_kh}`);
             if (upInput && item.nguoi_cap_nhat) upInput.value = item.nguoi_cap_nhat;
+            const selUp = document.getElementById(`sel-updater-${ma_kh}`);
+            if (selUp && item.nguoi_cap_nhat) {
+              const isPreset = isPresetInspector(item.nguoi_cap_nhat);
+              selUp.value = isPreset ? getInspectorPresetValue(item.nguoi_cap_nhat) : '__custom__';
+              if (upInput) upInput.style.display = (!isPreset && item.nguoi_cap_nhat) ? 'block' : 'none';
+            }
+
+            // Đồng bộ ô ghi chú / hiện trạng trên DOM
+            const finalNote = inspectionsMap[ma_kh].ghi_chu || '';
+            const noteInput = document.getElementById(`note-${ma_kh}`);
+            const selCond = document.getElementById(`sel-cond-${ma_kh}`);
+            if (noteInput && noteInput.value !== finalNote) noteInput.value = finalNote;
+            if (selCond) {
+              const isPresetCond = PRESET_CONDITIONS.includes(finalNote);
+              const selCondVal = isPresetCond ? finalNote : (finalNote ? '__custom__' : '');
+              if (selCond.value !== selCondVal) selCond.value = selCondVal;
+            }
+            PRESET_CONDITIONS.forEach((cond, cIdx) => {
+              const isTicked = finalNote.includes(cond);
+              const chkItem = document.getElementById(`chk-cond-d-${ma_kh}-${cIdx}`);
+              if (chkItem) {
+                chkItem.checked = isTicked;
+                if (chkItem.parentElement) chkItem.parentElement.classList.toggle('active', isTicked);
+              }
+            });
+
             setTimeout(() => row.classList.remove('row-just-updated'), 3500);
           }
 
@@ -5255,6 +5351,31 @@ function caiDatCotAnh() {
             }
             const mupdater = document.getElementById(`mupdater-${ma_kh}`);
             if (mupdater && item.nguoi_cap_nhat) mupdater.value = item.nguoi_cap_nhat;
+            const mselUp = document.getElementById(`msel-updater-${ma_kh}`);
+            if (mselUp && item.nguoi_cap_nhat) {
+              const isPreset = isPresetInspector(item.nguoi_cap_nhat);
+              mselUp.value = isPreset ? getInspectorPresetValue(item.nguoi_cap_nhat) : '__custom__';
+              if (mupdater) mupdater.style.display = (!isPreset && item.nguoi_cap_nhat) ? 'block' : 'none';
+            }
+
+            const mnote = document.getElementById(`mnote-${ma_kh}`);
+            const mselCond = document.getElementById(`msel-cond-${ma_kh}`);
+            const finalNote = inspectionsMap[ma_kh].ghi_chu || '';
+            if (mnote && mnote.value !== finalNote) mnote.value = finalNote;
+            if (mselCond) {
+              const isPresetCond = PRESET_CONDITIONS.includes(finalNote);
+              const selCondVal = isPresetCond ? finalNote : (finalNote ? '__custom__' : '');
+              if (mselCond.value !== selCondVal) mselCond.value = selCondVal;
+            }
+            PRESET_CONDITIONS.forEach((cond, cIdx) => {
+              const isTicked = finalNote.includes(cond);
+              const chkItem = document.getElementById(`chk-cond-m-${ma_kh}-${cIdx}`);
+              if (chkItem) {
+                chkItem.checked = isTicked;
+                if (chkItem.parentElement) chkItem.parentElement.classList.toggle('active', isTicked);
+              }
+            });
+
             setTimeout(() => card.classList.remove('row-just-updated'), 3500);
           }
         }
