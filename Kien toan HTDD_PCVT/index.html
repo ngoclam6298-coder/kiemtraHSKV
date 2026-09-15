@@ -294,7 +294,7 @@
           <div>
             <div class="live-monitor-title">
               <span>⚡ ĐỒNG BỘ HIỆN TRƯỜNG THỜI GIAN THỰC</span>
-              <span class="live-status-pill online" id="liveStatusPill">🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 10 PHÚT)</span>
+              <span class="live-status-pill online" id="liveStatusPill">🟢 ĐANG KẾT NỐI (TỰ ĐỘNG 15S)</span>
             </div>
             <div class="live-monitor-desc" id="liveMonitorDesc">
               Hôm nay hiện trường đã cập nhật: <strong id="liveCountToday">0</strong> khách hàng &bull; <span id="liveLastActivityText">Đang theo dõi cập nhật mới từ các anh ngoài trạm...</span>
@@ -322,9 +322,6 @@
           </button>
           <button type="button" class="btn-live-ctrl" onclick="openModal('modalSheetGuide')" title="Cài đặt đường link Webhook Google Sheet" style="background: #0284c7; color: #ffffff; font-weight: 700;">
             <span>⚙️ Cài đặt Webhook</span>
-          </button>
-          <button type="button" class="btn-live-ctrl" id="btnToggleIncompleteWarn" onclick="window.PCVT.toggleIncompleteWarning()" title="Bật/Tắt cảnh báo khi lưu thông tin chưa đầy đủ" style="background: #f59e0b; color: #ffffff; font-weight: 700; border-color: #d97706;">
-            <span id="labelToggleIncompleteWarn">⚠️ Cảnh báo: BẬT</span>
           </button>
         </div>
       </div>
@@ -879,48 +876,6 @@
       </div>
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeModal('modalMultiDeviceSync')">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Cảnh Báo Chưa Đầy Đủ Thông Tin Kiểm Tra (1 Ô Duy Nhất - Không Cho Lưu) -->
-  <div class="modal-overlay" id="modalIncompleteWarning" style="z-index: 10050; padding: 12px; align-items: center; justify-content: center;">
-    <div class="modal-container" style="max-width: 520px; width: 100%; border-top: 5px solid #dc2626; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); max-height: 90vh; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; margin: auto;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 0.9rem 1.15rem; flex-shrink: 0; border-bottom: 1px solid #fecaca;">
-        <div class="modal-title" style="color: #991b1b; display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem;">
-          <span style="font-size: 1.25rem;">⚠️</span>
-          <span>CHƯA ĐẦY ĐỦ THÔNG TIN KIỂM TRA</span>
-        </div>
-        <button class="btn-modal-close" onclick="closeModal('modalIncompleteWarning')" style="color: #991b1b;">&times;</button>
-      </div>
-      <div class="modal-body" style="padding: 1rem 1.15rem; overflow-y: auto;">
-        <!-- Customer Info Summary Card -->
-        <div id="incompleteWarnCustomerCard" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 0.9rem; margin-bottom: 0.85rem;">
-          <!-- dynamically filled -->
-        </div>
-
-        <!-- Missing Items Warning List -->
-        <div style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.45rem;">
-          Các thông tin bắt buộc còn thiếu:
-        </div>
-        <div id="incompleteWarnItemsList" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.9rem;">
-          <!-- dynamically filled -->
-        </div>
-
-        <!-- Notice: Cannot save without full info -->
-        <div style="background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #dc2626; padding: 0.75rem 0.9rem; border-radius: 6px; font-size: 0.82rem; color: #991b1b; display: flex; align-items: center; gap: 8px; line-height: 1.4;">
-          <span style="font-size: 1.3rem; flex-shrink: 0;">⛔</span>
-          <div>
-            <strong style="display: block; font-size: 0.85rem; margin-bottom: 2px;">Không thể lưu kết quả kiểm tra!</strong>
-            <span>Quy định kiểm tra bắt buộc phải có đầy đủ <strong>Hiện trạng đo đếm</strong> và <strong>Ảnh chụp công tơ</strong> mới được lưu.</span>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer" style="padding: 0.85rem 1.15rem; background: #f8fafc; border-top: 1px solid #e2e8f0; flex-shrink: 0;">
-        <button type="button" class="btn-incomplete-back" id="btnIncompleteBack" style="width: 100%; padding: 0.85rem 1rem; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3); text-align: center;">
-          <span style="font-size: 1.15rem;">✏️</span>
-          <span>Chưa đầy đủ thông tin kiểm tra, quay lại nhập tiếp</span>
-        </button>
       </div>
     </div>
   </div>
