@@ -172,6 +172,42 @@
     return '__custom__';
   }
 
+  // --- Kiểm tra chuỗi có phải là Tên Nhóm công tác hoặc Cán bộ kiểm tra hay không ---
+  function isWorkgroupOrInspectorName(val) {
+    if (!val) return false;
+    const str = String(val).trim().toLowerCase();
+    if (!str) return false;
+
+    // Các từ khóa đặc trưng của nhóm công tác
+    if (str.includes('nhóm ') || str.includes('trưởng nhóm') || str.includes('tn:') || str.includes('tổ ') || str.includes('+')) {
+      return true;
+    }
+
+    // Khớp với 9 nhóm công tác cài đặt sẵn
+    for (const g of PRESET_WORKGROUPS) {
+      if (
+        str === g.fullName.toLowerCase() ||
+        str === g.name.toLowerCase() ||
+        str === g.shortName.toLowerCase() ||
+        str.includes(g.name.toLowerCase()) ||
+        str.includes(g.leader.toLowerCase()) ||
+        str.includes(g.shortName.toLowerCase())
+      ) {
+        return true;
+      }
+    }
+
+    // Danh sách họ tên các cán bộ kiểm tra
+    const workerNames = [
+      'lưu quang tuấn', 'lê gia quốc trung', 'nguyễn xuân thắng', 'dương thanh bình',
+      'trần văn toàn', 'nguyễn thanh tùng', 'đoàn văn nguyên', 'nguyễn văn bình',
+      'nguyễn hữu mến', 'lê phúc hậu', 'phạm trọng tiến', 'nguyễn văn nguyên',
+      'nguyễn văn đạt', 'nguyễn hữu đức', 'hoàng minh kỳ', 'nguyễn thanh điền',
+      'nguyễn viết hùng', 'nguyễn văn thọ'
+    ];
+    return workerNames.some(w => str.includes(w));
+  }
+
   // --- 12 Hiện trạng hệ thống đo đếm chuẩn (PC Vũng Tàu) ---
   const PRESET_CONDITIONS = [
     'Hoạt động bình thường',
@@ -450,6 +486,10 @@
 
     // 1. Instant local persistence
     if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
+    if (isWorkgroupOrInspectorName(inspectionsMap[ma_kh].ghi_chu)) {
+      if (!inspectionsMap[ma_kh].nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = inspectionsMap[ma_kh].ghi_chu;
+      inspectionsMap[ma_kh].ghi_chu = '';
+    }
     inspectionsMap[ma_kh].localUpdatedAt = Date.now();
     saveLocalInspections();
 
@@ -482,7 +522,7 @@
       trang_thai: insp.trang_thai || 'Chưa kiểm tra',
       trang_thai_x: isCompleted ? 'X' : '',
       ngay_kiem_tra: insp.ngay_kiem_tra || '',
-      ghi_chu: insp.ghi_chu || '',
+      ghi_chu: (!isWorkgroupOrInspectorName(insp.ghi_chu) ? (insp.ghi_chu || '') : ''),
       hinh_anh: insp.hinh_anh || '',
       timestamp: Date.now()
     };
@@ -836,7 +876,22 @@
   function loadLocalInspections() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY_INSPECTIONS);
-      if (stored) inspectionsMap = JSON.parse(stored);
+      if (stored) {
+        inspectionsMap = JSON.parse(stored) || {};
+        // Tự động làm sạch các bản ghi bị lưu nhầm tên nhóm/cán bộ vào ô hiện trạng (ghi_chu)
+        let cleaned = false;
+        Object.keys(inspectionsMap).forEach(k => {
+          const item = inspectionsMap[k];
+          if (item && item.ghi_chu && isWorkgroupOrInspectorName(item.ghi_chu)) {
+            if (!item.nguoi_cap_nhat) item.nguoi_cap_nhat = item.ghi_chu;
+            item.ghi_chu = '';
+            cleaned = true;
+          }
+        });
+        if (cleaned) {
+          saveLocalInspections();
+        }
+      }
     } catch (e) {
       console.warn('Could not parse local inspections:', e);
       inspectionsMap = {};
@@ -845,6 +900,14 @@
 
   function saveLocalInspections() {
     try {
+      // Đảm bảo không bao giờ lưu tên nhóm vào ô ghi_chu / hiện trạng
+      Object.keys(inspectionsMap).forEach(k => {
+        const item = inspectionsMap[k];
+        if (item && item.ghi_chu && isWorkgroupOrInspectorName(item.ghi_chu)) {
+          if (!item.nguoi_cap_nhat) item.nguoi_cap_nhat = item.ghi_chu;
+          item.ghi_chu = '';
+        }
+      });
       localStorage.setItem(STORAGE_KEY_INSPECTIONS, JSON.stringify(inspectionsMap));
     } catch (e) {
       console.error('LocalStorage error:', e);
@@ -1444,7 +1507,10 @@
         `;
 
       // Chuẩn bị thanh xổ xuống hiện trạng (12 mục chuẩn)
-      const currentNote = (insp.ghi_chu || '').trim();
+      let currentNote = (insp.ghi_chu || '').trim();
+      if (isWorkgroupOrInspectorName(currentNote)) {
+        currentNote = '';
+      }
       let conditionOptions = `<option value="">-- Chọn hiện trạng đo đếm (12 mục) --</option>`;
       PRESET_CONDITIONS.forEach((cond, cIdx) => {
         const isSelected = (currentNote === cond);
@@ -2113,6 +2179,10 @@ function doPost(e) {
     var nguoiCapNhat = String(data.nguoi_cap_nhat || '').trim();
     var trangThaiX = (data.trang_thai === 'Đã kiểm tra' || data.trang_thai_x === 'X') ? 'X' : '';
     var ghiChu = String(data.ghi_chu || '').trim();
+    if (ghiChu && (ghiChu.indexOf('Nhóm') !== -1 || ghiChu.indexOf('nhóm') !== -1 || ghiChu.indexOf('Trưởng nhóm') !== -1 || ghiChu.indexOf('+') !== -1)) {
+      if (!nguoiCapNhat) nguoiCapNhat = ghiChu;
+      ghiChu = '';
+    }
     var ngayKT = data.ngay_kiem_tra || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm");
     var photoUrl = String(data.hinh_anh || data.photo || '').trim();
 
@@ -2313,8 +2383,19 @@ function doGet(e) {
       }
       if (idxNgay === -1) idxNgay = (data[0].length >= 9 ? 7 : 4);
 
-      var idxGhiChu = headers.indexOf('ghi chú');
-      if (idxGhiChu === -1) idxGhiChu = (data[0].length >= 9 ? 8 : 5);
+      var idxGhiChu = -1;
+      for (var hg = 0; hg < headers.length; hg++) {
+        if (headers[hg].indexOf('hiện trạng') !== -1 || headers[hg].indexOf('hien trang') !== -1) {
+          idxGhiChu = hg;
+          break;
+        }
+      }
+      if (idxGhiChu === -1) {
+        idxGhiChu = (data[0].length >= 9 ? 8 : 5);
+      }
+      if (idxGhiChu === 5 && data[0].length >= 9) {
+        idxGhiChu = 8;
+      }
 
       var idxHinhAnh = -1;
       for (var hx = 0; hx < headers.length; hx++) {
@@ -2333,16 +2414,23 @@ function doGet(e) {
         if (since === 0 || rowTime > since) {
           var uMaKh = String(data[i][idxMaKh] || '').trim();
           if (uMaKh) {
+            var rawNote = idxGhiChu !== -1 ? String(data[i][idxGhiChu] || '').trim() : '';
+            var rawUpdater = String(data[i][idxNguoi] || '').trim();
+            if (rawNote && (rawNote.indexOf('Nhóm') !== -1 || rawNote.indexOf('nhóm') !== -1 || rawNote.indexOf('Trưởng nhóm') !== -1 || rawNote.indexOf('+') !== -1)) {
+              if (!rawUpdater) rawUpdater = rawNote;
+              rawNote = '';
+            }
+
             updates.push({
               timestamp: rowTime,
               ma_kh: uMaKh,
               id_tram: idxIdTram !== -1 ? String(data[i][idxIdTram] || '').trim() : '',
               ten_tram: idxTenTram !== -1 ? String(data[i][idxTenTram] || '').trim() : '',
               danh_so: idxDanhSo !== -1 ? String(data[i][idxDanhSo] || '').trim() : '',
-              nguoi_cap_nhat: String(data[i][idxNguoi] || '').trim(),
+              nguoi_cap_nhat: rawUpdater,
               trang_thai_x: String(data[i][idxTrangThai] || 'X').trim(),
               ngay_kiem_tra: idxNgay !== -1 ? String(data[i][idxNgay] || '').trim() : '',
-              ghi_chu: idxGhiChu !== -1 ? String(data[i][idxGhiChu] || '').trim() : '',
+              ghi_chu: rawNote,
               hinh_anh: idxHinhAnh !== -1 ? String(data[i][idxHinhAnh] || '').trim() : ''
             });
           }
@@ -3693,7 +3781,24 @@ function caiDatCotAnh() {
     // 1. Ghi chú / Hiện trạng đo đếm
     const deskInput = document.getElementById(`note-${cleanMaKh}`);
     const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
-    const noteVal = ((deskInput && deskInput.value) || (mobInput && mobInput.value) || insp.ghi_chu || '').trim();
+    const dSelCond = document.getElementById(`sel-cond-${cleanMaKh}`);
+    const mSelCond = document.getElementById(`msel-cond-${cleanMaKh}`);
+    const isMobile = window.innerWidth < 1200;
+    let noteVal = isMobile
+      ? ((mobInput && mobInput.value) || (deskInput && deskInput.value) || '')
+      : ((deskInput && deskInput.value) || (mobInput && mobInput.value) || '');
+
+    if (!noteVal) {
+      const selCondVal = isMobile ? (mSelCond && mSelCond.value) : (dSelCond && dSelCond.value);
+      if (selCondVal && selCondVal !== '__custom__') noteVal = selCondVal;
+    }
+    if (!noteVal && insp.ghi_chu) {
+      noteVal = insp.ghi_chu;
+    }
+
+    if (isWorkgroupOrInspectorName(noteVal)) {
+      noteVal = ''; // Tên cán bộ/nhóm công tác không phải là hiện trạng đo đếm!
+    }
 
     // 2. Ảnh công tơ hiện trường
     const hasPhoto = !!(insp.hinh_anh || insp.link_anh || customer.link_anh);
@@ -4025,6 +4130,7 @@ function caiDatCotAnh() {
 
     toggleConditionCheck: function(ma_kh, cond, isChecked) {
       let currentVal = (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].ghi_chu) || '';
+      if (isWorkgroupOrInspectorName(currentVal)) currentVal = '';
       let items = currentVal ? currentVal.split(/;\s*|,\s*/).map(s => s.trim()).filter(Boolean) : [];
 
       if (isChecked) {
@@ -4043,6 +4149,9 @@ function caiDatCotAnh() {
     updateNote: function(ma_kh, value) {
       if (!inspectionsMap[ma_kh]) inspectionsMap[ma_kh] = {};
       const trimmed = (value || '').trim();
+      if (isWorkgroupOrInspectorName(trimmed)) {
+        return; // Tuyệt đối không cho phép ghi đè tên nhóm/cán bộ vào ô hiện trạng
+      }
       inspectionsMap[ma_kh].ghi_chu = trimmed;
       syncItemImmediately(ma_kh);
 
@@ -4104,6 +4213,7 @@ function caiDatCotAnh() {
 
     addTagNote: function(ma_kh, tagText) {
       let currentVal = (inspectionsMap[ma_kh] && inspectionsMap[ma_kh].ghi_chu) || '';
+      if (isWorkgroupOrInspectorName(currentVal)) currentVal = '';
       if (currentVal) {
         if (!currentVal.includes(tagText)) {
           currentVal = `${currentVal}; ${tagText}`;
@@ -4202,11 +4312,46 @@ function caiDatCotAnh() {
       const cleanMaKh = String(ma_kh || '').trim();
       const deskInput = document.getElementById(`note-${cleanMaKh}`);
       const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
-      const val = (deskInput && deskInput.value) || (mobInput && mobInput.value) || '';
+      const dSelCond = document.getElementById(`sel-cond-${cleanMaKh}`);
+      const mSelCond = document.getElementById(`msel-cond-${cleanMaKh}`);
+      const isMobile = window.innerWidth < 1200;
+
+      // Ưu tiên lấy từ input trên giao diện đang hiển thị (mobile hoặc desktop)
+      let val = isMobile 
+        ? ((mobInput && mobInput.value) || (deskInput && deskInput.value) || '')
+        : ((deskInput && deskInput.value) || (mobInput && mobInput.value) || '');
+
+      if (!val) {
+        const selCondVal = isMobile ? (mSelCond && mSelCond.value) : (dSelCond && dSelCond.value);
+        if (selCondVal && selCondVal !== '__custom__') val = selCondVal;
+      }
+      if (!val && inspectionsMap[cleanMaKh] && inspectionsMap[cleanMaKh].ghi_chu) {
+        val = inspectionsMap[cleanMaKh].ghi_chu;
+      }
+      if (isWorkgroupOrInspectorName(val)) {
+        val = ''; // Tuyệt đối không lấy tên nhóm công tác làm hiện trạng
+      }
 
       const deskUp = document.getElementById(`updater-${cleanMaKh}`);
       const mobUp = document.getElementById(`mupdater-${cleanMaKh}`);
-      const upVal = (deskUp && deskUp.value) || (mobUp && mobUp.value) || '';
+      const deskSel = document.getElementById(`sel-updater-${cleanMaKh}`);
+      const mobSel = document.getElementById(`msel-updater-${cleanMaKh}`);
+
+      let upVal = isMobile
+        ? ((mobUp && mobUp.value) || (deskUp && deskUp.value) || '')
+        : ((deskUp && deskUp.value) || (mobUp && mobUp.value) || '');
+
+      if (!upVal) {
+        const selVal = isMobile ? (mobSel && mobSel.value) : (deskSel && deskSel.value);
+        if (selVal && selVal !== '__custom__') upVal = selVal;
+      }
+      if (!upVal && inspectionsMap[cleanMaKh] && inspectionsMap[cleanMaKh].nguoi_cap_nhat) {
+        upVal = inspectionsMap[cleanMaKh].nguoi_cap_nhat;
+      }
+      if (!upVal) {
+        const curInsp = getCurrentInspector();
+        if (curInsp) upVal = curInsp;
+      }
 
       // Kiểm tra thông tin bắt buộc trước khi lưu (Không đầy đủ KHÔNG CHO LƯU)
       const check = checkInspectionIncomplete(cleanMaKh);
@@ -4221,8 +4366,17 @@ function caiDatCotAnh() {
 
     executeFullSave: function(cleanMaKh, val, upVal) {
       if (!inspectionsMap[cleanMaKh]) inspectionsMap[cleanMaKh] = {};
-      inspectionsMap[cleanMaKh].ghi_chu = val;
-      if (upVal) {
+      
+      // Bảo vệ ghi_chu không bao giờ bị ghi đè tên nhóm công tác vào
+      if (!isWorkgroupOrInspectorName(val)) {
+        inspectionsMap[cleanMaKh].ghi_chu = val;
+      } else if (inspectionsMap[cleanMaKh].ghi_chu && !isWorkgroupOrInspectorName(inspectionsMap[cleanMaKh].ghi_chu)) {
+        // Giữ lại hiện trạng hợp lệ đã có
+      } else {
+        inspectionsMap[cleanMaKh].ghi_chu = '';
+      }
+
+      if (upVal && upVal.trim()) {
         inspectionsMap[cleanMaKh].nguoi_cap_nhat = upVal.trim();
       } else if (!inspectionsMap[cleanMaKh].nguoi_cap_nhat) {
         const curInsp = getCurrentInspector();
@@ -4237,6 +4391,19 @@ function caiDatCotAnh() {
         inspectionsMap[cleanMaKh].ngay_kiem_tra = timeStr;
       }
       inspectionsMap[cleanMaKh].localUpdatedAt = Date.now();
+
+      // Cập nhật DOM các ô input / select hiện trạng ngay lập tức
+      const deskInput = document.getElementById(`note-${cleanMaKh}`);
+      const mobInput = document.getElementById(`mnote-${cleanMaKh}`);
+      const dSelCond = document.getElementById(`sel-cond-${cleanMaKh}`);
+      const mSelCond = document.getElementById(`msel-cond-${cleanMaKh}`);
+      const currentFinalNote = inspectionsMap[cleanMaKh].ghi_chu || '';
+      if (deskInput && deskInput.value !== currentFinalNote) deskInput.value = currentFinalNote;
+      if (mobInput && mobInput.value !== currentFinalNote) mobInput.value = currentFinalNote;
+      const isPreset = PRESET_CONDITIONS.includes(currentFinalNote);
+      const selVal = isPreset ? currentFinalNote : (currentFinalNote ? '__custom__' : '');
+      if (dSelCond && dSelCond.value !== selVal) dSelCond.value = selVal;
+      if (mSelCond && mSelCond.value !== selVal) mSelCond.value = selVal;
 
       renderKPIs();
       renderStationBanner();
@@ -4779,6 +4946,12 @@ function caiDatCotAnh() {
                   isChecked = true;
                 }
 
+                // Vệ sinh tuyệt đối: Nếu note chứa tên cán bộ / nhóm công tác thì xóa ngay và chuyển vào updater nếu updater trống
+                if (isWorkgroupOrInspectorName(note)) {
+                  if (!updater || updater === idTram) updater = note;
+                  note = '';
+                }
+
                 if (isChecked) {
                   sheetCheckedMap.set(u.ma_kh, {
                     ma_kh: u.ma_kh,
@@ -4833,50 +5006,45 @@ function caiDatCotAnh() {
             } else {
               const rows = (gData.table && gData.table.rows) || [];
               isConnected = true;
+
+              // Xác định vị trí cột theo schema gCols (Tránh lỗi GViz bỏ cell rỗng khiến số lượng cell trong hàng bị ngắn)
+              // Bảng Log_DongBo 10 cột chuẩn:
+              // Col 0: Timestamp | Col 1: Mã KH | Col 2: ID trạm | Col 3: Tên trạm | Col 4: Danh số | Col 5: Người cập nhật / Nhóm
+              // Col 6: Trạng thái (X) | Col 7: Ngày giờ KT | Col 8: Ghi chú / Hiện trạng | Col 9: Ảnh chụp công tơ
+              const isOld6Col = (gCols.length <= 6);
+              const colIdxMaKh = 1;
+              const colIdxIdTram = isOld6Col ? -1 : 2;
+              const colIdxTenTram = isOld6Col ? -1 : 3;
+              const colIdxDanhSo = isOld6Col ? -1 : 4;
+              const colIdxUpdater = isOld6Col ? 2 : 5; // Cột 5 (Col F) LUÔN LUÔN là Người cập nhật / Nhóm công tác
+              const colIdxTrangThai = isOld6Col ? 3 : 6;
+              const colIdxNgayKt = isOld6Col ? 4 : 7;
+              const colIdxNote = isOld6Col ? 5 : 8;   // Cột 8 (Col I) LUÔN LUÔN là Hiện trạng đo đếm / Ghi chú
+              const colIdxPhoto = isOld6Col ? -1 : (gCols.length >= 10 ? 9 : -1);
+
               rows.forEach(r => {
                 const cCells = r.c || [];
-                const rawVals = cCells.map(c => (c && c.v != null) ? String(c.v).trim() : '');
-                let ma_kh = '';
-                let id_tram = '';
-                let ten_tram = '';
-                let danh_so = '';
-                let nguoi_cap_nhat = '';
-                let trang_thai = '';
-                let ngay_kt = '';
-                let ghi_chu = '';
-                let hinh_anh = '';
+                const getCell = (idx) => (idx >= 0 && idx < cCells.length && cCells[idx] && cCells[idx].v != null) ? String(cCells[idx].v).trim() : '';
 
-                if (rawVals.length >= 10) {
-                  // Định dạng 10 cột chuẩn: Timestamp, Mã KH, ID trạm, Tên trạm, Mã danh số, Người cập nhật, Trạng thái, Ngày KT, Ghi chú, Ảnh chụp công tơ
-                  ma_kh = rawVals[1];
-                  id_tram = rawVals[2];
-                  ten_tram = rawVals[3];
-                  danh_so = rawVals[4];
-                  nguoi_cap_nhat = rawVals[5];
-                  trang_thai = rawVals[6];
-                  ngay_kt = rawVals[7];
-                  ghi_chu = rawVals[8];
-                  hinh_anh = rawVals[9];
-                } else if (rawVals.length >= 9) {
-                  // Định dạng 9 cột chuẩn
-                  ma_kh = rawVals[1];
-                  id_tram = rawVals[2];
-                  ten_tram = rawVals[3];
-                  danh_so = rawVals[4];
-                  nguoi_cap_nhat = rawVals[5];
-                  trang_thai = rawVals[6];
-                  ngay_kt = rawVals[7];
-                  ghi_chu = rawVals[8];
-                } else if (rawVals.length >= 4) {
-                  // Định dạng 6 cột cũ
-                  ma_kh = rawVals[1];
-                  nguoi_cap_nhat = rawVals[2];
-                  trang_thai = rawVals[3];
-                  ngay_kt = rawVals[4] || '';
-                  ghi_chu = rawVals[5] || '';
+                const ma_kh = getCell(colIdxMaKh);
+                if (!ma_kh) return;
+
+                let id_tram = colIdxIdTram !== -1 ? getCell(colIdxIdTram) : '';
+                let ten_tram = colIdxTenTram !== -1 ? getCell(colIdxTenTram) : '';
+                let danh_so = colIdxDanhSo !== -1 ? getCell(colIdxDanhSo) : '';
+                let nguoi_cap_nhat = getCell(colIdxUpdater);
+                let trang_thai = getCell(colIdxTrangThai);
+                let ngay_kt = getCell(colIdxNgayKt);
+                let ghi_chu = colIdxNote !== -1 ? getCell(colIdxNote) : '';
+                let hinh_anh = colIdxPhoto !== -1 ? getCell(colIdxPhoto) : '';
+
+                // Làm sạch tuyệt đối: Nếu ghi_chu vô tình là tên nhóm/cán bộ công tác (do lệch cột hoặc ghi đè nhầm trước đó)
+                if (isWorkgroupOrInspectorName(ghi_chu)) {
+                  if (!nguoi_cap_nhat) nguoi_cap_nhat = ghi_chu;
+                  ghi_chu = '';
                 }
 
-                if (ma_kh && (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra')) {
+                if (trang_thai.toUpperCase() === 'X' || trang_thai === 'Đã kiểm tra' || trang_thai.toLowerCase() === 'da kiem tra') {
                   sheetCheckedMap.set(ma_kh, {
                     ma_kh: ma_kh,
                     id_tram: id_tram,
@@ -5015,7 +5183,24 @@ function caiDatCotAnh() {
         if (isNewInfo || hasNewPhoto) {
           inspectionsMap[ma_kh].trang_thai = 'Đã kiểm tra';
           if (item.nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = item.nguoi_cap_nhat;
-          if (item.ghi_chu) inspectionsMap[ma_kh].ghi_chu = item.ghi_chu;
+
+          // BẢO VỆ HIỆN TRẠNG (GHI CHÚ):
+          // 1. Tuyệt đối không nhận tên nhóm/cán bộ vào trường ghi chú
+          // 2. Nếu thiết bị này vừa lưu hoặc sửa hiện trạng trong vòng 30 phút -> Ưu tiên giữ hiện trạng của thiết bị, không bị cloud ghi đè
+          const localAge = nowTs - (inspectionsMap[ma_kh].localUpdatedAt || 0);
+          const hasFreshLocalNote = Boolean(inspectionsMap[ma_kh].ghi_chu && localAge < 30 * 60 * 1000 && !isWorkgroupOrInspectorName(inspectionsMap[ma_kh].ghi_chu));
+          const incomingNote = String(item.ghi_chu || '').trim();
+
+          if (incomingNote && !isWorkgroupOrInspectorName(incomingNote)) {
+            if (!hasFreshLocalNote || !inspectionsMap[ma_kh].ghi_chu) {
+              inspectionsMap[ma_kh].ghi_chu = incomingNote;
+            }
+          } else if (isWorkgroupOrInspectorName(inspectionsMap[ma_kh].ghi_chu)) {
+            // Tự động làm sạch nếu dữ liệu cũ còn sót tên nhóm
+            if (!inspectionsMap[ma_kh].nguoi_cap_nhat) inspectionsMap[ma_kh].nguoi_cap_nhat = inspectionsMap[ma_kh].ghi_chu;
+            inspectionsMap[ma_kh].ghi_chu = '';
+          }
+
           if (hasNewPhoto) {
             inspectionsMap[ma_kh].hinh_anh = item.hinh_anh;
             updatePhotoCellInDOM(ma_kh, item.hinh_anh);
@@ -5275,8 +5460,12 @@ function caiDatCotAnh() {
       if (!inc) return;
 
       const isCompleted = (inc.t === 'X' || inc.trang_thai === 'Đã kiểm tra' || inc.trang_thai_x === 'X');
-      const updater = inc.u || inc.nguoi_cap_nhat || '';
-      const note = inc.n || inc.ghi_chu || '';
+      let updater = inc.u || inc.nguoi_cap_nhat || '';
+      let note = inc.n || inc.ghi_chu || '';
+      if (isWorkgroupOrInspectorName(note)) {
+        if (!updater) updater = note;
+        note = '';
+      }
       const date = inc.d || inc.ngay_kiem_tra || dateStr;
       const photo = inc.img || inc.hinh_anh || '';
 
@@ -5296,7 +5485,11 @@ function caiDatCotAnh() {
         const wasCompleted = (inspectionsMap[maKh].trang_thai === 'Đã kiểm tra');
         if (isCompleted) inspectionsMap[maKh].trang_thai = 'Đã kiểm tra';
         if (updater) inspectionsMap[maKh].nguoi_cap_nhat = updater;
-        if (note) inspectionsMap[maKh].ghi_chu = note;
+        if (note && !isWorkgroupOrInspectorName(note)) {
+          inspectionsMap[maKh].ghi_chu = note;
+        } else if (isWorkgroupOrInspectorName(inspectionsMap[maKh].ghi_chu)) {
+          inspectionsMap[maKh].ghi_chu = '';
+        }
         if (!inspectionsMap[maKh].ngay_kiem_tra && date) inspectionsMap[maKh].ngay_kiem_tra = date;
         if (photo) {
           inspectionsMap[maKh].hinh_anh = photo;
