@@ -53,7 +53,7 @@
   let currentStationFilter = '';   // Selected station ID
   let currentAreaFilter = '';      // Selected Area
   let currentConditionFilter = ''; // Selected condition filter (Hiện trạng đo đếm 12 mục)
-  let currentAssignedGroupFilter = ''; // '' | 'unassigned' | 'group_1' ... 'group_9'
+  let currentAssignedGroupFilter = ''; // '' | 'unassigned' | 'group_1' ... 'group_17'
   let currentStatusFilter = 'all'; // 'all' | 'pending' | 'completed'
   let currentSearchKeyword = '';   // Free text search
   let currentPage = 1;
@@ -73,7 +73,7 @@
   let liveActivityLog = [];        // Dòng thời gian các KH vừa kiểm tra ngoài hiện trường
   let lastLivePollTimestamp = 0;   // Dấu thời gian quét gần nhất
 
-  // --- 9 Nhóm công tác kiểm tra hệ thống đo đếm (PC Vũng Tàu) chuẩn theo ảnh mẫu ---
+  // --- 17 Nhóm công tác kiểm tra hệ thống đo đếm (PC Vũng Tàu) chuẩn theo danh sách phân công ---
   const PRESET_WORKGROUPS = [
     {
       id: 'group_1',
@@ -146,6 +146,70 @@
       leader: 'Nguyễn Hữu Mến',
       shortName: 'Mến + Hậu',
       fullName: 'Nguyễn Hữu Mến + Lê Phúc Hậu (Trưởng nhóm: Nguyễn Hữu Mến)'
+    },
+    {
+      id: 'group_10',
+      index: 10,
+      name: 'Trương Xuân Hải + Trịnh Thế Vỹ',
+      leader: 'Trương Xuân Hải',
+      shortName: 'Hải + Vỹ',
+      fullName: 'Trương Xuân Hải + Trịnh Thế Vỹ (Trưởng nhóm: Trương Xuân Hải)'
+    },
+    {
+      id: 'group_11',
+      index: 11,
+      name: 'Nguyễn Đăng Huy + Trần Trung Hiếu',
+      leader: 'Nguyễn Đăng Huy',
+      shortName: 'Huy + Hiếu',
+      fullName: 'Nguyễn Đăng Huy + Trần Trung Hiếu (Trưởng nhóm: Nguyễn Đăng Huy)'
+    },
+    {
+      id: 'group_12',
+      index: 12,
+      name: 'Nguyễn Văn Hiệp + Huỳnh Tấn Mai',
+      leader: 'Nguyễn Văn Hiệp',
+      shortName: 'Hiệp + Mai',
+      fullName: 'Nguyễn Văn Hiệp + Huỳnh Tấn Mai (Trưởng nhóm: Nguyễn Văn Hiệp)'
+    },
+    {
+      id: 'group_13',
+      index: 13,
+      name: 'Nguyễn Ngọc Phước + Ngô Thanh Hải',
+      leader: 'Nguyễn Ngọc Phước',
+      shortName: 'Phước + Hải',
+      fullName: 'Nguyễn Ngọc Phước + Ngô Thanh Hải (Trưởng nhóm: Nguyễn Ngọc Phước)'
+    },
+    {
+      id: 'group_14',
+      index: 14,
+      name: 'Nguyễn Đức Luận + Trần Huy Phong',
+      leader: 'Nguyễn Đức Luận',
+      shortName: 'Luận + Phong',
+      fullName: 'Nguyễn Đức Luận + Trần Huy Phong (Trưởng nhóm: Nguyễn Đức Luận)'
+    },
+    {
+      id: 'group_15',
+      index: 15,
+      name: 'Nguyễn Văn Biên + Đặng Quốc Phương',
+      leader: 'Nguyễn Văn Biên',
+      shortName: 'Biên + Phương',
+      fullName: 'Nguyễn Văn Biên + Đặng Quốc Phương (Trưởng nhóm: Nguyễn Văn Biên)'
+    },
+    {
+      id: 'group_16',
+      index: 16,
+      name: 'Nguyễn Xuân Nhân + Đoàn Văn Chính',
+      leader: 'Nguyễn Xuân Nhân',
+      shortName: 'Nhân + Chính',
+      fullName: 'Nguyễn Xuân Nhân + Đoàn Văn Chính (Trưởng nhóm: Nguyễn Xuân Nhân)'
+    },
+    {
+      id: 'group_17',
+      index: 17,
+      name: 'Lý Hồng Hải + Lưu Quang Tuấn',
+      leader: 'Lý Hồng Hải',
+      shortName: 'Hải + Tuấn',
+      fullName: 'Lý Hồng Hải + Lưu Quang Tuấn (Trưởng nhóm: Lý Hồng Hải)'
     }
   ];
 
@@ -233,7 +297,14 @@
       'trần văn toàn', 'nguyễn thanh tùng', 'đoàn văn nguyên', 'nguyễn văn bình',
       'nguyễn hữu mến', 'lê phúc hậu', 'phạm trọng tiến', 'nguyễn văn nguyên',
       'nguyễn văn đạt', 'nguyễn hữu đức', 'hoàng minh kỳ', 'nguyễn thanh điền',
-      'nguyễn viết hùng', 'nguyễn văn thọ'
+      'nguyễn viết hùng', 'nguyễn văn thọ', 'phạm duy phương', 'nguyễn thế viện',
+      'nguyễn kim linh', 'nguyễn đức thành', 'nguyễn ngọc kỳ', 'huỳnh tấn phát',
+      'nguyễn trọng hải', 'nguyễn văn thành',
+      // Cán bộ Nhóm 10 - 17
+      'trương xuân hải', 'trịnh thế vỹ', 'nguyễn đăng huy', 'trần trung hiếu',
+      'nguyễn văn hiệp', 'huỳnh tấn mai', 'nguyễn ngọc phước', 'ngô thanh hải',
+      'nguyễn đức luận', 'trần huy phong', 'nguyễn văn biên', 'đặng quốc phương',
+      'nguyễn xuân nhân', 'đoàn văn chính', 'lý hồng hải'
     ];
     return workerNames.some(w => str.includes(w));
   }
@@ -728,6 +799,7 @@
       console.warn('URL params parsing notice:', e);
     }
 
+    populateWorkgroupSelects();
     initEventListeners();
     loadStationAssignments();
     await loadInitialData();
@@ -3279,8 +3351,40 @@ function caiDatCotAnh() {
     sel.innerHTML = html;
   }
 
+  function populateWorkgroupSelects() {
+    // 1. Dropdown chọn nhóm ở Bước 1 Giao việc trạm (Modal)
+    const assignSel = document.getElementById('assignGroupSelect');
+    if (assignSel) {
+      const curVal = assignSel.value;
+      let html = '';
+      PRESET_WORKGROUPS.forEach(g => {
+        html += `<option value="${g.id}">Nhóm ${g.index}: ${escapeHTML(g.name)} (TN: ${escapeHTML(g.leader)})</option>`;
+      });
+      assignSel.innerHTML = html;
+      if (curVal && PRESET_WORKGROUPS.some(g => g.id === curVal)) {
+        assignSel.value = curVal;
+      }
+    }
+
+    // 2. Dropdown chọn nhóm ở thanh công cụ đầu trang (Thực hiện đi bấm)
+    const inspSel = document.getElementById('selectInspectorPreset');
+    if (inspSel) {
+      const curVal = inspSel.value;
+      let html = `<option value="">-- Chọn nhóm công tác kiểm tra --</option>`;
+      PRESET_WORKGROUPS.forEach(g => {
+        html += `<option value="${escapeHTML(g.fullName)}">Nhóm ${g.index}: ${escapeHTML(g.name)} (TN: ${escapeHTML(g.leader)})</option>`;
+      });
+      html += `<option value="__custom__">✏️ Khác (Tự nhập tên)...</option>`;
+      inspSel.innerHTML = html;
+      if (curVal) {
+        inspSel.value = curVal;
+      }
+    }
+  }
+
   function openStationAssignmentModal(preselectedGroupId) {
     openModal('modalStationAssignment');
+    populateWorkgroupSelects();
     currentAssignModalSearch = '';
     selectedAssignStations.clear();
     cachedStationCustStats = null;
