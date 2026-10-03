@@ -348,27 +348,60 @@ function getAllData() {
         const soLuongHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(row[map.so_luong_hoan_thanh - 1]) : 0;
         const xoa = map.xoa > 0 ? parseNonNegativeInt(row[map.xoa - 1]) : 0;
         const trangThaiRaw = map.trang_thai > 0 ? String(row[map.trang_thai - 1] || "").trim() : "";
-        const trangThai = trangThaiRaw === "Hoàn thành" ? "Hoàn thành" : "Chưa hoàn thành";
-        const ngayHoanThanh = map.ngay_hoan_thanh > 0 ? formatDateVN(row[map.ngay_hoan_thanh - 1]) : "";
-        const khuVuc = map.khu_vuc > 0 ? String(row[map.khu_vuc - 1] || "").trim() : t.name;
+        const isHoanThanh = (trangThaiRaw === "Hoàn thành");
+        const trangThai = isHoanThanh ? "Hoàn thành" : "Chưa hoàn thành";
 
         let isLocked = false;
         let soLanSua = 0;
+        let soLuongHoanThanh = 0;
+        let xoa = 0;
+        let ngayHoanThanh = "";
+        let nguoiNhap = "";
+        let thoiGianNhap = "";
 
-        if (trangThai === "Hoàn thành") {
+        if (isHoanThanh) {
+          soLuongHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(row[map.so_luong_hoan_thanh - 1]) : 0;
+          xoa = map.xoa > 0 ? parseNonNegativeInt(row[map.xoa - 1]) : 0;
+          ngayHoanThanh = map.ngay_hoan_thanh > 0 ? formatDateVN(row[map.ngay_hoan_thanh - 1]) : "";
           if (map.khoa > 0) {
             const lockVal = row[map.khoa - 1];
             isLocked = lockVal === true || String(lockVal).toUpperCase() === "TRUE";
           }
           soLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(row[map.so_lan_sua - 1]) : 0;
+          nguoiNhap = map.nguoi_nhap > 0 ? String(row[map.nguoi_nhap - 1] || "").trim() : "";
+          thoiGianNhap = map.thoi_gian_nhap > 0 ? formatDateVN(row[map.thoi_gian_nhap - 1]) : "";
         } else {
-          // Trạng thái Chưa hoàn thành luôn ở trạng thái CHƯA LƯU ban đầu (không khóa, số lần sửa = 0)
+          // Trạng thái Chưa hoàn thành: Trả lại trạng thái ban đầu (Mở khóa, số lần sửa = 0, ô người nhập để trống)
           isLocked = false;
           soLanSua = 0;
+          soLuongHoanThanh = 0;
+          xoa = 0;
+          ngayHoanThanh = "";
+          nguoiNhap = "";
+          thoiGianNhap = "";
+
+          // Tự động xóa sạch các giá trị thừa trong Sheet nếu dòng này chưa hoàn thành nhưng có rác từ phiên bản cũ
+          const hasResidual = (map.so_luong_hoan_thanh > 0 && row[map.so_luong_hoan_thanh - 1] !== "") ||
+                              (map.xoa > 0 && row[map.xoa - 1] !== "") ||
+                              (map.khoa > 0 && row[map.khoa - 1] !== "") ||
+                              (map.so_lan_sua > 0 && row[map.so_lan_sua - 1] !== "") ||
+                              (map.nguoi_nhap > 0 && row[map.nguoi_nhap - 1] !== "") ||
+                              (map.thoi_gian_nhap > 0 && row[map.thoi_gian_nhap - 1] !== "") ||
+                              (map.trang_thai > 0 && row[map.trang_thai - 1] !== "");
+          if (hasResidual) {
+            try {
+              if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).clearContent();
+              if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).clearContent();
+              if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).clearContent();
+              if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).clearContent();
+              if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).clearContent();
+              if (map.so_lan_sua > 0) sheet.getRange(rowIndex, map.so_lan_sua).clearContent();
+              if (map.nguoi_nhap > 0) sheet.getRange(rowIndex, map.nguoi_nhap).clearContent();
+              if (map.thoi_gian_nhap > 0) sheet.getRange(rowIndex, map.thoi_gian_nhap).clearContent();
+            } catch (clearErr) {}
+          }
         }
 
-        const nguoiNhap = map.nguoi_nhap > 0 ? String(row[map.nguoi_nhap - 1] || "").trim() : "";
-        const thoiGianNhap = map.thoi_gian_nhap > 0 ? formatDateVN(row[map.thoi_gian_nhap - 1]) : "";
         const conLai = tong - soLuongHoanThanh - xoa;
 
         totalVolume += tong;
@@ -402,17 +435,26 @@ function getAllData() {
       }
     }
 
+    const totalStations = teamStations.length;
+    const completedStationsCount = teamStations.filter(s => s.trang_thai === "Hoàn thành").length;
     const remainingVolume = totalVolume - completedVolume - deletedVolume;
+
+    // TỈ LỆ % THỰC HIỆN TÍNH THEO % SỐ LƯỢNG TRẠM THỰC HIỆN
+    const progressPercent = totalStations > 0 
+      ? Math.round((completedStationsCount / totalStations) * 1000) / 10 
+      : 0;
+
     teamStats[t.key] = {
       key: t.key,
       name: t.name,
       sheetName: sheetName,
-      totalStations: teamStations.length,
+      totalStations: totalStations,
+      completedStations: completedStationsCount,
       totalVolume: totalVolume,
       completedVolume: completedVolume,
       deletedVolume: deletedVolume,
       remainingVolume: remainingVolume,
-      progressPercent: totalVolume > 0 ? Math.round((completedVolume / totalVolume) * 1000) / 10 : 0
+      progressPercent: progressPercent
     };
   });
 
@@ -550,32 +592,33 @@ function handleSaveStation(payload) {
     const tong = map.tong > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.tong).getValue()) : 0;
 
     // TRƯỜNG HỢP 1: CHUYỂN VỀ CHƯA HOÀN THÀNH -> TRẢ LẠI TRẠNG THÁI BAN ĐẦU (CHƯA LƯU)
+    // Xóa trắng toàn bộ thông tin từ cột F đến N như một trạm ban đầu chưa nhập
     if (isResetToInitial) {
-      if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(0);
-      if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).setValue(0);
-      if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue("Chưa hoàn thành");
-      if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setValue("");
-      
-      // Mở khóa và reset số lần sửa về 0
-      if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).setValue(false);
-      if (map.so_lan_sua > 0) sheet.getRange(rowIndex, map.so_lan_sua).setValue(0);
-      if (map.nguoi_nhap > 0) sheet.getRange(rowIndex, map.nguoi_nhap).setValue("");
-      if (map.thoi_gian_nhap > 0) sheet.getRange(rowIndex, map.thoi_gian_nhap).setValue("");
+      if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).clearContent();
+      if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).clearContent();
+      if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).clearContent();
+      if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).clearContent();
+      if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).clearContent();
+      if (map.so_lan_sua > 0) sheet.getRange(rowIndex, map.so_lan_sua).clearContent();
+      if (map.nguoi_nhap > 0) sheet.getRange(rowIndex, map.nguoi_nhap).clearContent();
+      if (map.thoi_gian_nhap > 0) sheet.getRange(rowIndex, map.thoi_gian_nhap).clearContent();
 
       const newValues = {
-        so_luong_hoan_thanh: 0,
-        xoa: 0,
-        trang_thai: "Chưa hoàn thành",
+        so_luong_hoan_thanh: "",
+        xoa: "",
+        trang_thai: "",
         ngay_hoan_thanh: "",
-        khoa: false,
-        so_lan_sua: 0
+        khoa: "",
+        so_lan_sua: "",
+        nguoi_nhap: "",
+        thoi_gian_nhap: ""
       };
 
-      logAction(ss, sheet.getName(), maTram, "Trả về trạng thái ban đầu (Chưa lưu)", oldValues, newValues, nguoiNhap || "Cán bộ hiện trường");
+      logAction(ss, sheet.getName(), maTram, "Trả về trạng thái ban đầu (Chưa lưu - Xóa toàn bộ thông tin)", oldValues, newValues, nguoiNhap || "Cán bộ hiện trường");
 
       return {
         success: true,
-        message: `Đã đưa trạm [${maTram}] về trạng thái CHƯA LƯU ban đầu trong Google Sheet (Mở khóa, số lần sửa = 0)!`,
+        message: `Đã xóa toàn bộ thông tin trạm [${maTram}] trong Google Sheet và đưa về trạng thái ban đầu!`,
         updatedStation: {
           sheetName: sheet.getName(),
           rowIndex: rowIndex,

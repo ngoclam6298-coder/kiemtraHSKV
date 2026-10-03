@@ -1319,7 +1319,6 @@
       currentTeam: 'kinh_doanh', // 'kinh_doanh' | 'do_dem' | 'thu_ghi'
       unlockedStations: {},     // map: ma_tram => true (khi được mở khóa sửa 1 lần)
       unlockingMaTram: null,    // trạm đang mở modal PIN
-      defaultNguoiNhap: localStorage.getItem("pcvt_gis_nguoi_nhap") || '',
       isSubmitting: false
     };
 
@@ -1353,7 +1352,9 @@
     });
 
     function initUserStorage() {
-      state.defaultNguoiNhap = localStorage.getItem("pcvt_gis_nguoi_nhap") || "";
+      try {
+        localStorage.removeItem("pcvt_gis_nguoi_nhap");
+      } catch (e) {}
     }
 
     function checkApiModeAndLoad() {
@@ -1551,15 +1552,22 @@
       let totalVolume = 0;
       let completedVolume = 0;
       let deletedVolume = 0;
+      let completedStations = 0;
 
       teamStations.forEach(s => {
         totalVolume += (parseInt(s.tong, 10) || 0);
         completedVolume += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
         deletedVolume += (parseInt(s.xoa, 10) || 0);
+        if (s.trang_thai === "Hoàn thành") {
+          completedStations++;
+        }
       });
 
       const remainingVolume = totalVolume - completedVolume - deletedVolume;
-      const progressPercent = totalVolume > 0 ? (Math.round((completedVolume / totalVolume) * 1000) / 10) : 0;
+      // Tỉ lệ % thực hiện được tính theo % số lượng trạm thực hiện
+      const progressPercent = totalStations > 0 
+        ? (Math.round((completedStations / totalStations) * 1000) / 10) 
+        : 0;
 
       document.getElementById("metricStationCount").innerText = totalStations;
       document.getElementById("metricTotalVolume").innerText = totalVolume.toLocaleString("vi-VN");
@@ -1765,7 +1773,8 @@
                      inputmode="numeric" 
                      min="0" 
                      step="1" 
-                     value="${st.so_luong_hoan_thanh !== undefined ? st.so_luong_hoan_thanh : 0}" 
+                     placeholder="0"
+                     value="${st.so_luong_hoan_thanh ? st.so_luong_hoan_thanh : ''}" 
                      ${disabledAttr} 
                      oninput="onInlineChange('${st.ma_tram}')">
             </td>
@@ -1778,7 +1787,8 @@
                      inputmode="numeric" 
                      min="0" 
                      step="1" 
-                     value="${st.xoa !== undefined ? st.xoa : 0}" 
+                     placeholder="0"
+                     value="${st.xoa ? st.xoa : ''}" 
                      ${disabledAttr} 
                      oninput="onInlineChange('${st.ma_tram}')">
             </td>
@@ -1818,31 +1828,30 @@
                        tabindex="-1"
                        onchange="onPickerSelected('${st.ma_tram}', this.value)">
                 <button type="button" 
-                        class="tbl-btn-cal" 
-                        title="Mở lịch chọn ngày" 
-                        ${disabledAttr} 
-                        onclick="openHiddenPicker('${st.ma_tram}')">
+                       class="tbl-btn-cal" 
+                       title="Mở lịch chọn ngày" 
+                       ${disabledAttr} 
+                       onclick="openHiddenPicker('${st.ma_tram}')">
                   📅
                 </button>
                 <button type="button" 
-                        class="tbl-btn-today" 
-                        title="Điền ngày hôm nay" 
-                        ${disabledAttr} 
-                        onclick="fillRowToday('${st.ma_tram}')">
+                       class="tbl-btn-today" 
+                       title="Điền ngày hôm nay" 
+                       ${disabledAttr} 
+                       onclick="fillRowToday('${st.ma_tram}')">
                   Hôm nay
                 </button>
               </div>
             </td>
 
-            <!-- 11. HẠNG MỤC 5: NGƯỜI NHẬP (PHƯƠNG NGANG TỪNG TRẠM) -->
+            <!-- 11. HẠNG MỤC 5: NGƯỜI NHẬP (ĐỂ TRỐNG NHẬP TAY, KHÔNG MẶC ĐỊNH) -->
             <td class="text-center">
               <input type="text" 
                      id="inline_nguoi_${st.ma_tram}" 
                      class="tbl-input-text" 
                      placeholder="Người thực hiện..." 
-                     value="${escapeHtml(st.nguoi_nhap || state.defaultNguoiNhap || '')}" 
-                     ${disabledAttr}
-                     oninput="onInlineNguoiNhapInput(this.value)">
+                     value="${escapeHtml(st.nguoi_nhap || '')}" 
+                     ${disabledAttr}>
             </td>
 
             <!-- 12. THAO TÁC (LƯU HOẶC MỞ KHÓA TỐI ĐA 3 LẦN) -->
@@ -1952,7 +1961,7 @@
 
     /**
      * Tự động xử lý khi thay đổi Trạng thái trên hàng ngang
-     * - Khi chọn "Chưa hoàn thành": Trả ngay về trạng thái CHƯA LƯU (Nút 'Lưu', xóa ngày HT, đặt SL=0, xóa badge sửa)
+     * - Khi chọn "Chưa hoàn thành": Trả ngay về trạng thái CHƯA LƯU (Nút 'Lưu', xóa trống ngày HT, SL=trống, Người nhập=trống, xóa badge sửa)
      * - Khi chọn "Hoàn thành": Tự động điền ngày hôm nay
      */
     window.onInlineTrangThaiChange = function(maTram) {
@@ -1960,16 +1969,18 @@
       const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
       const htEl = document.getElementById(`inline_ht_${maTram}`);
       const xoaEl = document.getElementById(`inline_xoa_${maTram}`);
+      const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
       const conLaiEl = document.getElementById(`inline_conlai_${maTram}`);
       const st = state.allStations.find(s => s.ma_tram === maTram);
       if (!ttEl || !st) return;
 
       if (ttEl.value === "Chưa hoàn thành") {
-        // 1. Tự động xóa ngày hoàn thành
+        // 1. Tự động xóa trắng ngày hoàn thành và người nhập
         if (ngayEl) ngayEl.value = "";
-        // 2. Đặt Hoàn thành = 0, Xóa = 0
-        if (htEl) htEl.value = 0;
-        if (xoaEl) xoaEl.value = 0;
+        if (nguoiEl) nguoiEl.value = "";
+        // 2. Đặt Hoàn thành = trống, Xóa = trống
+        if (htEl) htEl.value = "";
+        if (xoaEl) xoaEl.value = "";
 
         // 3. Tính lại Còn lại = Tổng
         const tong = parseInt(st.tong, 10) || 0;
@@ -1991,6 +2002,10 @@
         st.trang_thai = "Chưa hoàn thành";
         st.is_locked = false;
         st.so_lan_sua = 0;
+        st.so_luong_hoan_thanh = 0;
+        st.xoa = 0;
+        st.ngay_hoan_thanh = "";
+        st.nguoi_nhap = "";
 
         // 6. Xóa badge và class sửa
         const rowEl = document.getElementById(`row_${maTram}`);
@@ -2017,14 +2032,6 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
-
-    window.onInlineNguoiNhapInput = function(val) {
-      const trimmed = (val || "").trim();
-      if (trimmed) {
-        state.defaultNguoiNhap = trimmed;
-        localStorage.setItem("pcvt_gis_nguoi_nhap", trimmed);
-      }
-    };
 
     // =========================================================================
     // XỬ LÝ LƯU SỐ LIỆU CHO TỪNG DÒNG (INLINE ROW SAVE)
@@ -2053,10 +2060,6 @@
         showToast(`[${maTram}] Vui lòng nhập họ tên 'Người nhập' trên dòng trạm này trước khi lưu!`, "warning", 4500);
         if (nguoiEl) nguoiEl.focus();
         return;
-      }
-      if (valNguoiNhap) {
-        state.defaultNguoiNhap = valNguoiNhap;
-        localStorage.setItem("pcvt_gis_nguoi_nhap", valNguoiNhap);
       }
 
       const isUnlocked = state.unlockedStations[maTram] === true;
@@ -2251,7 +2254,7 @@
       }
 
       const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
-      const rowNguoi = nguoiEl ? nguoiEl.value.trim() : (st.nguoi_nhap || state.defaultNguoiNhap || "Cán bộ hiện trường");
+      const rowNguoi = nguoiEl ? nguoiEl.value.trim() : (st.nguoi_nhap || "Cán bộ hiện trường");
 
       const currentClientData = {
         so_luong_hoan_thanh: st.so_luong_hoan_thanh || 0,
