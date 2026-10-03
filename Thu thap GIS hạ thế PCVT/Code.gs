@@ -550,7 +550,7 @@ function handleSaveStation(payload) {
     if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(newSlHoanThanh);
     if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).setValue(newXoa);
     if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue(newTrangThai);
-    if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setValue(newNgayHT);
+    if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setNumberFormat("@").setValue(newNgayHT);
     
     // Tự động khóa dòng lại sau khi lưu
     if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).setValue(true);

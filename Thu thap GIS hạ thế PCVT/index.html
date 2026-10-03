@@ -620,15 +620,17 @@
     .tbl-date-wrap {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .tbl-input-date {
       height: 38px;
-      width: 130px;
+      width: 108px;
       padding: 4px 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      text-align: center;
       border: 1.5px solid var(--border-color);
       border-radius: var(--radius-sm);
       outline: none;
@@ -638,12 +640,36 @@
 
     .tbl-input-date:focus {
       border-color: var(--evn-blue);
+      box-shadow: 0 0 0 2px rgba(0, 91, 170, 0.15);
     }
 
     .tbl-input-date:disabled {
       background: #f8fafc;
       color: #64748b;
       border-color: #e2e8f0;
+      cursor: not-allowed;
+    }
+
+    .tbl-btn-cal {
+      height: 38px;
+      padding: 0 7px;
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .tbl-btn-cal:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+
+    .tbl-btn-cal:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
@@ -1563,14 +1589,29 @@
               </select>
             </td>
 
-            <!-- 10. HẠNG MỤC 4: NGÀY HOÀN THÀNH (PHƯƠNG NGANG) -->
+            <!-- 10. HẠNG MỤC 4: NGÀY HOÀN THÀNH (ĐỊNH DẠNG dd/mm/yyyy) -->
             <td class="text-center">
               <div class="tbl-date-wrap">
-                <input type="date" 
+                <input type="text" 
                        id="inline_ngay_${st.ma_tram}" 
                        class="tbl-input-date" 
-                       value="${pickerDate}" 
-                       ${disabledAttr}>
+                       placeholder="dd/mm/yyyy"
+                       maxlength="10"
+                       value="${formatToVN(st.ngay_hoan_thanh)}" 
+                       ${disabledAttr}
+                       oninput="onDateInputMask(this)">
+                <input type="date" 
+                       id="hidden_picker_${st.ma_tram}" 
+                       style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;"
+                       tabindex="-1"
+                       onchange="onPickerSelected('${st.ma_tram}', this.value)">
+                <button type="button" 
+                        class="tbl-btn-cal" 
+                        title="Mở lịch chọn ngày" 
+                        ${disabledAttr} 
+                        onclick="openHiddenPicker('${st.ma_tram}')">
+                  📅
+                </button>
                 <button type="button" 
                         class="tbl-btn-today" 
                         title="Điền ngày hôm nay" 
@@ -1614,6 +1655,78 @@
     };
 
     /**
+     * Định dạng ngày sang dd/mm/yyyy
+     */
+    function formatToVN(dateStr) {
+      if (!dateStr) return "";
+      const str = String(dateStr).trim();
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
+        const parts = str.split('/');
+        return `${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[2]}`;
+      }
+      if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(str)) {
+        const parts = str.split('-');
+        return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
+      }
+      return str;
+    }
+
+    function getTodayVN() {
+      const now = new Date();
+      const d = String(now.getDate()).padStart(2, '0');
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const y = now.getFullYear();
+      return `${d}/${m}/${y}`;
+    }
+
+    /**
+     * Tự động gõ mặt nạ dd/mm/yyyy khi người dùng nhập số
+     */
+    window.onDateInputMask = function(el) {
+      let val = el.value.replace(/\D/g, '').slice(0, 8);
+      if (val.length >= 5) {
+        el.value = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4);
+      } else if (val.length >= 3) {
+        el.value = val.slice(0, 2) + '/' + val.slice(2);
+      } else {
+        el.value = val;
+      }
+    };
+
+    /**
+     * Mở lịch ngầm để chọn ngày
+     */
+    window.openHiddenPicker = function(maTram) {
+      const picker = document.getElementById(`hidden_picker_${maTram}`);
+      if (!picker) return;
+      if (typeof picker.showPicker === 'function') {
+        picker.showPicker();
+      } else {
+        picker.click();
+      }
+    };
+
+    window.onPickerSelected = function(maTram, isoDate) {
+      if (!isoDate) return;
+      const parts = isoDate.split('-');
+      if (parts.length === 3) {
+        const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        const inputEl = document.getElementById(`inline_ngay_${maTram}`);
+        if (inputEl) inputEl.value = formatted;
+      }
+    };
+
+    /**
+     * Điền ngày hôm nay (dd/mm/yyyy) vào ô ngày của dòng tương ứng
+     */
+    window.fillRowToday = function(maTram) {
+      const inputEl = document.getElementById(`inline_ngay_${maTram}`);
+      if (inputEl && !inputEl.disabled) {
+        inputEl.value = getTodayVN();
+      }
+    };
+
+    /**
      * Tự động điền ngày hôm nay khi chọn Trạng thái Hoàn thành
      */
     window.onInlineTrangThaiChange = function(maTram) {
@@ -1623,22 +1736,8 @@
 
       if (ttEl.value === "Hoàn thành") {
         if (!ngayEl.value && !ngayEl.disabled) {
-          fillRowToday(maTram);
+          ngayEl.value = getTodayVN();
         }
-      }
-    };
-
-    /**
-     * Điền ngày hôm nay vào ô ngày của dòng tương ứng
-     */
-    window.fillRowToday = function(maTram) {
-      const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
-      if (ngayEl && !ngayEl.disabled) {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        ngayEl.value = `${y}-${m}-${d}`;
       }
     };
 
@@ -1741,11 +1840,18 @@
         return;
       }
 
-      const ngayHoanThanhVN = convertPickerToVN(valNgayRaw);
-      if (valTrangThai === "Hoàn thành" && !ngayHoanThanhVN) {
-        showToast(`[${maTram}] Khi trạng thái là 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!`, "error");
-        if (ngayEl) ngayEl.focus();
-        return;
+      let ngayHoanThanhVN = formatToVN(valNgayRaw);
+      if (valTrangThai === "Hoàn thành") {
+        if (!ngayHoanThanhVN) {
+          showToast(`[${maTram}] Khi trạng thái là 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!`, "error");
+          if (ngayEl) ngayEl.focus();
+          return;
+        }
+        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(ngayHoanThanhVN)) {
+          showToast(`[${maTram}] Ngày hoàn thành phải theo đúng định dạng dd/mm/yyyy (ví dụ: 03/10/2026)!`, "error");
+          if (ngayEl) ngayEl.focus();
+          return;
+        }
       }
 
       const isUnlocked = state.unlockedStations[maTram] === true;
