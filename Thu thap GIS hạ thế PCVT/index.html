@@ -1082,10 +1082,6 @@
           📋 Đội QL Thu Ghi
           <span class="tab-badge" id="badgeTG">0 trạm</span>
         </button>
-        <button class="tab-btn" data-team="all">
-          🌐 Tất Cả Trạm
-          <span class="tab-badge" id="badgeAll">0 trạm</span>
-        </button>
       </div>
     </div>
 
@@ -1220,11 +1216,6 @@
 
         </div>
 
-        <!-- CẢNH BÁO / TÍNH TOÁN CÒN LẠI DƯỚI FORM -->
-        <div id="calcPreview" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.85rem;">
-          <span>Tính toán tham khảo: <strong>Còn lại = Tổng - Hoàn thành - Xóa</strong></span>
-          <span id="previewConLai" class="font-mono font-bold" style="font-size: 1rem; color: var(--evn-blue);">0</span>
-        </div>
 
         <!-- CÁC NÚT THAO TÁC -->
         <div class="actions-bar">
@@ -1354,20 +1345,20 @@
     // Dữ liệu mẫu EVN PC Vũng Tàu dùng cho Chế độ Giả lập (Demo Mode)
     const DEMO_STATIONS = [
       // 1. Phòng Kinh Doanh
-      { rowIndex: 2, stt: 1, ma_tram: "TRAM_KD01", id_tram_moi: "VT_KD_001", ten_tram_moi: "Trạm Biến Áp Thùy Vân 1", tong: 120, so_luong_hoan_thanh: 100, xoa: 5, con_lai: 15, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
-      { rowIndex: 3, stt: 2, ma_tram: "TRAM_KD02", id_tram_moi: "VT_KD_002", ten_tram_moi: "Trạm Biến Áp Hoàng Hoa Thám", tong: 85, so_luong_hoan_thanh: 85, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
-      { rowIndex: 4, stt: 3, ma_tram: "TRAM_KD03", id_tram_moi: "VT_KD_003", ten_tram_moi: "Trạm Biến Áp Lê Hồng Phong", tong: 210, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 210, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { rowIndex: 5, stt: 4, ma_tram: "TRAM_KD04", id_tram_moi: "VT_KD_004", ten_tram_moi: "Trạm Biến Áp Ba Cu", tong: 95, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
+      { teamKey: "kinh_doanh", rowIndex: 2, stt: 1, ma_tram: "TRAM_KD01", id_tram_moi: "VT_KD_001", ten_tram_moi: "Trạm Biến Áp Thùy Vân 1", tong: 120, so_luong_hoan_thanh: 100, xoa: 5, con_lai: 15, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
+      { teamKey: "kinh_doanh", rowIndex: 3, stt: 2, ma_tram: "TRAM_KD02", id_tram_moi: "VT_KD_002", ten_tram_moi: "Trạm Biến Áp Hoàng Hoa Thám", tong: 85, so_luong_hoan_thanh: 85, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
+      { teamKey: "kinh_doanh", rowIndex: 4, stt: 3, ma_tram: "TRAM_KD03", id_tram_moi: "VT_KD_003", ten_tram_moi: "Trạm Biến Áp Lê Hồng Phong", tong: 210, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 210, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", rowIndex: 5, stt: 4, ma_tram: "TRAM_KD04", id_tram_moi: "VT_KD_004", ten_tram_moi: "Trạm Biến Áp Ba Cu", tong: 95, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
       
       // 2. Đội Quản lý hệ thống đo đếm
-      { rowIndex: 6, stt: 5, ma_tram: "TRAM_DD01", id_tram_moi: "VT_DD_101", ten_tram_moi: "Trạm Biến Áp Bến Đình", tong: 150, so_luong_hoan_thanh: 130, xoa: 10, con_lai: 10, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { rowIndex: 7, stt: 6, ma_tram: "TRAM_DD02", id_tram_moi: "VT_DD_102", ten_tram_moi: "Trạm Biến Áp Trần Phú", tong: 180, so_luong_hoan_thanh: 180, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "30/09/2026", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "30/09/2026 15:20:00" },
-      { rowIndex: 8, stt: 7, ma_tram: "TRAM_DD03", id_tram_moi: "VT_DD_103", ten_tram_moi: "Trạm Biến Áp Bãi Trước", tong: 110, so_luong_hoan_thanh: 50, xoa: 0, con_lai: 60, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", rowIndex: 6, stt: 1, ma_tram: "TRAM_DD01", id_tram_moi: "VT_DD_101", ten_tram_moi: "Trạm Biến Áp Bến Đình", tong: 150, so_luong_hoan_thanh: 130, xoa: 10, con_lai: 10, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", rowIndex: 7, stt: 2, ma_tram: "TRAM_DD02", id_tram_moi: "VT_DD_102", ten_tram_moi: "Trạm Biến Áp Trần Phú", tong: 180, so_luong_hoan_thanh: 180, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "30/09/2026", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "30/09/2026 15:20:00" },
+      { teamKey: "do_dem", rowIndex: 8, stt: 3, ma_tram: "TRAM_DD03", id_tram_moi: "VT_DD_103", ten_tram_moi: "Trạm Biến Áp Bãi Trước", tong: 110, so_luong_hoan_thanh: 50, xoa: 0, con_lai: 60, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
 
       // 3. Đội quản lý thu ghi
-      { rowIndex: 9, stt: 8, ma_tram: "TRAM_TG01", id_tram_moi: "VT_TG_201", ten_tram_moi: "Trạm Biến Áp Nguyễn An Ninh", tong: 160, so_luong_hoan_thanh: 140, xoa: 20, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 11:30:00" },
-      { rowIndex: 10, stt: 9, ma_tram: "TRAM_TG02", id_tram_moi: "VT_TG_202", ten_tram_moi: "Trạm Biến Áp Trương Công Định", tong: 140, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 45, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội quản lý thu ghi", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { rowIndex: 11, stt: 10, ma_tram: "TRAM_TG03", id_tram_moi: "VT_TG_203", ten_tram_moi: "Trạm Biến Áp Võ Thị Sáu", tong: 130, so_luong_hoan_thanh: 130, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 08:45:00" }
+      { teamKey: "thu_ghi", rowIndex: 9, stt: 1, ma_tram: "TRAM_TG01", id_tram_moi: "VT_TG_201", ten_tram_moi: "Trạm Biến Áp Nguyễn An Ninh", tong: 160, so_luong_hoan_thanh: 140, xoa: 20, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 11:30:00" },
+      { teamKey: "thu_ghi", rowIndex: 10, stt: 2, ma_tram: "TRAM_TG02", id_tram_moi: "VT_TG_202", ten_tram_moi: "Trạm Biến Áp Trương Công Định", tong: 140, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 45, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội quản lý thu ghi", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "thu_ghi", rowIndex: 11, stt: 3, ma_tram: "TRAM_TG03", id_tram_moi: "VT_TG_203", ten_tram_moi: "Trạm Biến Áp Võ Thị Sáu", tong: 130, so_luong_hoan_thanh: 130, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 08:45:00" }
     ];
 
     // =========================================================================
@@ -1487,13 +1478,14 @@
     }
 
     /**
-     * Phân loại trạm theo đội / khu vực
+     * Lọc trạm chính xác theo từng phòng/đội tương ứng từng Sheet
      */
     function getStationsForTeam(teamKey) {
-      if (teamKey === 'all') {
-        return state.allStations;
-      }
       return state.allStations.filter(st => {
+        if (st.teamKey) {
+          return st.teamKey === teamKey;
+        }
+        // Fallback kiểm tra từ khóa
         const rawKv = (st.khu_vuc || "").trim();
         const kv = rawKv.toLowerCase()
           .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
@@ -1504,10 +1496,8 @@
           return kv.includes("do dem") || kv.includes("htdd") || kv.includes("he thong do dem");
         } else if (teamKey === 'thu_ghi') {
           return kv.includes("thu ghi") || kv.includes("qltg") || kv.includes("tg");
-        } else if (teamKey === rawKv) {
-          return true;
         }
-        return true;
+        return false;
       });
     }
 
@@ -1528,7 +1518,8 @@
       const select = document.getElementById("tableFilterKhuVuc");
       if (!select) return;
       const currentVal = select.value;
-      const uniqueKvs = [...new Set(state.allStations.map(s => s.khu_vuc).filter(Boolean))];
+      const currentStations = getStationsForTeam(state.currentTeam);
+      const uniqueKvs = [...new Set(currentStations.map(s => s.khu_vuc).filter(Boolean))];
       
       let html = '<option value="all">Tất cả khu vực</option>';
       uniqueKvs.forEach(kv => {
@@ -1541,30 +1532,16 @@
     }
 
     /**
-     * Đếm số lượng trạm theo từng tab & Tự chuyển tab nếu chưa phân đội
+     * Đếm số lượng trạm độc lập theo từng tab của 3 phòng/đội
      */
     function updateTabBadges() {
       const kdCount = getStationsForTeam('kinh_doanh').length;
       const ddCount = getStationsForTeam('do_dem').length;
       const tgCount = getStationsForTeam('thu_ghi').length;
-      const allCount = state.allStations.length;
 
       document.getElementById("badgeKD").innerText = `${kdCount} trạm`;
       document.getElementById("badgeDD").innerText = `${ddCount} trạm`;
       document.getElementById("badgeTG").innerText = `${tgCount} trạm`;
-      const badgeAll = document.getElementById("badgeAll");
-      if (badgeAll) badgeAll.innerText = `${allCount} trạm`;
-
-      // Nếu 3 đội đều = 0 (do cột Khu vực trong Sheet ghi Vũng Tàu, Phú Mỹ...)
-      // thì tự động chuyển sang tab "Tất cả trạm" để người dùng thấy đủ 199 trạm
-      if (kdCount === 0 && ddCount === 0 && tgCount === 0 && allCount > 0 && state.currentTeam !== 'all') {
-        state.currentTeam = 'all';
-        const tabBtns = document.querySelectorAll(".tab-btn");
-        tabBtns.forEach(btn => {
-          if (btn.getAttribute("data-team") === 'all') btn.classList.add("active");
-          else btn.classList.remove("active");
-        });
-      }
     }
 
     /**
@@ -1575,12 +1552,11 @@
       
       const teamTitles = {
         'kinh_doanh': 'Phòng Kinh Doanh',
-        'do_dem': 'Đội QL Hệ Thống Đo Đếm',
-        'thu_ghi': 'Đội QL Thu Ghi',
-        'all': 'Toàn Bộ Các Trạm'
+        'do_dem': 'Đội Quản lý hệ thống đo đếm',
+        'thu_ghi': 'Đội quản lý thu ghi'
       };
 
-      const titleName = teamTitles[state.currentTeam] || `Khu vực: ${state.currentTeam}`;
+      const titleName = teamTitles[state.currentTeam] || 'Phòng Kinh Doanh';
       document.getElementById("summaryTeamTitle").innerText = `📊 Tổng hợp tiến độ: ${titleName}`;
 
       const totalStations = teamStations.length;
@@ -1823,8 +1799,10 @@
      * Cập nhật tính toán Còn lại dưới form
      */
     function updateCalcPreview() {
+      const el = document.getElementById("previewConLai");
+      if (!el) return;
       if (!state.selectedStation) {
-        document.getElementById("previewConLai").innerText = "0";
+        el.innerText = "0";
         return;
       }
       const tong = parseInt(state.selectedStation.tong, 10) || 0;
@@ -1832,7 +1810,6 @@
       const xoa = parseInt(document.getElementById("inputXoa").value, 10) || 0;
       const conLai = tong - ht - xoa;
 
-      const el = document.getElementById("previewConLai");
       el.innerText = conLai.toLocaleString("vi-VN");
       if (conLai < 0) el.style.color = "#dc2626";
       else if (conLai === 0) el.style.color = "#16a34a";
@@ -1923,6 +1900,8 @@
       const payload = {
         action: "saveStation",
         ma_tram: state.selectedStation.ma_tram,
+        sheet_name: state.selectedStation.sheetName || "",
+        team_key: state.selectedStation.teamKey || state.currentTeam,
         so_luong_hoan_thanh: soLuongHoanThanh,
         xoa: xoa,
         trang_thai: valTrangThai,
@@ -2031,6 +2010,8 @@
       const payload = {
         action: "unlockStation",
         ma_tram: st.ma_tram,
+        sheet_name: st.sheetName || "",
+        team_key: st.teamKey || state.currentTeam,
         pin: pin,
         current_client_data: currentClientData,
         nguoi_nhap: state.nguoiNhap || "Cán bộ hiện trường"
