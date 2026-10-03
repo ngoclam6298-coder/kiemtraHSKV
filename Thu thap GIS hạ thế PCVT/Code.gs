@@ -153,6 +153,7 @@ function getColumnMapping(sheet) {
     ngay_hoan_thanh: -1,
     khu_vuc: -1,
     khoa: -1,
+    so_lan_sua: -1,
     nguoi_nhap: -1,
     thoi_gian_nhap: -1
   };
@@ -172,6 +173,7 @@ function getColumnMapping(sheet) {
     else if (norm.includes("ngayhoanthanh") || norm.includes("ngayht")) map.ngay_hoan_thanh = idx + 1;
     else if (norm.includes("khuvuc") || norm.includes("donvi") || norm.includes("doi")) map.khu_vuc = idx + 1;
     else if (norm === "khoa" || norm === "dakhoa" || norm === "islocked") map.khoa = idx + 1;
+    else if (norm.includes("solansua") || norm.includes("solanedit") || norm === "sua") map.so_lan_sua = idx + 1;
     else if (norm.includes("nguoinhap") || norm.includes("nguoithuchien")) map.nguoi_nhap = idx + 1;
     else if (norm.includes("thoigiannhap") || norm.includes("thoigiancapnhat")) map.thoi_gian_nhap = idx + 1;
   });
@@ -180,6 +182,7 @@ function getColumnMapping(sheet) {
   let currentMaxCol = sheet.getLastColumn();
   const missingCols = [];
   if (map.khoa === -1) missingCols.push({ key: "khoa", title: "Khóa" });
+  if (map.so_lan_sua === -1) missingCols.push({ key: "so_lan_sua", title: "Số lần sửa" });
   if (map.nguoi_nhap === -1) missingCols.push({ key: "nguoi_nhap", title: "Người nhập" });
   if (map.thoi_gian_nhap === -1) missingCols.push({ key: "thoi_gian_nhap", title: "Thời gian nhập" });
 
@@ -355,6 +358,7 @@ function getAllData() {
           isLocked = lockVal === true || String(lockVal).toUpperCase() === "TRUE";
         }
 
+        const soLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(row[map.so_lan_sua - 1]) : 0;
         const nguoiNhap = map.nguoi_nhap > 0 ? String(row[map.nguoi_nhap - 1] || "").trim() : "";
         const thoiGianNhap = map.thoi_gian_nhap > 0 ? formatDateVN(row[map.thoi_gian_nhap - 1]) : "";
         const conLai = tong - soLuongHoanThanh - xoa;
@@ -380,6 +384,7 @@ function getAllData() {
           ngay_hoan_thanh: ngayHoanThanh,
           khu_vuc: khuVuc,
           is_locked: isLocked,
+          so_lan_sua: soLanSua,
           nguoi_nhap: nguoiNhap,
           thoi_gian_nhap: thoiGianNhap
         };
@@ -507,10 +512,21 @@ function handleSaveStation(payload) {
     const rowIndex = searchResult.rowIndex;
 
     // Kiểm tra khóa
+    // Kiểm tra khóa & giới hạn số lần sửa
     let currentLocked = false;
     if (map.khoa > 0) {
       const lockVal = sheet.getRange(rowIndex, map.khoa).getValue();
       currentLocked = lockVal === true || String(lockVal).toUpperCase() === "TRUE";
+    }
+
+    let currentSoLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_lan_sua).getValue()) : 0;
+    const isEditAction = currentLocked || payload.is_unlock_verified;
+
+    if (isEditAction && currentSoLanSua >= 3) {
+      return {
+        success: false,
+        message: `Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`
+      };
     }
 
     if (currentLocked && !payload.is_unlock_verified) {
@@ -543,8 +559,17 @@ function handleSaveStation(payload) {
       return { success: false, message: "Khi chọn trạng thái 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!" };
     }
 
-    const nguoiNhap = String(payload.nguoi_nhap || "").trim() || "Cán bộ hiện trường";
+    const nguoiNhap = String(payload.nguoi_nhap || "").trim();
+    if (!nguoiNhap) {
+      return { success: false, message: `Vui lòng nhập tên 'Người nhập' trên dòng trạm [${maTram}] trước khi lưu!` };
+    }
     const thoiGianNhap = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+7", "dd/MM/yyyy HH:mm:ss");
+
+    // Cập nhật số lần sửa nếu là thao tác sửa
+    if (isEditAction) {
+      currentSoLanSua += 1;
+      if (map.so_lan_sua > 0) sheet.getRange(rowIndex, map.so_lan_sua).setValue(currentSoLanSua);
+    }
 
     // Cập nhật vào Sheet
     if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(newSlHoanThanh);
@@ -564,7 +589,7 @@ function handleSaveStation(payload) {
       ngay_hoan_thanh: newNgayHT
     };
 
-    const actionName = currentLocked || payload.is_unlock_verified ? "Sửa" : "Lưu";
+    const actionName = isEditAction ? `Sửa (Lần ${currentSoLanSua}/3)` : "Lưu";
     logAction(ss, sheet.getName(), maTram, actionName, oldValues, newValues, nguoiNhap);
 
     const tong = map.tong > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.tong).getValue()) : 0;
@@ -572,7 +597,9 @@ function handleSaveStation(payload) {
 
     return {
       success: true,
-      message: `Đã lưu thành công số liệu trạm [${maTram}] vào Sheet [${sheet.getName()}]! Dòng này hiện đã được KHÓA tự động.`,
+      message: isEditAction
+        ? `Đã lưu chỉnh sửa trạm [${maTram}] (Lần sửa ${currentSoLanSua}/3) vào Sheet [${sheet.getName()}]! Dòng này hiện đã được KHÓA tự động.`
+        : `Đã lưu thành công số liệu trạm [${maTram}] vào Sheet [${sheet.getName()}]! Dòng này hiện đã được KHÓA tự động.`,
       updatedStation: {
         sheetName: sheet.getName(),
         rowIndex: rowIndex,
@@ -584,6 +611,7 @@ function handleSaveStation(payload) {
         trang_thai: newTrangThai,
         ngay_hoan_thanh: newNgayHT,
         is_locked: true,
+        so_lan_sua: currentSoLanSua,
         nguoi_nhap: nguoiNhap,
         thoi_gian_nhap: thoiGianNhap
       }
@@ -597,7 +625,7 @@ function handleSaveStation(payload) {
 }
 
 /**
- * Xử lý mở khóa trạm
+ * Xử lý mở khóa trạm (Yêu cầu mã PIN 1111, tối đa không quá 3 lần sửa)
  */
 function handleUnlockStation(payload) {
   const lock = LockService.getScriptLock();
@@ -616,7 +644,7 @@ function handleUnlockStation(payload) {
     if (inputPin !== systemPin) {
       return {
         success: false,
-        message: "Mã PIN xác nhận không đúng! Vui lòng liên hệ người quản lý để được cấp mã PIN chính xác."
+        message: "Mã PIN xác nhận không đúng! Vui lòng nhập mã PIN chính xác (Mặc định: 1111)."
       };
     }
 
@@ -635,6 +663,15 @@ function handleUnlockStation(payload) {
     }
 
     const rowIndex = searchResult.rowIndex;
+
+    // KIỂM TRA GIỚI HẠN TỐI ĐA 3 LẦN SỬA
+    const currentSoLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_lan_sua).getValue()) : 0;
+    if (currentSoLanSua >= 3) {
+      return {
+        success: false,
+        message: `Trạm [${maTram}] đã sửa đủ 3 lần (giới hạn tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`
+      };
+    }
 
     const sheetSlHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_luong_hoan_thanh).getValue()) : 0;
     const sheetXoa = map.xoa > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.xoa).getValue()) : 0;
@@ -674,22 +711,23 @@ function handleUnlockStation(payload) {
       ss,
       sheet.getName(),
       maTram,
-      "Yêu cầu sửa / Mở khóa",
+      `Yêu cầu sửa / Mở khóa PIN (Lần ${currentSoLanSua + 1}/3)`,
       {
         so_luong_hoan_thanh: sheetSlHoanThanh,
         xoa: sheetXoa,
         trang_thai: sheetTrangThai,
         ngay_hoan_thanh: sheetNgayHT
       },
-      "Đã xác thực PIN thành công, mở khóa cho phép sửa 1 lần",
+      `Đã xác thực PIN thành công, mở khóa cho phép sửa lần ${currentSoLanSua + 1}/3`,
       nguoiNhap
     );
 
     return {
       success: true,
-      message: `Xác nhận PIN thành công! Đã mở khóa trạm [${maTram}] cho phép sửa 01 lần. Sau khi bấm LƯU, dòng sẽ tự động khóa lại.`,
+      message: `Xác nhận PIN thành công! Đã mở khóa trạm [${maTram}] cho phép sửa (Lần ${currentSoLanSua + 1}/3). Sau khi bấm LƯU, dòng sẽ tự động khóa lại.`,
       is_unlocked: true,
       ma_tram: maTram,
+      so_lan_sua: currentSoLanSua,
       sheet_name: sheet.getName()
     };
   } catch (error) {

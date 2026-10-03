@@ -789,6 +789,96 @@
       transform: scale(0.96);
     }
 
+    .btn-tbl-save-edit {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      border: none;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-tbl-save-edit:hover {
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    }
+
+    .btn-tbl-locked-perm {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border: 1.5px solid #cbd5e1;
+      height: 38px;
+      padding: 0 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: not-allowed;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    /* Ô NHẬP NGƯỜI NHẬP TRÊN DÒNG */
+    .tbl-input-text {
+      height: 38px;
+      min-width: 140px;
+      width: 100%;
+      padding: 0 10px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .tbl-input-text:focus {
+      border-color: var(--evn-blue);
+      box-shadow: 0 0 0 2px rgba(0, 91, 170, 0.15);
+    }
+
+    .tbl-input-text:disabled {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    /* BADGE SỐ LẦN SỬA */
+    .edit-count-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 8px;
+      margin-top: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .edit-count-warn {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .edit-count-max {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
     /* CÒN LẠI BADGE */
     .remaining-badge {
       display: inline-block;
@@ -1022,9 +1112,8 @@
   <!-- USER & STATUS BAR -->
   <div class="user-bar">
     <div class="user-bar-content">
-      <div class="user-input-group">
-        <label for="inputNguoiNhap">👤 Người nhập:</label>
-        <input type="text" id="inputNguoiNhap" placeholder="Nhập họ tên của bạn (tự lưu)..." autocomplete="name">
+      <div style="font-weight: 700; color: var(--evn-dark-blue); font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+        <span>🔒 <strong>Chính sách số liệu:</strong> Nhập 'Người nhập' theo từng trạm &middot; Cho phép sửa tối đa <strong>3 lần/trạm</strong> (Mã PIN: <code>1111</code>)</span>
       </div>
       <div id="networkBadge" class="network-badge network-online">
         🟢 Trực tuyến
@@ -1146,11 +1235,11 @@
           </select>
         </div>
         <div style="font-size: 0.78rem; color: var(--text-muted);">
-          💡 <em>Nhập trực tiếp 4 ô theo hàng ngang rồi bấm <strong>💾 Lưu</strong></em>
+          💡 <em>Nhập trực tiếp các ô theo hàng ngang rồi bấm <strong>💾 Lưu</strong> (Mỗi trạm tối đa 3 lần sửa)</em>
         </div>
       </div>
 
-      <!-- BẢNG CUỘN VỚI 4 CỘT NHẬP THEO PHƯƠNG NGANG -->
+      <!-- BẢNG CUỘN VỚI CÁC CỘT NHẬP THEO PHƯƠNG NGANG -->
       <div class="table-scroll">
         <table id="stationsTable">
           <thead>
@@ -1160,19 +1249,20 @@
               <th>ID trạm mới</th>
               <th>Tên trạm (mới)</th>
               <th class="text-right" style="width: 65px;">Tổng</th>
-              <!-- 4 HẠNG MỤC NHẬP THEO PHƯƠNG NGANG -->
-              <th class="text-center" style="min-width: 100px;">Hoàn thành *</th>
-              <th class="text-center" style="min-width: 90px;">Xóa *</th>
+              <!-- CÁC HẠNG MỤC NHẬP THEO PHƯƠNG NGANG -->
+              <th class="text-center" style="min-width: 95px;">Hoàn thành *</th>
+              <th class="text-center" style="min-width: 85px;">Xóa *</th>
               <th class="text-right" style="min-width: 80px;">Còn lại</th>
               <th class="text-center" style="min-width: 145px;">Trạng thái *</th>
-              <th class="text-center" style="min-width: 180px;">Ngày hoàn thành</th>
-              <!-- NÚT LƯU / SỬA -->
-              <th class="text-center" style="min-width: 95px;">Thao tác</th>
+              <th class="text-center" style="min-width: 185px;">Ngày hoàn thành</th>
+              <th class="text-center" style="min-width: 155px;">Người nhập *</th>
+              <!-- THAO TÁC / SỐ LẦN SỬA -->
+              <th class="text-center" style="min-width: 115px;">Thao tác</th>
             </tr>
           </thead>
           <tbody id="tableBody">
             <tr>
-              <td colspan="11" class="text-center" style="padding: 30px; color: var(--text-muted);">
+              <td colspan="12" class="text-center" style="padding: 30px; color: var(--text-muted);">
                 Đang nạp danh sách trạm...
               </td>
             </tr>
@@ -1183,25 +1273,28 @@
 
   </main>
 
-  <!-- MODAL NHẬP MÃ PIN ĐỂ MỞ KHÓA SỬA 1 LẦN -->
+  <!-- MODAL NHẬP MÃ PIN ĐỂ MỞ KHÓA SỬA (TỐI ĐA 3 LẦN) -->
   <div id="pinModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
         <span class="modal-icon">🔐</span>
         <div>
           <div class="modal-title">Mở Khóa Sửa Số Liệu</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">Trạm: <strong id="modalMaTram">...</strong></div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+            Trạm: <strong id="modalMaTram" style="color: var(--evn-blue);">...</strong> &middot; 
+            <span id="modalSoLanSuaBadge" style="font-weight: 800; color: #b45309;">Đã sửa 0/3 lần</span>
+          </div>
         </div>
       </div>
       <div class="modal-body">
-        <p>Dòng này hiện đã bị khóa sau khi lưu. Nhập mã PIN quản lý để mở khóa sửa <strong>01 lần</strong> trên hàng ngang này.</p>
+        <p style="margin-bottom: 8px;">Dòng này đã bị khóa sau khi lưu. Nhập mã PIN quản lý (mặc định: <strong>1111</strong>) để mở khóa cho phép sửa dòng trạm này:</p>
         
         <div class="pin-input-group">
           <input type="password" id="modalPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="off" inputmode="numeric">
         </div>
 
         <div class="modal-note">
-          ℹ️ <strong>Mặc định:</strong> Mã PIN là <code>1111</code> (hoặc do quản trị viên cấp). Sau khi bấm Lưu, trạm sẽ tự động khóa lại.
+          🔒 <strong>Quy định bảo mật:</strong> Mã PIN là <code>1111</code>. Mỗi trạm chỉ cho phép sửa tối đa <strong>3 lần</strong>. Sau khi bấm Lưu, dòng sẽ tự động khóa lại ngay.
         </div>
       </div>
       <div class="modal-actions">
@@ -1226,28 +1319,28 @@
       currentTeam: 'kinh_doanh', // 'kinh_doanh' | 'do_dem' | 'thu_ghi'
       unlockedStations: {},     // map: ma_tram => true (khi được mở khóa sửa 1 lần)
       unlockingMaTram: null,    // trạm đang mở modal PIN
-      nguoiNhap: '',
+      defaultNguoiNhap: localStorage.getItem("pcvt_gis_nguoi_nhap") || '',
       isSubmitting: false
     };
 
     // Dữ liệu mẫu EVN PC Vũng Tàu dùng cho Chế độ Giả lập (Demo Mode)
     const DEMO_STATIONS = [
       // 1. Phòng Kinh Doanh (Khớp dữ liệu thực tế)
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 2, stt: 1, ma_tram: "150110180", id_tram_moi: "105002", ten_tram_moi: "Tập thể Quốc lộ 51A", tong: 116, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 116, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 3, stt: 2, ma_tram: "150110200", id_tram_moi: "105004", ten_tram_moi: "Khu nhà ở 41D", tong: 14, so_luong_hoan_thanh: 14, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 4, stt: 3, ma_tram: "150110220", id_tram_moi: "105007", ten_tram_moi: "Tập thể Thông Tin", tong: 58, so_luong_hoan_thanh: 50, xoa: 8, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 5, stt: 4, ma_tram: "150160202", id_tram_moi: "105381", ten_tram_moi: "Yên Bái", tong: 80, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 80, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 6, stt: 5, ma_tram: "150160220", id_tram_moi: "105369", ten_tram_moi: "Nguyễn Văn Trỗi 4", tong: 99, so_luong_hoan_thanh: 90, xoa: 9, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 2, stt: 1, ma_tram: "150110180", id_tram_moi: "105002", ten_tram_moi: "Tập thể Quốc lộ 51A", tong: 116, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 116, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 3, stt: 2, ma_tram: "150110200", id_tram_moi: "105004", ten_tram_moi: "Khu nhà ở 41D", tong: 14, so_luong_hoan_thanh: 14, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 4, stt: 3, ma_tram: "150110220", id_tram_moi: "105007", ten_tram_moi: "Tập thể Thông Tin", tong: 58, so_luong_hoan_thanh: 50, xoa: 8, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 5, stt: 4, ma_tram: "150160202", id_tram_moi: "105381", ten_tram_moi: "Yên Bái", tong: 80, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 80, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 6, stt: 5, ma_tram: "150160220", id_tram_moi: "105369", ten_tram_moi: "Nguyễn Văn Trỗi 4", tong: 99, so_luong_hoan_thanh: 90, xoa: 9, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
       
       // 2. Đội Quản lý hệ thống đo đếm
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 2, stt: 1, ma_tram: "150160227", id_tram_moi: "105370", ten_tram_moi: "Cô Giang", tong: 35, so_luong_hoan_thanh: 30, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "02/10/2026 11:20:00" },
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 3, stt: 2, ma_tram: "150160250", id_tram_moi: "105362", ten_tram_moi: "Trần Hưng Đạo 9", tong: 27, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 27, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 4, stt: 3, ma_tram: "150160255", id_tram_moi: "105363", ten_tram_moi: "Trần Hưng Đạo 10", tong: 33, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 33, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 2, stt: 1, ma_tram: "150160227", id_tram_moi: "105370", ten_tram_moi: "Cô Giang", tong: 35, so_luong_hoan_thanh: 30, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "02/10/2026 11:20:00" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 3, stt: 2, ma_tram: "150160250", id_tram_moi: "105362", ten_tram_moi: "Trần Hưng Đạo 9", tong: 27, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 27, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 4, stt: 3, ma_tram: "150160255", id_tram_moi: "105363", ten_tram_moi: "Trần Hưng Đạo 10", tong: 33, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 33, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
 
       // 3. Đội quản lý thu ghi
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 2, stt: 1, ma_tram: "150160285", id_tram_moi: "105081", ten_tram_moi: "Trần Hưng Đạo 8", tong: 37, so_luong_hoan_thanh: 35, xoa: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 14:10:00" },
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 3, stt: 2, ma_tram: "1501M0030", id_tram_moi: "105282", ten_tram_moi: "Lê Hồng Phong 6", tong: 48, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 48, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 4, stt: 3, ma_tram: "1501M0047", id_tram_moi: "105300", ten_tram_moi: "CC Nam Kỳ Khởi Nghĩa", tong: 16, so_luong_hoan_thanh: 16, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 09:30:00" }
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 2, stt: 1, ma_tram: "150160285", id_tram_moi: "105081", ten_tram_moi: "Trần Hưng Đạo 8", tong: 37, so_luong_hoan_thanh: 35, xoa: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 14:10:00" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 3, stt: 2, ma_tram: "1501M0030", id_tram_moi: "105282", ten_tram_moi: "Lê Hồng Phong 6", tong: 48, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 48, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 4, stt: 3, ma_tram: "1501M0047", id_tram_moi: "105300", ten_tram_moi: "CC Nam Kỳ Khởi Nghĩa", tong: 16, so_luong_hoan_thanh: 16, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 09:30:00" }
     ];
 
     // =========================================================================
@@ -1260,16 +1353,7 @@
     });
 
     function initUserStorage() {
-      const savedUser = localStorage.getItem("pcvt_gis_nguoi_nhap") || "";
-      const inputEl = document.getElementById("inputNguoiNhap");
-      if (inputEl) {
-        inputEl.value = savedUser;
-        state.nguoiNhap = savedUser;
-        inputEl.addEventListener("input", (e) => {
-          state.nguoiNhap = e.target.value.trim();
-          localStorage.setItem("pcvt_gis_nguoi_nhap", state.nguoiNhap);
-        });
-      }
+      state.defaultNguoiNhap = localStorage.getItem("pcvt_gis_nguoi_nhap") || "";
     }
 
     function checkApiModeAndLoad() {
@@ -1539,7 +1623,7 @@
         const currentName = teamNames[state.currentTeam] || state.currentTeam;
         tbody.innerHTML = `
           <tr>
-            <td colspan="11" class="text-center" style="padding: 36px 16px; color: var(--text-muted);">
+            <td colspan="12" class="text-center" style="padding: 36px 16px; color: var(--text-muted);">
               <div style="font-size: 1.05rem; font-weight: 800; color: #b45309; margin-bottom: 8px;">
                 ⚡ Đang chờ nạp trạm từ: ${currentName}
               </div>
@@ -1579,7 +1663,7 @@
         }
         tbody.innerHTML = `
           <tr>
-            <td colspan="11" class="text-center" style="padding: 24px; color: var(--text-muted);">
+            <td colspan="12" class="text-center" style="padding: 24px; color: var(--text-muted);">
               ${emptyHtml}
             </td>
           </tr>
@@ -1606,14 +1690,47 @@
         const pickerDate = convertDateToPicker(st.ngay_hoan_thanh);
         const disabledAttr = isEffectivelyLocked ? "disabled" : "";
 
-        // Nút Thao tác: Lưu nếu chưa khóa/đã mở khóa; Sửa nếu đã khóa
-        const actionBtn = isEffectivelyLocked
-          ? `<button type="button" class="btn-tbl-unlock" onclick="openInlineUnlock('${st.ma_tram}')" title="Dòng đã khóa. Bấm để nhập PIN mở khóa">
-               🔒 Mở khóa
-             </button>`
-          : `<button type="button" class="btn-tbl-save" id="btn_save_${st.ma_tram}" onclick="saveInlineStation('${st.ma_tram}')" title="Lưu 4 số liệu dòng này vào Google Sheet">
-               💾 Lưu
-             </button>`;
+        // Nút Thao tác & Kiểm soát tối đa 3 lần sửa
+        const soLanSua = parseInt(st.so_lan_sua, 10) || 0;
+        let actionBtn = "";
+        let editBadgeHtml = "";
+
+        if (isUnlocked) {
+          // Trạng thái vừa xác thực PIN 1111 mở khóa thành công -> Cho phép sửa và Lưu lại
+          actionBtn = `
+            <button type="button" class="btn-tbl-save-edit" id="btn_save_${st.ma_tram}" onclick="saveInlineStation('${st.ma_tram}')" title="Lưu số liệu chỉnh sửa (Lần sửa ${soLanSua + 1}/3)">
+              💾 Lưu (${soLanSua + 1}/3)
+            </button>
+          `;
+          editBadgeHtml = `<div class="edit-count-badge edit-count-warn">Sửa ${soLanSua + 1}/3</div>`;
+        } else if (isEffectivelyLocked) {
+          if (soLanSua >= 3) {
+            // Đã đạt tối đa 3 lần sửa -> Khóa vĩnh viễn
+            actionBtn = `
+              <button type="button" class="btn-tbl-locked-perm" disabled title="Trạm này đã sửa đủ 3/3 lần tối đa, không thể mở khóa sửa thêm">
+                🔒 Khóa (3/3)
+              </button>
+            `;
+            editBadgeHtml = `<div class="edit-count-badge edit-count-max">Đã sửa 3/3</div>`;
+          } else {
+            // Còn lượt sửa (< 3 lần) -> Bấm để nhập mã PIN 1111 mở khóa
+            actionBtn = `
+              <button type="button" class="btn-tbl-unlock" onclick="openInlineUnlock('${st.ma_tram}')" title="Nhập mã PIN 1111 để mở khóa sửa (Đã sửa: ${soLanSua}/3 lần, còn ${3 - soLanSua} lần)">
+                🔓 Sửa (${soLanSua}/3)
+              </button>
+            `;
+            if (soLanSua > 0) {
+              editBadgeHtml = `<div class="edit-count-badge edit-count-warn">Đã sửa ${soLanSua}/3</div>`;
+            }
+          }
+        } else {
+          // Chưa lưu lần nào -> Nút Lưu ban đầu
+          actionBtn = `
+            <button type="button" class="btn-tbl-save" id="btn_save_${st.ma_tram}" onclick="saveInlineStation('${st.ma_tram}')" title="Lưu số liệu trạm này vào Google Sheet">
+              💾 Lưu
+            </button>
+          `;
+        }
 
         html += `
           <tr class="${rowClass}" id="row_${st.ma_tram}">
@@ -1715,9 +1832,21 @@
               </div>
             </td>
 
-            <!-- 11. THAO TÁC (LƯU HOẶC MỞ KHÓA) -->
+            <!-- 11. HẠNG MỤC 5: NGƯỜI NHẬP (PHƯƠNG NGANG TỪNG TRẠM) -->
+            <td class="text-center">
+              <input type="text" 
+                     id="inline_nguoi_${st.ma_tram}" 
+                     class="tbl-input-text" 
+                     placeholder="Người thực hiện..." 
+                     value="${escapeHtml(st.nguoi_nhap || state.defaultNguoiNhap || '')}" 
+                     ${disabledAttr}
+                     oninput="onInlineNguoiNhapInput(this.value)">
+            </td>
+
+            <!-- 12. THAO TÁC (LƯU HOẶC MỞ KHÓA TỐI ĐA 3 LẦN) -->
             <td class="text-center">
               ${actionBtn}
+              ${editBadgeHtml}
             </td>
           </tr>
         `;
@@ -1834,26 +1963,54 @@
       }
     };
 
+    function escapeHtml(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.onInlineNguoiNhapInput = function(val) {
+      const trimmed = (val || "").trim();
+      if (trimmed) {
+        state.defaultNguoiNhap = trimmed;
+        localStorage.setItem("pcvt_gis_nguoi_nhap", trimmed);
+      }
+    };
+
     // =========================================================================
     // XỬ LÝ LƯU SỐ LIỆU CHO TỪNG DÒNG (INLINE ROW SAVE)
     // =========================================================================
     async function saveInlineStation(maTram) {
       if (state.isSubmitting) return;
 
-      // 1. Kiểm tra tên người nhập
-      const nguoiNhapInput = (document.getElementById("inputNguoiNhap").value || "").trim();
-      if (!nguoiNhapInput) {
-        showToast("Vui lòng nhập tên của bạn ở ô 'Người nhập' phía trên cùng!", "error", 4000);
-        document.getElementById("inputNguoiNhap").focus();
+      // 1. Kiểm tra tên người nhập trực tiếp trên dòng trạm đó
+      const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
+      const valNguoiNhap = nguoiEl ? nguoiEl.value.trim() : "";
+      if (!valNguoiNhap) {
+        showToast(`[${maTram}] Vui lòng nhập họ tên 'Người nhập' trên dòng trạm này trước khi lưu!`, "warning", 4500);
+        if (nguoiEl) nguoiEl.focus();
         return;
       }
-      state.nguoiNhap = nguoiNhapInput;
-      localStorage.setItem("pcvt_gis_nguoi_nhap", state.nguoiNhap);
+      state.defaultNguoiNhap = valNguoiNhap;
+      localStorage.setItem("pcvt_gis_nguoi_nhap", valNguoiNhap);
 
       // 2. Tìm trạm trong state
       const station = state.allStations.find(s => s.ma_tram === maTram);
       if (!station) {
         showToast(`Không tìm thấy dữ liệu trạm ${maTram}`, "error");
+        return;
+      }
+
+      const isUnlocked = state.unlockedStations[maTram] === true;
+      const soLanSua = parseInt(station.so_lan_sua, 10) || 0;
+
+      // Chặn nếu trạm đã sửa đủ 3 lần
+      if ((station.is_locked || isUnlocked) && soLanSua >= 3 && !isUnlocked) {
+        showToast(`Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống không cho phép sửa thêm.`, "error", 5000);
         return;
       }
 
@@ -1897,8 +2054,6 @@
         }
       }
 
-      const isUnlocked = state.unlockedStations[maTram] === true;
-
       const payload = {
         action: "saveStation",
         ma_tram: maTram,
@@ -1908,7 +2063,7 @@
         xoa: xoa,
         trang_thai: valTrangThai,
         ngay_hoan_thanh: ngayHoanThanhVN,
-        nguoi_nhap: state.nguoiNhap,
+        nguoi_nhap: valNguoiNhap,
         is_unlock_verified: isUnlocked
       };
 
@@ -1917,17 +2072,21 @@
         showLoading(`Đang lưu trạm ${maTram} (Demo Mode)...`);
         setTimeout(() => {
           hideLoading();
+          if (isUnlocked) {
+            station.so_lan_sua = soLanSua + 1;
+          }
           station.so_luong_hoan_thanh = soLuongHoanThanh;
           station.xoa = xoa;
           station.trang_thai = valTrangThai;
           station.ngay_hoan_thanh = ngayHoanThanhVN;
           station.con_lai = station.tong - soLuongHoanThanh - xoa;
           station.is_locked = true;
-          station.nguoi_nhap = state.nguoiNhap;
+          station.nguoi_nhap = valNguoiNhap;
           station.thoi_gian_nhap = new Date().toLocaleString("vi-VN");
           delete state.unlockedStations[maTram];
           renderAll();
-          showToast(`Đã lưu và khóa trạm [${maTram}] thành công!`, "success");
+          const editMsg = isUnlocked ? ` (Lần sửa ${station.so_lan_sua}/3)` : "";
+          showToast(`Đã lưu và khóa trạm [${maTram}]${editMsg} thành công!`, "success");
         }, 350);
         return;
       }
@@ -1973,11 +2132,22 @@
     }
 
     // =========================================================================
-    // XỬ LÝ MỞ KHÓA BẰNG MÃ PIN (CHO DÒNG TƯƠNG ỨNG)
+    // XỬ LÝ MỞ KHÓA BẰNG MÃ PIN (CHO PHÉP TỐI ĐA 3 LẦN SỬA)
     // =========================================================================
     window.openInlineUnlock = function(maTram) {
+      const st = state.allStations.find(s => s.ma_tram === maTram);
+      if (!st) return;
+
+      const soLanSua = parseInt(st.so_lan_sua, 10) || 0;
+      if (soLanSua >= 3) {
+        showToast(`Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`, "error", 5000);
+        return;
+      }
+
       state.unlockingMaTram = maTram;
       document.getElementById("modalMaTram").innerText = maTram;
+      const countEl = document.getElementById("modalSoLanSuaBadge");
+      if (countEl) countEl.innerText = `Đã sửa ${soLanSua}/3 lần (Còn ${3 - soLanSua} lần)`;
       document.getElementById("modalPinInput").value = "";
       document.getElementById("pinModal").classList.add("active");
       setTimeout(() => document.getElementById("modalPinInput").focus(), 200);
@@ -1991,7 +2161,7 @@
     async function handleConfirmPin() {
       const pin = document.getElementById("modalPinInput").value.trim();
       if (!pin) {
-        showToast("Vui lòng nhập mã PIN xác nhận!", "warning");
+        showToast("Vui lòng nhập mã PIN xác nhận (Mặc định: 1111)!", "warning");
         document.getElementById("modalPinInput").focus();
         return;
       }
@@ -2002,6 +2172,16 @@
         closePinModal();
         return;
       }
+
+      const soLanSua = parseInt(st.so_lan_sua, 10) || 0;
+      if (soLanSua >= 3) {
+        closePinModal();
+        showToast(`Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`, "error", 5000);
+        return;
+      }
+
+      const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
+      const rowNguoi = nguoiEl ? nguoiEl.value.trim() : (st.nguoi_nhap || state.defaultNguoiNhap || "Cán bộ hiện trường");
 
       const currentClientData = {
         so_luong_hoan_thanh: st.so_luong_hoan_thanh || 0,
@@ -2017,7 +2197,7 @@
         team_key: st.teamKey || state.currentTeam,
         pin: pin,
         current_client_data: currentClientData,
-        nguoi_nhap: state.nguoiNhap || "Cán bộ hiện trường"
+        nguoi_nhap: rowNguoi
       };
 
       // === DEMO MODE ===
@@ -2029,7 +2209,7 @@
         closePinModal();
         state.unlockedStations[maTram] = true;
         renderTable();
-        showToast(`Đã mở khóa trạm [${maTram}]! Cho phép sửa 01 lần.`, "success");
+        showToast(`Đã mở khóa trạm [${maTram}]! Cho phép sửa lần ${soLanSua + 1}/3.`, "success");
         return;
       }
 
@@ -2052,7 +2232,7 @@
           closePinModal();
           state.unlockedStations[maTram] = true;
           renderTable();
-          showToast(result.message || `Đã mở khóa trạm [${maTram}]! Cho phép sửa 01 lần.`, "success");
+          showToast(result.message || `Đã mở khóa trạm [${maTram}] cho phép sửa lần ${soLanSua + 1}/3.`, "success");
         } else {
           if (result.needReload) {
             closePinModal();
