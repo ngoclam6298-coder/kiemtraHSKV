@@ -224,14 +224,137 @@
       font-weight: bold;
     }
 
-    /* 1. MỤC TÌM KIẾM TRÊN CÙNG (SEARCH BAR ON TOP) */
-    .top-search-card {
+    /* =========================================================================
+       1. KHUNG PHÒNG / ĐỘI & THANH TÌM KIẾM LỒNG NHAU (NESTED TEAM SEARCH)
+       ========================================================================= */
+    .team-workspace-card {
       background: #ffffff;
       border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0, 91, 170, 0.08);
-      border: 1.5px solid #bfdbfe;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 14px rgba(0, 91, 170, 0.08);
+      border: 2px solid #bfdbfe;
+      overflow: hidden;
+    }
+
+    /* THANH TAB PHÒNG / ĐỘI NẰM NGAY TRÊN ĐẦU KHUNG */
+    .tabs-nav {
+      display: flex;
+      background: #f1f5f9;
+      padding: 6px 6px 0 6px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-bottom: 2px solid #bfdbfe;
+    }
+
+    .tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 145px;
+      padding: 10px 10px 12px 10px;
+      border: 2px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      color: #64748b;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      background: #e2e8f0;
+      color: var(--evn-blue);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--evn-blue);
+      border-color: #bfdbfe;
+      border-bottom: 2px solid #ffffff;
+      margin-bottom: -2px;
+      font-weight: 800;
+      box-shadow: 0 -2px 6px rgba(0, 91, 170, 0.06);
+    }
+
+    .tab-btn-title {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .tab-badge {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 800;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: var(--evn-blue);
+      color: #ffffff;
+    }
+
+    /* NỘI DUNG TÌM KIẾM LỒNG THEO PHÒNG / ĐỘI */
+    .nested-search-body {
+      padding: 12px 14px 14px 14px;
+      background: #ffffff;
+    }
+
+    .search-header-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .search-team-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.86rem;
+      color: #334155;
+    }
+
+    .search-team-indicator strong {
+      color: var(--evn-blue);
+      font-weight: 800;
+    }
+
+    .search-team-badge {
+      background: var(--evn-light-blue);
+      color: var(--evn-dark-blue);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .search-scope-note {
+      font-size: 0.78rem;
+      color: #0284c7;
+      font-weight: 700;
+      background: #f0f9ff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      border: 1px solid #bae6fd;
     }
 
     .search-input-box {
@@ -242,27 +365,28 @@
 
     .search-input-box input {
       width: 100%;
-      padding: 12px 42px 12px 44px;
-      font-size: 1rem;
+      padding: 11px 42px 11px 42px;
+      font-size: 0.96rem;
       font-weight: 600;
-      border: 2px solid var(--evn-accent);
-      border-radius: var(--radius-md);
-      background: #ffffff;
+      border: 2px solid #93c5fd;
+      border-radius: var(--radius-sm);
+      background: #f8fafc;
       outline: none;
       color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.1);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
       transition: all 0.2s;
     }
 
     .search-input-box input:focus {
+      background: #ffffff;
       border-color: var(--evn-blue);
-      box-shadow: 0 0 0 3px rgba(0, 91, 170, 0.2);
+      box-shadow: 0 0 0 3px rgba(0, 91, 170, 0.15);
     }
 
     .search-icon-left {
       position: absolute;
       left: 14px;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--evn-accent);
       pointer-events: none;
     }
@@ -272,105 +396,22 @@
       right: 12px;
       background: #e2e8f0;
       border: none;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-muted);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: bold;
       transition: background 0.2s;
     }
 
     .search-btn-clear:hover {
       background: #cbd5e1;
-    }
-
-    .search-match-alert {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      padding: 6px 12px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 6px;
-      color: var(--evn-dark-blue);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .search-match-alert button {
-      background: var(--evn-blue);
-      color: #fff;
-      border: none;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* 2. DEPARTMENT TABS (3 SHEET = 3 PHÒNG / ĐỘI) */
-    .tabs-wrapper {
-      margin-bottom: 12px;
-    }
-
-    .tabs-nav {
-      display: flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: var(--radius-md);
-      gap: 4px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .tabs-nav::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 140px;
-      padding: 10px 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-weight: 700;
-      font-size: 0.85rem;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .tab-btn.active {
-      background: #ffffff;
-      color: var(--evn-blue);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    }
-
-    .tab-badge {
-      background: var(--evn-light-blue);
-      color: var(--evn-dark-blue);
-      font-size: 0.72rem;
-      padding: 1px 8px;
-      border-radius: 12px;
-      font-weight: 800;
-    }
-
-    .tab-btn.active .tab-badge {
-      background: var(--evn-blue);
-      color: #ffffff;
+      color: #1e293b;
     }
 
     /* 3. SUMMARY BAR */
@@ -1002,33 +1043,42 @@
       </div>
     </div>
 
-    <!-- 1. MỤC TÌM KIẾM TRÊN CÙNG (CHỈ THỂ HIỆN MỤC TÌM KIẾM) -->
-    <section class="top-search-card">
-      <div class="search-input-box">
-        <span class="search-icon-left">🔍</span>
-        <input type="text" id="topSearchInput" placeholder="Gõ MA_TRAM hoặc ID trạm mới để tìm kiếm nhanh..." autocomplete="off">
-        <button id="btnClearTopSearch" class="search-btn-clear" style="display: none;">✕</button>
-      </div>
-      <div id="searchMatchAlert" class="search-match-alert" style="display: none;"></div>
-    </section>
-
-    <!-- 2. PHÂN CHIA THÀNH 3 SHEET (3 PHÒNG / ĐỘI) -->
-    <div class="tabs-wrapper">
+    <!-- 1. KHUNG ĐIỀU HƯỚNG PHÒNG / ĐỘI VÀ TÌM KIẾM LỒNG NHAU (CHỈ TÌM TRONG ĐỘI ĐANG CHỌN) -->
+    <section class="team-workspace-card">
       <div class="tabs-nav" id="departmentTabs">
         <button class="tab-btn active" data-team="kinh_doanh">
-          🏢 Phòng Kinh Doanh
+          <span class="tab-btn-title">🏢 Phòng Kinh Doanh</span>
           <span class="tab-badge" id="badgeKD">0 trạm</span>
         </button>
         <button class="tab-btn" data-team="do_dem">
-          ⚡ Đội QL Hệ Thống Đo Đếm
+          <span class="tab-btn-title">⚡ Đội QL Hệ Thống Đo Đếm</span>
           <span class="tab-badge" id="badgeDD">0 trạm</span>
         </button>
         <button class="tab-btn" data-team="thu_ghi">
-          📋 Đội QL Thu Ghi
+          <span class="tab-btn-title">📋 Đội QL Thu Ghi</span>
           <span class="tab-badge" id="badgeTG">0 trạm</span>
         </button>
       </div>
-    </div>
+
+      <!-- THANH TÌM KIẾM NẰM TRỌN TRONG PHÒNG / ĐỘI ĐANG CHỌN -->
+      <div class="nested-search-body">
+        <div class="search-header-meta">
+          <div class="search-team-indicator">
+            <span>🔍 Đang tìm kiếm trong:</span>
+            <strong id="searchTeamName">Phòng Kinh Doanh</strong>
+            <span class="search-team-badge" id="searchTeamCount">0 trạm</span>
+          </div>
+          <div class="search-scope-note">
+            <span>🔒 Chỉ tìm các trạm phân cho phòng/đội này</span>
+          </div>
+        </div>
+        <div class="search-input-box">
+          <span class="search-icon-left">🔍</span>
+          <input type="text" id="topSearchInput" placeholder="Gõ MA_TRAM hoặc ID trạm mới để tìm trong Phòng Kinh Doanh..." autocomplete="off">
+          <button id="btnClearTopSearch" class="search-btn-clear" style="display: none;" title="Xóa tìm kiếm">✕</button>
+        </div>
+      </div>
+    </section>
 
     <!-- 3. SUMMARY BAR (THANH TỔNG HỢP TIẾN ĐỘ CỦA ĐỘI) -->
     <section class="summary-card">
@@ -1346,8 +1396,32 @@
     function renderAll() {
       updateKhuVucDropdown();
       updateTabBadges();
+      updateSearchTeamIndicator();
       renderSummaryBar();
       renderTable();
+    }
+
+    /**
+     * Cập nhật thông tin chỉ báo và placeholder của thanh tìm kiếm lồng theo từng phòng/đội
+     */
+    function updateSearchTeamIndicator() {
+      const teamNames = {
+        'kinh_doanh': 'Phòng Kinh Doanh',
+        'do_dem': 'Đội QL Hệ Thống Đo Đếm',
+        'thu_ghi': 'Đội QL Thu Ghi'
+      };
+      const teamStations = getStationsForTeam(state.currentTeam);
+      const name = teamNames[state.currentTeam] || 'Phòng Kinh Doanh';
+      
+      const labelEl = document.getElementById("searchTeamName");
+      const countEl = document.getElementById("searchTeamCount");
+      const inputEl = document.getElementById("topSearchInput");
+
+      if (labelEl) labelEl.innerText = name;
+      if (countEl) countEl.innerText = `${teamStations.length} trạm`;
+      if (inputEl) {
+        inputEl.placeholder = `Gõ MA_TRAM hoặc ID trạm mới để tìm trong ${name} (${teamStations.length} trạm)...`;
+      }
     }
 
     function updateKhuVucDropdown() {
@@ -1427,9 +1501,6 @@
       const khuVucFilterEl = document.getElementById("tableFilterKhuVuc");
       const khuVucFilter = khuVucFilterEl ? khuVucFilterEl.value : "all";
 
-      // Kiểm tra xem từ khóa tìm kiếm có trúng trạm ở đội khác không
-      checkCrossTeamSearch(searchKeyword);
-
       const filtered = teamStations.filter(st => {
         // Lọc theo ô tìm kiếm trên cùng
         if (searchKeyword) {
@@ -1484,10 +1555,32 @@
       }
 
       if (filtered.length === 0) {
+        const teamNames = {
+          'kinh_doanh': 'Phòng Kinh Doanh',
+          'do_dem': 'Đội QL Hệ Thống Đo Đếm',
+          'thu_ghi': 'Đội QL Thu Ghi'
+        };
+        const currentName = teamNames[state.currentTeam] || state.currentTeam;
+        let emptyHtml = "";
+        if (searchKeyword) {
+          emptyHtml = `
+            <div style="padding: 16px 12px;">
+              <div style="font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
+                🔍 Không tìm thấy trạm nào khớp với từ khóa "<em>${searchKeyword.replace(/</g, "&lt;")}</em>" trong ${currentName}
+              </div>
+              <div style="font-size: 0.85rem; color: #64748b; max-width: 580px; margin: 0 auto; line-height: 1.5;">
+                🔒 Thanh tìm kiếm này được <strong>lồng riêng theo từng phòng/đội</strong> (${teamStations.length} trạm).
+                <br>Nếu trạm bạn cần tìm thuộc phòng/đội khác, vui lòng <strong>bấm vào Tab tương ứng ở trên</strong> để tìm kiếm.
+              </div>
+            </div>
+          `;
+        } else {
+          emptyHtml = `Không tìm thấy trạm nào phù hợp với bộ lọc trong ${currentName}.`;
+        }
         tbody.innerHTML = `
           <tr>
-            <td colspan="11" class="text-center" style="padding: 28px; color: var(--text-muted);">
-              Không tìm thấy trạm nào phù hợp trong sheet này.
+            <td colspan="11" class="text-center" style="padding: 24px; color: var(--text-muted);">
+              ${emptyHtml}
             </td>
           </tr>
         `;
@@ -1739,56 +1832,6 @@
           ngayEl.value = getTodayVN();
         }
       }
-    };
-
-    /**
-     * Kiểm tra chéo từ khóa tìm kiếm sang các phòng/đội khác
-     */
-    function checkCrossTeamSearch(keyword) {
-      const alertEl = document.getElementById("searchMatchAlert");
-      if (!keyword || keyword.length < 2) {
-        alertEl.style.display = "none";
-        return;
-      }
-
-      const teamNames = {
-        'kinh_doanh': 'Phòng Kinh Doanh',
-        'do_dem': 'Đội QL Hệ Thống Đo Đếm',
-        'thu_ghi': 'Đội QL Thu Ghi'
-      };
-
-      const otherTeams = ['kinh_doanh', 'do_dem', 'thu_ghi'].filter(t => t !== state.currentTeam);
-      let matchOtherTeam = null;
-      let matchCount = 0;
-
-      for (let t of otherTeams) {
-        const stList = getStationsForTeam(t);
-        const matches = stList.filter(s => 
-          (s.ma_tram || "").toLowerCase().includes(keyword) || 
-          (s.id_tram_moi || "").toLowerCase().includes(keyword) || 
-          (s.ten_tram_moi || "").toLowerCase().includes(keyword)
-        );
-        if (matches.length > 0) {
-          matchOtherTeam = t;
-          matchCount = matches.length;
-          break;
-        }
-      }
-
-      if (matchOtherTeam) {
-        alertEl.innerHTML = `
-          <span>💡 Tìm thấy <strong>${matchCount}</strong> trạm tại <strong>${teamNames[matchOtherTeam]}</strong></span>
-          <button type="button" onclick="switchTeamTab('${matchOtherTeam}')">Chuyển sang xem 👉</button>
-        `;
-        alertEl.style.display = "flex";
-      } else {
-        alertEl.style.display = "none";
-      }
-    }
-
-    window.switchTeamTab = function(teamKey) {
-      const btn = document.querySelector(`.tab-btn[data-team="${teamKey}"]`);
-      if (btn) btn.click();
     };
 
     // =========================================================================
@@ -2060,6 +2103,14 @@
           btn.classList.add("active");
           state.currentTeam = btn.getAttribute("data-team");
           
+          // Xóa từ khóa tìm kiếm khi đổi phòng/đội để tìm độc lập theo đội đó
+          const searchInput = document.getElementById("topSearchInput");
+          if (searchInput) {
+            searchInput.value = "";
+            document.getElementById("btnClearTopSearch").style.display = "none";
+          }
+
+          updateSearchTeamIndicator();
           updateKhuVucDropdown();
           renderSummaryBar();
           renderTable();
@@ -2076,7 +2127,7 @@
         }
       });
 
-      // 3. Tìm kiếm trên cùng
+      // 3. Tìm kiếm lồng theo phòng/đội
       const topSearch = document.getElementById("topSearchInput");
       const btnClearTop = document.getElementById("btnClearTopSearch");
 
@@ -2089,7 +2140,6 @@
       btnClearTop.addEventListener("click", () => {
         topSearch.value = "";
         btnClearTop.style.display = "none";
-        document.getElementById("searchMatchAlert").style.display = "none";
         topSearch.focus();
         renderTable();
       });
