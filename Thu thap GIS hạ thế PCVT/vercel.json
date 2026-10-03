@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "name": "thu-thap-gis-pcvt",
+  "cleanUrls": true,
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

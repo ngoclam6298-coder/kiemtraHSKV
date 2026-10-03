@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Thu Thập GIS Hạ Thế PCVT - Cập Nhật & Theo Dõi Tiến Độ</title>
+  
+  <!-- Font chữ hiện đại, rõ nét ngoài trời -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --evn-blue: #005baa;
+      --evn-dark-blue: #003e7e;
+      --evn-light-blue: #e8f2fc;
+      --evn-accent: #0284c7;
+      --status-completed: #10b981;
+      --status-completed-bg: #ecfdf5;
+      --status-completed-border: #a7f3d0;
+      --status-pending: #f59e0b;
+      --status-pending-bg: #fffbeb;
+      --status-pending-border: #fde68a;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --locked-color: #64748b;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --card-bg: #ffffff;
+      --page-bg: #f1f5f9;
+      --border-color: #cbd5e1;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--page-bg);
+      color: var(--text-main);
+      line-height: 1.45;
+      padding-bottom: 70px;
+    }
+
+    /* TOP HEADER */
+    .app-header {
+      background: linear-gradient(135deg, var(--evn-dark-blue) 0%, var(--evn-blue) 100%);
+      color: #ffffff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 3px 10px rgba(0, 46, 94, 0.25);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.2;
+    }
+
+    .brand-title span {
+      color: #fed7aa;
+      font-size: 0.8rem;
+      display: block;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* USER & NETWORK BAR */
+    .user-bar {
+      background: #ffffff;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .user-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .user-input-group label {
+      font-weight: 700;
+      color: var(--evn-dark-blue);
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+
+    .user-input-group input {
+      flex: 1;
+      padding: 6px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .user-input-group input:focus {
+      border-color: var(--evn-blue);
+    }
+
+    .network-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .network-online {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .network-offline {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .network-demo {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    /* CONTAINER */
+    .app-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 12px 14px;
+    }
+
+    /* DEMO NOTICE BANNER */
+    .demo-banner {
+      background: #fff7ed;
+      border: 1.5px dashed #f97316;
+      color: #9a3412;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .demo-banner code {
+      background: #ffedd5;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    /* DEPARTMENT TABS */
+    .tabs-wrapper {
+      margin-bottom: 14px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      gap: 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 130px;
+      padding: 10px 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--evn-blue);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .tab-badge {
+      background: var(--evn-light-blue);
+      color: var(--evn-dark-blue);
+      font-size: 0.7rem;
+      padding: 1px 7px;
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: var(--evn-blue);
+      color: #ffffff;
+    }
+
+    /* SUMMARY BAR */
+    .summary-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .summary-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--evn-dark-blue);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-progress-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--status-completed);
+    }
+
+    .progress-bar-container {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9 0%, var(--status-completed) 100%);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .summary-grid .col-span-mobile {
+        grid-column: span 1;
+      }
+    }
+
+    .metric-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .metric-value {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-value.completed { color: var(--status-completed); }
+    .metric-value.deleted { color: #dc2626; }
+    .metric-value.remaining { color: #d97706; }
+    .metric-value.negative { color: #ef4444; }
+
+    /* SECTION CARD */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--evn-dark-blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* AUTOCOMPLETE SEARCH */
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      padding: 12px 40px 12px 42px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: 2px solid var(--evn-accent);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      outline: none;
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
+    }
+
+    .search-input-box input:focus {
+      border-color: var(--evn-blue);
+      box-shadow: 0 0 0 3px rgba(0, 91, 170, 0.2);
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 14px;
+      font-size: 1.1rem;
+      color: var(--evn-accent);
+      pointer-events: none;
+    }
+
+    .search-btn-clear {
+      position: absolute;
+      right: 12px;
+      background: #e2e8f0;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .autocomplete-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 90;
+      display: none;
+    }
+
+    .autocomplete-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+
+    .autocomplete-item:hover, .autocomplete-item:active {
+      background: var(--evn-light-blue);
+    }
+
+    .ac-main {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--evn-dark-blue);
+    }
+
+    .ac-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* SELECTED STATION INFO BANNER */
+    .station-banner {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .station-banner.is-locked {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .sb-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .sb-code {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--evn-blue);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .badge-locked {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+    }
+
+    .badge-unlocked {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .sb-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 12px;
+      font-size: 0.85rem;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 8px;
+    }
+
+    .sb-info-item span:first-child {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .sb-info-item span:last-child {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* FORM STYLES */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 520px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .form-group label .req {
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 48px;
+      padding: 10px 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      outline: none;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--evn-blue);
+      box-shadow: 0 0 0 2px rgba(0, 91, 170, 0.15);
+    }
+
+    .form-control:disabled {
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    .date-input-wrapper {
+      display: flex;
+      gap: 6px;
+    }
+
+    .date-input-wrapper input {
+      flex: 1;
+    }
+
+    .btn-today {
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--evn-dark-blue);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-today:active {
+      background: #cbd5e1;
+    }
+
+    /* ACTION BUTTONS */
+    .actions-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #0284c7 0%, var(--evn-blue) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      height: 52px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 91, 170, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-save:hover {
+      background: linear-gradient(135deg, #0369a1 0%, var(--evn-dark-blue) 100%);
+    }
+
+    .btn-save:active {
+      transform: scale(0.98);
+    }
+
+    .btn-save:disabled {
+      background: #cbd5e1;
+      color: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn-request-unlock {
+      background: #ffffff;
+      color: #b91c1c;
+      border: 2px solid #ef4444;
+      border-radius: var(--radius-md);
+      height: 48px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-request-unlock:active {
+      background: #fef2f2;
+      transform: scale(0.98);
+    }
+
+    /* TABLE SECTION */
+    .table-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .table-search {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    .filter-select {
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: var(--evn-dark-blue);
+      font-weight: 800;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-main);
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+      cursor: pointer;
+    }
+
+    tr.row-selected {
+      background-color: #e0f2fe !important;
+    }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+    /* STATUS BADGES */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-pill.completed {
+      background: var(--status-completed-bg);
+      color: #065f46;
+      border: 1px solid var(--status-completed-border);
+    }
+
+    .status-pill.pending {
+      background: var(--status-pending-bg);
+      color: #92400e;
+      border: 1px solid var(--status-pending-border);
+    }
+
+    .remaining-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 800;
+    }
+
+    .remaining-positive { background: #fef3c7; color: #b45309; }
+    .remaining-zero { background: #dcfce7; color: #15803d; }
+    .remaining-negative { background: #fee2e2; color: #b91c1c; }
+
+    .btn-table-action {
+      background: var(--evn-light-blue);
+      color: var(--evn-blue);
+      border: 1px solid #bfdbfe;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-table-action:active {
+      background: #bfdbfe;
+    }
+
+    /* MODAL PIN */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal-icon {
+      font-size: 1.6rem;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--evn-dark-blue);
+    }
+
+    .modal-body {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .pin-input-group {
+      margin: 14px 0;
+    }
+
+    .pin-input {
+      width: 100%;
+      height: 52px;
+      font-size: 1.5rem;
+      letter-spacing: 8px;
+      text-align: center;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      border: 2px solid var(--evn-blue);
+      border-radius: var(--radius-md);
+      outline: none;
+    }
+
+    .modal-note {
+      font-size: 0.78rem;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--evn-accent);
+      color: #334155;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .btn-modal-confirm {
+      flex: 1;
+      background: var(--evn-blue);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-modal-cancel {
+      background: #e2e8f0;
+      color: var(--text-main);
+      border: none;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* TOAST ALERT */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 90%;
+      max-width: 440px;
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease;
+      pointer-events: auto;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .toast-success { background: #065f46; color: #ffffff; }
+    .toast-error { background: #991b1b; color: #ffffff; }
+    .toast-warning { background: #92400e; color: #ffffff; }
+
+    /* LOADING SPINNER OVERLAY */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid #cbd5e1;
+      border-top-color: var(--evn-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--evn-dark-blue);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loadingText" class="loading-text">Đang tải dữ liệu...</div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-title">
+        ⚡ THU THẬP GIS HẠ THẾ
+        <span>Công ty Điện lực Vũng Tàu (PCVT)</span>
+      </div>
+      <div class="header-actions">
+        <button id="btnReload" class="btn-icon" title="Tải lại dữ liệu">
+          🔄 <span>Tải lại</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- USER & STATUS BAR -->
+  <div class="user-bar">
+    <div class="user-input-group">
+      <label for="inputNguoiNhap">👤 Người nhập:</label>
+      <input type="text" id="inputNguoiNhap" placeholder="Nhập họ tên của bạn (tự lưu)..." autocomplete="name">
+    </div>
+    <div id="networkBadge" class="network-badge network-online">
+      🟢 Trực tuyến
+    </div>
+  </div>
+
+  <main class="app-container">
+
+    <!-- DEMO NOTICE (Chỉ hiển thị khi chưa dán Apps Script URL thật) -->
+    <div id="demoNotice" class="demo-banner" style="display: none;">
+      <span style="font-size: 1.2rem;">💡</span>
+      <div>
+        <strong>Chế độ Giả lập (Demo Mode):</strong> Bạn đang mở app trực tiếp mà chưa gắn link Google Apps Script. 
+        Mọi chức năng tìm kiếm, nhập số liệu, khóa trạm, mở khóa bằng mã PIN (mặc định: <code>1111</code>) đều hoạt động mô phỏng đầy đủ.
+        <div style="margin-top: 4px; font-size: 0.8rem;">
+          👉 Để kết nối Google Sheet thực tế, hãy Deploy Web App và dán link vào biến <code>APPS_SCRIPT_URL</code> ở đầu file <code>index.html</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 TABS = 3 PHÒNG / ĐỘI -->
+    <div class="tabs-wrapper">
+      <div class="tabs-nav" id="departmentTabs">
+        <button class="tab-btn active" data-team="kinh_doanh">
+          🏢 Phòng Kinh Doanh
+          <span class="tab-badge" id="badgeKD">0 trạm</span>
+        </button>
+        <button class="tab-btn" data-team="do_dem">
+          ⚡ Đội QL Hệ Thống Đo Đếm
+          <span class="tab-badge" id="badgeDD">0 trạm</span>
+        </button>
+        <button class="tab-btn" data-team="thu_ghi">
+          📋 Đội QL Thu Ghi
+          <span class="tab-badge" id="badgeTG">0 trạm</span>
+        </button>
+        <button class="tab-btn" data-team="all">
+          🌐 Tất Cả Trạm
+          <span class="tab-badge" id="badgeAll">0 trạm</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SUMMARY BAR (THANH TỔNG HỢP TIẾN ĐỘ CỦA ĐỘI) -->
+    <section class="summary-card">
+      <div class="summary-header">
+        <div class="summary-title" id="summaryTeamTitle">
+          📊 Tổng hợp tiến độ: Phòng Kinh Doanh
+        </div>
+        <div class="summary-progress-label" id="summaryPercent">
+          0.0%
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progressBarFill" class="progress-bar-fill"></div>
+      </div>
+      <div class="summary-grid">
+        <div class="metric-box">
+          <div class="metric-label">Số trạm</div>
+          <div class="metric-value" id="metricStationCount">0</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Tổng khối lượng</div>
+          <div class="metric-value" id="metricTotalVolume">0</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Đã hoàn thành</div>
+          <div class="metric-value completed" id="metricCompleted">0</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Đã xóa</div>
+          <div class="metric-value deleted" id="metricDeleted">0</div>
+        </div>
+        <div class="metric-box col-span-mobile">
+          <div class="metric-label">Còn lại</div>
+          <div class="metric-value remaining" id="metricRemaining">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH & EDIT FORM CARD -->
+    <section class="card" id="formCard">
+      <div class="card-title">
+        <span>📝 Cập Nhật Số Liệu Hiện Trường</span>
+        <span id="currentStatusIndicator" style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">
+          Vui lòng chọn trạm
+        </span>
+      </div>
+
+      <!-- 1. Ô TÌM TRẠM CÓ GỢI Ý (AUTOCOMPLETE) -->
+      <div class="search-wrapper">
+        <div class="search-input-box">
+          <span class="search-icon-left">🔍</span>
+          <input type="text" id="searchStationInput" placeholder="Gõ MA_TRAM hoặc ID trạm mới để tìm..." autocomplete="off">
+          <button id="btnClearSearch" class="search-btn-clear" style="display: none;">✕</button>
+        </div>
+        <div id="autocompleteList" class="autocomplete-list"></div>
+      </div>
+
+      <!-- BANNER THÔNG TIN TRẠM ĐƯỢC CHỌN (CHỈ ĐỌC) -->
+      <div id="selectedStationBanner" class="station-banner" style="display: none;">
+        <div class="sb-row">
+          <div>
+            <div class="sb-code" id="sbMaTram">TRAM_000</div>
+            <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;" id="sbTenTram">Tên trạm biến áp</div>
+          </div>
+          <div id="sbLockBadgeContainer">
+            <span class="badge-lock badge-unlocked">🔓 Cho phép nhập</span>
+          </div>
+        </div>
+        <div class="sb-info-grid">
+          <div class="sb-info-item">
+            <span>ID trạm mới: </span>
+            <span id="sbIdTramMoi">-</span>
+          </div>
+          <div class="sb-info-item">
+            <span>Khu vực: </span>
+            <span id="sbKhuVuc">-</span>
+          </div>
+          <div class="sb-info-item">
+            <span>Tổng khối lượng: </span>
+            <span id="sbTong" class="font-mono">0</span>
+          </div>
+          <div class="sb-info-item">
+            <span>Người cập nhật trước: </span>
+            <span id="sbNguoiNhap">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. FORM NHẬP 4 CỘT -->
+      <form id="stationForm" onsubmit="return false;">
+        <div class="form-grid">
+          
+          <!-- Cột 1: Số lượng hoàn thành -->
+          <div class="form-group">
+            <label for="inputHoanThanh">
+              ✅ Số lượng hoàn thành: <span class="req">*</span>
+            </label>
+            <input type="number" id="inputHoanThanh" class="form-control" inputmode="numeric" min="0" step="1" placeholder="0">
+          </div>
+
+          <!-- Cột 2: Xóa -->
+          <div class="form-group">
+            <label for="inputXoa">
+              🗑️ Xóa: <span class="req">*</span>
+            </label>
+            <input type="number" id="inputXoa" class="form-control" inputmode="numeric" min="0" step="1" placeholder="0">
+          </div>
+
+          <!-- Cột 3: Trạng thái -->
+          <div class="form-group">
+            <label for="selectTrangThai">
+              📌 Trạng thái: <span class="req">*</span>
+            </label>
+            <select id="selectTrangThai" class="form-control">
+              <option value="Chưa hoàn thành">⏳ Chưa hoàn thành</option>
+              <option value="Hoàn thành">✅ Hoàn thành</option>
+            </select>
+          </div>
+
+          <!-- Cột 4: Ngày hoàn thành -->
+          <div class="form-group">
+            <label for="inputNgayHT">
+              📅 Ngày hoàn thành: <span id="ngayHTReq" class="req" style="display: none;">*</span>
+            </label>
+            <div class="date-input-wrapper">
+              <input type="date" id="inputNgayHT" class="form-control">
+              <button type="button" id="btnToday" class="btn-today">Hôm nay</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CẢNH BÁO / TÍNH TOÁN CÒN LẠI DƯỚI FORM -->
+        <div id="calcPreview" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px dashed var(--border-color); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.85rem;">
+          <span>Tính toán tham khảo: <strong>Còn lại = Tổng - Hoàn thành - Xóa</strong></span>
+          <span id="previewConLai" class="font-mono font-bold" style="font-size: 1rem; color: var(--evn-blue);">0</span>
+        </div>
+
+        <!-- CÁC NÚT THAO TÁC -->
+        <div class="actions-bar">
+          <button type="button" id="btnSave" class="btn-save" disabled>
+            💾 LƯU SỐ LIỆU VÀO GOOGLE SHEET
+          </button>
+          
+          <button type="button" id="btnUnlock" class="btn-request-unlock" style="display: none;">
+            🔒 DÒNG ĐÃ KHÓA — BẤM VÀO ĐÂY ĐỂ YÊU CẦU SỬA (MÃ PIN)
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 3. BẢNG THEO DÕI TIẾN ĐỘ CHI TIẾT -->
+    <section class="card">
+      <div class="card-title">
+        <span>📋 Bảng Theo Dõi Chi Tiết Từng Trạm</span>
+        <span id="tableRecordCount" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">
+          0 trạm
+        </span>
+      </div>
+
+      <!-- BỘ LỌC BẢNG -->
+      <div class="table-controls">
+        <input type="text" id="tableFilterSearch" class="table-search" placeholder="🔍 Lọc nhanh theo mã hoặc tên trạm...">
+        
+        <select id="tableFilterStatus" class="filter-select">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="Hoàn thành">Chỉ: Hoàn thành</option>
+          <option value="Chưa hoàn thành">Chỉ: Chưa hoàn thành</option>
+        </select>
+
+        <select id="tableFilterLock" class="filter-select">
+          <option value="all">Tất cả tình trạng khóa</option>
+          <option value="locked">🔒 Đã khóa</option>
+          <option value="unlocked">🔓 Chưa khóa</option>
+        </select>
+
+        <select id="tableFilterKhuVuc" class="filter-select">
+          <option value="all">Tất cả khu vực</option>
+        </select>
+      </div>
+
+      <!-- BẢNG CUỘN -->
+      <div class="table-scroll">
+        <table id="stationsTable">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 45px;">STT</th>
+              <th>Mã trạm</th>
+              <th>ID trạm mới</th>
+              <th>Tên trạm (mới)</th>
+              <th class="text-right">Tổng</th>
+              <th class="text-right">Hoàn thành</th>
+              <th class="text-right">Xóa</th>
+              <th class="text-right">Còn lại</th>
+              <th class="text-center">Trạng thái</th>
+              <th class="text-center">Ngày HT</th>
+              <th class="text-center">Khóa</th>
+              <th class="text-center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td colspan="12" class="text-center" style="padding: 30px; color: var(--text-muted);">
+                Đang nạp danh sách trạm...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL NHẬP MÃ PIN ĐỂ MỞ KHÓA -->
+  <div id="pinModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-icon">🔐</span>
+        <div>
+          <div class="modal-title">Xác Nhận Quyền Sửa Dữ Liệu</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Trạm: <strong id="modalMaTram">...</strong></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p>Dòng này hiện đã bị khóa sau khi lưu. Bạn cần nhập mã PIN được cấp bởi người quản lý để mở khóa sửa <strong>01 lần</strong>.</p>
+        
+        <div class="pin-input-group">
+          <input type="password" id="modalPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="off" inputmode="numeric">
+        </div>
+
+        <div class="modal-note">
+          ℹ️ <strong>Lưu ý:</strong> Hệ thống sẽ tự động đối chiếu số liệu hiển thị trên máy bạn với số liệu thực tế trong Google Sheet. Nếu có người khác đã sửa, hệ thống sẽ yêu cầu tải lại để tránh sai lệch.
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="btnCancelPin" class="btn-modal-cancel">Hủy</button>
+        <button id="btnConfirmPin" class="btn-modal-confirm">Xác nhận mở khóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * CẤU HÌNH ĐƯỜNG DẪN GOOGLE APPS SCRIPT WEB APP
+     * =========================================================================
+     * Sau khi Deploy dự án Google Apps Script (Code.gs), sao chép Web App URL
+     * và dán vào biến APPS_SCRIPT_URL dưới đây.
+     * Ví dụ: const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycb.../exec";
+     */
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCxNr_jHA34quYFTq7KOCVgSXU4mRZX8_29NS99sIbpdMhSam8nWzUa0pxr5CZuWIRuQ/exec";
+
+    // Trạng thái ứng dụng
+    const state = {
+      isDemoMode: false,
+      allStations: [],
+      currentTeam: 'kinh_doanh', // 'kinh_doanh' | 'do_dem' | 'thu_ghi'
+      selectedStation: null,
+      isUnlockedForOneEdit: false,
+      nguoiNhap: '',
+      isSubmitting: false
+    };
+
+    // Dữ liệu mẫu EVN PC Vũng Tàu dùng cho Chế độ Giả lập (Demo Mode)
+    const DEMO_STATIONS = [
+      // 1. Phòng Kinh Doanh
+      { rowIndex: 2, stt: 1, ma_tram: "TRAM_KD01", id_tram_moi: "VT_KD_001", ten_tram_moi: "Trạm Biến Áp Thùy Vân 1", tong: 120, so_luong_hoan_thanh: 100, xoa: 5, con_lai: 15, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
+      { rowIndex: 3, stt: 2, ma_tram: "TRAM_KD02", id_tram_moi: "VT_KD_002", ten_tram_moi: "Trạm Biến Áp Hoàng Hoa Thám", tong: 85, so_luong_hoan_thanh: 85, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
+      { rowIndex: 4, stt: 3, ma_tram: "TRAM_KD03", id_tram_moi: "VT_KD_003", ten_tram_moi: "Trạm Biến Áp Lê Hồng Phong", tong: 210, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 210, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { rowIndex: 5, stt: 4, ma_tram: "TRAM_KD04", id_tram_moi: "VT_KD_004", ten_tram_moi: "Trạm Biến Áp Ba Cu", tong: 95, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
+      
+      // 2. Đội Quản lý hệ thống đo đếm
+      { rowIndex: 6, stt: 5, ma_tram: "TRAM_DD01", id_tram_moi: "VT_DD_101", ten_tram_moi: "Trạm Biến Áp Bến Đình", tong: 150, so_luong_hoan_thanh: 130, xoa: 10, con_lai: 10, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { rowIndex: 7, stt: 6, ma_tram: "TRAM_DD02", id_tram_moi: "VT_DD_102", ten_tram_moi: "Trạm Biến Áp Trần Phú", tong: 180, so_luong_hoan_thanh: 180, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "30/09/2026", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "30/09/2026 15:20:00" },
+      { rowIndex: 8, stt: 7, ma_tram: "TRAM_DD03", id_tram_moi: "VT_DD_103", ten_tram_moi: "Trạm Biến Áp Bãi Trước", tong: 110, so_luong_hoan_thanh: 50, xoa: 0, con_lai: 60, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+
+      // 3. Đội quản lý thu ghi
+      { rowIndex: 9, stt: 8, ma_tram: "TRAM_TG01", id_tram_moi: "VT_TG_201", ten_tram_moi: "Trạm Biến Áp Nguyễn An Ninh", tong: 160, so_luong_hoan_thanh: 140, xoa: 20, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 11:30:00" },
+      { rowIndex: 10, stt: 9, ma_tram: "TRAM_TG02", id_tram_moi: "VT_TG_202", ten_tram_moi: "Trạm Biến Áp Trương Công Định", tong: 140, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 45, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội quản lý thu ghi", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { rowIndex: 11, stt: 10, ma_tram: "TRAM_TG03", id_tram_moi: "VT_TG_203", ten_tram_moi: "Trạm Biến Áp Võ Thị Sáu", tong: 130, so_luong_hoan_thanh: 130, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 08:45:00" }
+    ];
+
+    // =========================================================================
+    // KHỞI TẠO ỨNG DỤNG
+    // =========================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      initUserStorage();
+      setupEvents();
+      checkApiModeAndLoad();
+    });
+
+    /**
+     * Khôi phục tên Người nhập từ LocalStorage
+     */
+    function initUserStorage() {
+      const savedUser = localStorage.getItem("pcvt_gis_nguoi_nhap") || "";
+      const inputEl = document.getElementById("inputNguoiNhap");
+      if (inputEl) {
+        inputEl.value = savedUser;
+        state.nguoiNhap = savedUser;
+        inputEl.addEventListener("input", (e) => {
+          state.nguoiNhap = e.target.value.trim();
+          localStorage.setItem("pcvt_gis_nguoi_nhap", state.nguoiNhap);
+        });
+      }
+    }
+
+    /**
+     * Kiểm tra chế độ chạy (Thật hay Demo) và nạp dữ liệu
+     */
+    function checkApiModeAndLoad() {
+      const isPlaceholder = !APPS_SCRIPT_URL || 
+                            APPS_SCRIPT_URL.includes("YOUR_SCRIPT_ID_HERE") || 
+                            !APPS_SCRIPT_URL.startsWith("http");
+
+      if (isPlaceholder) {
+        state.isDemoMode = true;
+        document.getElementById("demoNotice").style.display = "flex";
+        const netBadge = document.getElementById("networkBadge");
+        netBadge.className = "network-badge network-demo";
+        netBadge.innerHTML = "🟡 Chế độ Demo";
+        showToast("Đang chạy Chế độ Giả lập với dữ liệu mẫu!", "warning");
+        loadDemoData();
+      } else {
+        state.isDemoMode = false;
+        document.getElementById("demoNotice").style.display = "none";
+        loadRemoteData();
+      }
+    }
+
+    /**
+     * Nạp dữ liệu giả lập
+     */
+    function loadDemoData() {
+      showLoading("Đang nạp dữ liệu giả lập...");
+      setTimeout(() => {
+        state.allStations = JSON.parse(JSON.stringify(DEMO_STATIONS));
+        hideLoading();
+        renderAll();
+      }, 300);
+    }
+
+    /**
+     * Nạp dữ liệu từ Google Apps Script
+     */
+    async function loadRemoteData() {
+      if (!navigator.onLine) {
+        showToast("Không có kết nối mạng Internet!", "error");
+        updateNetworkStatus(false);
+        return;
+      }
+
+      showLoading("Đang đồng bộ dữ liệu từ Google Sheet...");
+      try {
+        const url = `${APPS_SCRIPT_URL}?action=getData&_t=${Date.now()}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          state.allStations = data.stations || [];
+          
+          // Kiểm tra cảnh báo trùng MA_TRAM trong sheet
+          if (data.duplicates && data.duplicates.length > 0) {
+            const uniqueDupes = [...new Set(data.duplicates)];
+            showToast(`Cảnh báo: Có ${uniqueDupes.length} mã trạm bị trùng lặp trên Google Sheet: ${uniqueDupes.join(', ')}`, "warning", 6000);
+          } else {
+            showToast("Đồng bộ dữ liệu Google Sheet thành công!", "success");
+          }
+          
+          updateNetworkStatus(true);
+          renderAll();
+
+          // Nếu đang chọn 1 trạm, cập nhật lại dữ liệu trạm đó
+          if (state.selectedStation) {
+            const found = state.allStations.find(s => s.ma_tram === state.selectedStation.ma_tram);
+            if (found) {
+              selectStation(found);
+            }
+          }
+        } else {
+          throw new Error(data.message || "Lỗi nạp dữ liệu từ Apps Script");
+        }
+      } catch (err) {
+        console.error("Lỗi fetch Apps Script:", err);
+        showToast("Lỗi kết nối máy chủ Google Sheet: " + err.message, "error", 5000);
+        updateNetworkStatus(false);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    /**
+     * Phân loại trạm theo đội / khu vực
+     */
+    function getStationsForTeam(teamKey) {
+      if (teamKey === 'all') {
+        return state.allStations;
+      }
+      return state.allStations.filter(st => {
+        const rawKv = (st.khu_vuc || "").trim();
+        const kv = rawKv.toLowerCase()
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+
+        if (teamKey === 'kinh_doanh') {
+          return kv.includes("kinh doanh") || kv.includes("pkd") || kv.includes("kd");
+        } else if (teamKey === 'do_dem') {
+          return kv.includes("do dem") || kv.includes("htdd") || kv.includes("he thong do dem");
+        } else if (teamKey === 'thu_ghi') {
+          return kv.includes("thu ghi") || kv.includes("qltg") || kv.includes("tg");
+        } else if (teamKey === rawKv) {
+          return true;
+        }
+        return true;
+      });
+    }
+
+    /**
+     * Cập nhật toàn bộ giao diện: đếm trạm, thanh tổng hợp, bảng
+     */
+    function renderAll() {
+      updateKhuVucDropdown();
+      updateTabBadges();
+      renderSummaryBar();
+      renderTable();
+    }
+
+    /**
+     * Cập nhật danh sách Khu vực vào ô lọc
+     */
+    function updateKhuVucDropdown() {
+      const select = document.getElementById("tableFilterKhuVuc");
+      if (!select) return;
+      const currentVal = select.value;
+      const uniqueKvs = [...new Set(state.allStations.map(s => s.khu_vuc).filter(Boolean))];
+      
+      let html = '<option value="all">Tất cả khu vực</option>';
+      uniqueKvs.forEach(kv => {
+        html += `<option value="${kv}">${kv}</option>`;
+      });
+      select.innerHTML = html;
+      if (uniqueKvs.includes(currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    /**
+     * Đếm số lượng trạm theo từng tab & Tự chuyển tab nếu chưa phân đội
+     */
+    function updateTabBadges() {
+      const kdCount = getStationsForTeam('kinh_doanh').length;
+      const ddCount = getStationsForTeam('do_dem').length;
+      const tgCount = getStationsForTeam('thu_ghi').length;
+      const allCount = state.allStations.length;
+
+      document.getElementById("badgeKD").innerText = `${kdCount} trạm`;
+      document.getElementById("badgeDD").innerText = `${ddCount} trạm`;
+      document.getElementById("badgeTG").innerText = `${tgCount} trạm`;
+      const badgeAll = document.getElementById("badgeAll");
+      if (badgeAll) badgeAll.innerText = `${allCount} trạm`;
+
+      // Nếu 3 đội đều = 0 (do cột Khu vực trong Sheet ghi Vũng Tàu, Phú Mỹ...)
+      // thì tự động chuyển sang tab "Tất cả trạm" để người dùng thấy đủ 199 trạm
+      if (kdCount === 0 && ddCount === 0 && tgCount === 0 && allCount > 0 && state.currentTeam !== 'all') {
+        state.currentTeam = 'all';
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        tabBtns.forEach(btn => {
+          if (btn.getAttribute("data-team") === 'all') btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+      }
+    }
+
+    /**
+     * Hiển thị Thanh tổng hợp (Summary Bar) theo tab hiện tại
+     */
+    function renderSummaryBar() {
+      const teamStations = getStationsForTeam(state.currentTeam);
+      
+      const teamTitles = {
+        'kinh_doanh': 'Phòng Kinh Doanh',
+        'do_dem': 'Đội QL Hệ Thống Đo Đếm',
+        'thu_ghi': 'Đội QL Thu Ghi',
+        'all': 'Toàn Bộ Các Trạm'
+      };
+
+      const titleName = teamTitles[state.currentTeam] || `Khu vực: ${state.currentTeam}`;
+      document.getElementById("summaryTeamTitle").innerText = `📊 Tổng hợp tiến độ: ${titleName}`;
+
+      const totalStations = teamStations.length;
+      let totalVolume = 0;
+      let completedVolume = 0;
+      let deletedVolume = 0;
+
+      teamStations.forEach(s => {
+        totalVolume += (parseInt(s.tong, 10) || 0);
+        completedVolume += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
+        deletedVolume += (parseInt(s.xoa, 10) || 0);
+      });
+
+      const remainingVolume = totalVolume - completedVolume - deletedVolume;
+      const progressPercent = totalVolume > 0 ? (Math.round((completedVolume / totalVolume) * 1000) / 10) : 0;
+
+      document.getElementById("metricStationCount").innerText = totalStations;
+      document.getElementById("metricTotalVolume").innerText = totalVolume.toLocaleString("vi-VN");
+      document.getElementById("metricCompleted").innerText = completedVolume.toLocaleString("vi-VN");
+      document.getElementById("metricDeleted").innerText = deletedVolume.toLocaleString("vi-VN");
+      
+      const remEl = document.getElementById("metricRemaining");
+      remEl.innerText = remainingVolume.toLocaleString("vi-VN");
+      remEl.className = `metric-value ${remainingVolume < 0 ? 'negative' : 'remaining'}`;
+
+      document.getElementById("summaryPercent").innerText = `${progressPercent.toFixed(1)}%`;
+      document.getElementById("progressBarFill").style.width = `${Math.min(progressPercent, 100)}%`;
+    }
+
+    /**
+     * Hiển thị Bảng theo dõi tiến độ chi tiết
+     */
+    function renderTable() {
+      const teamStations = getStationsForTeam(state.currentTeam);
+      const searchKeyword = (document.getElementById("tableFilterSearch").value || "").trim().toLowerCase();
+      const statusFilter = document.getElementById("tableFilterStatus").value;
+      const lockFilter = document.getElementById("tableFilterLock").value;
+      const khuVucFilterEl = document.getElementById("tableFilterKhuVuc");
+      const khuVucFilter = khuVucFilterEl ? khuVucFilterEl.value : "all";
+
+      const filtered = teamStations.filter(st => {
+        // Lọc theo từ khóa tìm kiếm trong bảng
+        if (searchKeyword) {
+          const matchCode = (st.ma_tram || "").toLowerCase().includes(searchKeyword);
+          const matchIdMoi = (st.id_tram_moi || "").toLowerCase().includes(searchKeyword);
+          const matchTen = (st.ten_tram_moi || "").toLowerCase().includes(searchKeyword);
+          if (!matchCode && !matchIdMoi && !matchTen) return false;
+        }
+
+        // Lọc theo trạng thái
+        if (statusFilter !== "all" && st.trang_thai !== statusFilter) {
+          return false;
+        }
+
+        // Lọc theo tình trạng khóa
+        if (lockFilter === "locked" && !st.is_locked) return false;
+        if (lockFilter === "unlocked" && st.is_locked) return false;
+
+        // Lọc theo Khu vực
+        if (khuVucFilter !== "all" && st.khu_vuc !== khuVucFilter) {
+          return false;
+        }
+
+        return true;
+      });
+
+      document.getElementById("tableRecordCount").innerText = `${filtered.length} / ${teamStations.length} trạm`;
+
+      const tbody = document.getElementById("tableBody");
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="12" class="text-center" style="padding: 24px; color: var(--text-muted);">
+              Không tìm thấy trạm nào phù hợp điều kiện lọc.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = "";
+      filtered.forEach((st, idx) => {
+        const isSelected = state.selectedStation && state.selectedStation.ma_tram === st.ma_tram;
+        const rowClass = isSelected ? "row-selected" : "";
+
+        // Tính còn lại
+        const conLai = (st.tong || 0) - (st.so_luong_hoan_thanh || 0) - (st.xoa || 0);
+        let remClass = "remaining-zero";
+        if (conLai > 0) remClass = "remaining-positive";
+        else if (conLai < 0) remClass = "remaining-negative";
+
+        const statusPill = st.trang_thai === "Hoàn thành" 
+          ? `<span class="status-pill completed">✅ Hoàn thành</span>` 
+          : `<span class="status-pill pending">⏳ Chưa xong</span>`;
+
+        const lockBadge = st.is_locked
+          ? `<span title="Đã khóa dữ liệu">🔒</span>`
+          : `<span title="Cho phép nhập">🔓</span>`;
+
+        html += `
+          <tr class="${rowClass}" onclick="selectStationByMaTram('${st.ma_tram}')">
+            <td class="text-center font-mono">${idx + 1}</td>
+            <td class="font-mono" style="font-weight: 800; color: var(--evn-blue);">${st.ma_tram}</td>
+            <td>${st.id_tram_moi || "-"}</td>
+            <td>${st.ten_tram_moi || "-"}</td>
+            <td class="text-right font-mono">${(st.tong || 0).toLocaleString("vi-VN")}</td>
+            <td class="text-right font-mono" style="color: var(--status-completed); font-weight: 800;">${(st.so_luong_hoan_thanh || 0).toLocaleString("vi-VN")}</td>
+            <td class="text-right font-mono" style="color: #dc2626;">${(st.xoa || 0).toLocaleString("vi-VN")}</td>
+            <td class="text-right font-mono"><span class="remaining-badge ${remClass}">${conLai.toLocaleString("vi-VN")}</span></td>
+            <td class="text-center">${statusPill}</td>
+            <td class="text-center">${st.ngay_hoan_thanh || "-"}</td>
+            <td class="text-center">${lockBadge}</td>
+            <td class="text-center">
+              <button type="button" class="btn-table-action" onclick="event.stopPropagation(); selectStationByMaTram('${st.ma_tram}')">
+                Chọn
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    /**
+     * Chọn trạm theo Mã trạm
+     */
+    window.selectStationByMaTram = function(maTram) {
+      const station = state.allStations.find(s => s.ma_tram === maTram);
+      if (station) {
+        selectStation(station);
+      }
+    };
+
+    /**
+     * Cập nhật thông tin trạm vào Form nhập
+     */
+    function selectStation(station) {
+      state.selectedStation = station;
+      state.isUnlockedForOneEdit = false; // Reset cờ mở khóa mỗi khi chọn lại
+
+      // Hiển thị Banner trạm
+      const banner = document.getElementById("selectedStationBanner");
+      banner.style.display = "block";
+      document.getElementById("sbMaTram").innerText = station.ma_tram;
+      document.getElementById("sbTenTram").innerText = station.ten_tram_moi || "(Chưa có tên trạm)";
+      document.getElementById("sbIdTramMoi").innerText = station.id_tram_moi || "-";
+      document.getElementById("sbKhuVuc").innerText = station.khu_vuc || "-";
+      document.getElementById("sbTong").innerText = (station.tong || 0).toLocaleString("vi-VN");
+      document.getElementById("sbNguoiNhap").innerText = station.nguoi_nhap 
+        ? `${station.nguoi_nhap} (${station.thoi_gian_nhap || ''})` 
+        : "-";
+
+      // Điền 4 cột người dùng vào Form
+      document.getElementById("inputHoanThanh").value = station.so_luong_hoan_thanh !== undefined ? station.so_luong_hoan_thanh : 0;
+      document.getElementById("inputXoa").value = station.xoa !== undefined ? station.xoa : 0;
+      document.getElementById("selectTrangThai").value = station.trang_thai === "Hoàn thành" ? "Hoàn thành" : "Chưa hoàn thành";
+      
+      // Chuyển ngày dd/mm/yyyy sang yyyy-mm-dd cho input date
+      document.getElementById("inputNgayHT").value = convertDateToPicker(station.ngay_hoan_thanh);
+
+      // Cập nhật giao diện Khóa / Cho phép nhập
+      applyLockState(station.is_locked);
+      updateCalcPreview();
+
+      // Cuộn êm đến vị trí form nếu xem trên điện thoại
+      document.getElementById("formCard").scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Cập nhật lại highlight dòng trong bảng
+      renderTable();
+    }
+
+    /**
+     * Áp dụng trạng thái Khóa / Mở khóa cho Form
+     */
+    function applyLockState(isLocked) {
+      const bannerLockBadge = document.getElementById("sbLockBadgeContainer");
+      const bannerEl = document.getElementById("selectedStationBanner");
+      const btnSave = document.getElementById("btnSave");
+      const btnUnlock = document.getElementById("btnUnlock");
+      const inputs = [
+        document.getElementById("inputHoanThanh"),
+        document.getElementById("inputXoa"),
+        document.getElementById("selectTrangThai"),
+        document.getElementById("inputNgayHT"),
+        document.getElementById("btnToday")
+      ];
+
+      // Nếu đang được mở khóa 1 lần
+      const effectivelyLocked = isLocked && !state.isUnlockedForOneEdit;
+
+      if (effectivelyLocked) {
+        bannerLockBadge.innerHTML = `<span class="badge-lock badge-locked">🔒 Dòng đã khóa</span>`;
+        bannerEl.className = "station-banner is-locked";
+        document.getElementById("currentStatusIndicator").innerHTML = "🔒 <strong>Đã khóa</strong> (Chế độ chỉ xem)";
+
+        inputs.forEach(el => el.disabled = true);
+        btnSave.disabled = true;
+        btnSave.style.display = "none";
+        btnUnlock.style.display = "flex";
+      } else {
+        if (state.isUnlockedForOneEdit) {
+          bannerLockBadge.innerHTML = `<span class="badge-lock badge-unlocked">🔓 Đã mở khóa (Sửa 1 lần)</span>`;
+          document.getElementById("currentStatusIndicator").innerHTML = "🔓 <strong>Cho phép sửa 01 lần</strong> (Sẽ tự khóa lại sau khi lưu)";
+        } else {
+          bannerLockBadge.innerHTML = `<span class="badge-lock badge-unlocked">🔓 Cho phép nhập</span>`;
+          document.getElementById("currentStatusIndicator").innerHTML = "✏️ Sẵn sàng nhập số liệu";
+        }
+
+        bannerEl.className = "station-banner";
+        inputs.forEach(el => el.disabled = false);
+        btnSave.disabled = false;
+        btnSave.style.display = "flex";
+        btnUnlock.style.display = "none";
+      }
+
+      handleTrangThaiChange();
+    }
+
+    /**
+     * Xử lý hiển thị dấu bắt buộc cho Ngày hoàn thành
+     */
+    function handleTrangThaiChange() {
+      const tt = document.getElementById("selectTrangThai").value;
+      const reqEl = document.getElementById("ngayHTReq");
+      if (tt === "Hoàn thành") {
+        reqEl.style.display = "inline";
+        // Nếu ngày đang trống thì tự điền hôm nay
+        const inputNgay = document.getElementById("inputNgayHT");
+        if (!inputNgay.value && !inputNgay.disabled) {
+          fillTodayDate();
+        }
+      } else {
+        reqEl.style.display = "none";
+      }
+      updateCalcPreview();
+    }
+
+    /**
+     * Cập nhật tính toán Còn lại dưới form
+     */
+    function updateCalcPreview() {
+      if (!state.selectedStation) {
+        document.getElementById("previewConLai").innerText = "0";
+        return;
+      }
+      const tong = parseInt(state.selectedStation.tong, 10) || 0;
+      const ht = parseInt(document.getElementById("inputHoanThanh").value, 10) || 0;
+      const xoa = parseInt(document.getElementById("inputXoa").value, 10) || 0;
+      const conLai = tong - ht - xoa;
+
+      const el = document.getElementById("previewConLai");
+      el.innerText = conLai.toLocaleString("vi-VN");
+      if (conLai < 0) el.style.color = "#dc2626";
+      else if (conLai === 0) el.style.color = "#16a34a";
+      else el.style.color = "#0284c7";
+    }
+
+    /**
+     * Điền ngày hôm nay
+     */
+    function fillTodayDate() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      document.getElementById("inputNgayHT").value = `${y}-${m}-${d}`;
+    }
+
+    /**
+     * Chuyển đổi định dạng ngày
+     */
+    function convertDateToPicker(dateStr) {
+      if (!dateStr) return "";
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+        const parts = dateStr.split('/');
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+      }
+      return dateStr;
+    }
+
+    function convertPickerToVN(pickerVal) {
+      if (!pickerVal) return "";
+      const parts = pickerVal.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+      return pickerVal;
+    }
+
+    // =========================================================================
+    // XỬ LÝ LƯU SỐ LIỆU
+    // =========================================================================
+    async function handleSave() {
+      if (state.isSubmitting) return;
+
+      if (!state.selectedStation) {
+        showToast("Vui lòng chọn một trạm trước khi lưu!", "warning");
+        return;
+      }
+
+      // Kiểm tra tên người nhập
+      const nguoiNhapInput = document.getElementById("inputNguoiNhap").value.trim();
+      if (!nguoiNhapInput) {
+        showToast("Vui lòng nhập tên của bạn ở ô 'Người nhập' phía trên!", "error");
+        document.getElementById("inputNguoiNhap").focus();
+        return;
+      }
+      state.nguoiNhap = nguoiNhapInput;
+      localStorage.setItem("pcvt_gis_nguoi_nhap", state.nguoiNhap);
+
+      // Đọc và kiểm tra các giá trị nhập
+      const valHoanThanhRaw = document.getElementById("inputHoanThanh").value.trim();
+      const valXoaRaw = document.getElementById("inputXoa").value.trim();
+      const valTrangThai = document.getElementById("selectTrangThai").value;
+      const valNgayHTRaw = document.getElementById("inputNgayHT").value;
+
+      const soLuongHoanThanh = valHoanThanhRaw === "" ? 0 : parseInt(valHoanThanhRaw, 10);
+      const xoa = valXoaRaw === "" ? 0 : parseInt(valXoaRaw, 10);
+
+      if (isNaN(soLuongHoanThanh) || soLuongHoanThanh < 0) {
+        showToast("Số lượng hoàn thành phải là số nguyên không âm (>= 0)!", "error");
+        document.getElementById("inputHoanThanh").focus();
+        return;
+      }
+
+      if (isNaN(xoa) || xoa < 0) {
+        showToast("Số lượng xóa phải là số nguyên không âm (>= 0)!", "error");
+        document.getElementById("inputXoa").focus();
+        return;
+      }
+
+      const ngayHoanThanhVN = convertPickerToVN(valNgayHTRaw);
+      if (valTrangThai === "Hoàn thành" && !ngayHoanThanhVN) {
+        showToast("Khi trạng thái là 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!", "error");
+        document.getElementById("inputNgayHT").focus();
+        return;
+      }
+
+      const payload = {
+        action: "saveStation",
+        ma_tram: state.selectedStation.ma_tram,
+        so_luong_hoan_thanh: soLuongHoanThanh,
+        xoa: xoa,
+        trang_thai: valTrangThai,
+        ngay_hoan_thanh: ngayHoanThanhVN,
+        nguoi_nhap: state.nguoiNhap,
+        is_unlock_verified: state.isUnlockedForOneEdit
+      };
+
+      // === CHẾ ĐỘ GIẢ LẬP (DEMO MODE) ===
+      if (state.isDemoMode) {
+        showLoading("Đang lưu số liệu (Demo Mode)...");
+        setTimeout(() => {
+          hideLoading();
+          const target = state.allStations.find(s => s.ma_tram === payload.ma_tram);
+          if (target) {
+            target.so_luong_hoan_thanh = payload.so_luong_hoan_thanh;
+            target.xoa = payload.xoa;
+            target.trang_thai = payload.trang_thai;
+            target.ngay_hoan_thanh = payload.ngay_hoan_thanh;
+            target.con_lai = target.tong - target.so_luong_hoan_thanh - target.xoa;
+            target.is_locked = true; // TỰ ĐỘNG KHÓA LẠI
+            target.nguoi_nhap = payload.nguoi_nhap;
+            target.thoi_gian_nhap = new Date().toLocaleString("vi-VN");
+            
+            state.isUnlockedForOneEdit = false;
+            selectStation(target);
+            renderAll();
+            showToast(`Đã lưu và khóa trạm [${target.ma_tram}] thành công!`, "success");
+          }
+        }, 500);
+        return;
+      }
+
+      // === CHẾ ĐỘ GOOGLE APPS SCRIPT THỰC TẾ ===
+      if (!navigator.onLine) {
+        showToast("Không có kết nối mạng! Không thể lưu dữ liệu.", "error");
+        return;
+      }
+
+      state.isSubmitting = true;
+      showLoading("Đang ghi vào Google Sheet và khóa trạm...");
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showToast(result.message || "Lưu số liệu thành công!", "success");
+          state.isUnlockedForOneEdit = false;
+          // Tải lại dữ liệu mới nhất từ server để đồng bộ chuẩn xác
+          await loadRemoteData();
+        } else {
+          if (result.isLocked) {
+            showToast(result.message, "error", 5000);
+            applyLockState(true);
+          } else {
+            showToast("Lỗi: " + result.message, "error", 5000);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi khi lưu:", err);
+        showToast("Lỗi kết nối khi gửi dữ liệu lên Google Sheet: " + err.message, "error", 5000);
+      } finally {
+        state.isSubmitting = false;
+        hideLoading();
+      }
+    }
+
+    // =========================================================================
+    // XỬ LÝ MỞ KHÓA BẰNG MÃ PIN (YÊU CẦU SỬA)
+    // =========================================================================
+    function openPinModal() {
+      if (!state.selectedStation) return;
+      document.getElementById("modalMaTram").innerText = state.selectedStation.ma_tram;
+      document.getElementById("modalPinInput").value = "";
+      document.getElementById("pinModal").classList.add("active");
+      setTimeout(() => document.getElementById("modalPinInput").focus(), 200);
+    }
+
+    function closePinModal() {
+      document.getElementById("pinModal").classList.remove("active");
+    }
+
+    async function handleConfirmPin() {
+      const pin = document.getElementById("modalPinInput").value.trim();
+      if (!pin) {
+        showToast("Vui lòng nhập mã PIN xác nhận!", "warning");
+        document.getElementById("modalPinInput").focus();
+        return;
+      }
+
+      const st = state.selectedStation;
+      const currentClientData = {
+        so_luong_hoan_thanh: st.so_luong_hoan_thanh || 0,
+        xoa: st.xoa || 0,
+        trang_thai: st.trang_thai || "Chưa hoàn thành",
+        ngay_hoan_thanh: st.ngay_hoan_thanh || ""
+      };
+
+      const payload = {
+        action: "unlockStation",
+        ma_tram: st.ma_tram,
+        pin: pin,
+        current_client_data: currentClientData,
+        nguoi_nhap: state.nguoiNhap || "Cán bộ hiện trường"
+      };
+
+      // === CHẾ ĐỘ GIẢ LẬP (DEMO MODE) ===
+      if (state.isDemoMode) {
+        if (pin !== "1111") {
+          showToast("Mã PIN không đúng! (Mã mặc định trong Demo là 1111)", "error");
+          return;
+        }
+        closePinModal();
+        showToast("Đã xác thực mã PIN thành công! Cho phép sửa 01 lần.", "success");
+        state.isUnlockedForOneEdit = true;
+        applyLockState(false);
+        return;
+      }
+
+      // === CHẾ ĐỘ GOOGLE APPS SCRIPT THỰC TẾ ===
+      if (!navigator.onLine) {
+        showToast("Mất kết nối mạng! Không thể xác thực PIN.", "error");
+        return;
+      }
+
+      showLoading("Đang xác thực mã PIN và đối chiếu số liệu...");
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          closePinModal();
+          showToast(result.message || "Xác nhận PIN thành công! Đã mở khóa cho phép sửa 1 lần.", "success", 5000);
+          state.isUnlockedForOneEdit = true;
+          applyLockState(false);
+        } else {
+          if (result.needReload) {
+            closePinModal();
+            showToast(result.message, "error", 7000);
+            // Tự động tải lại dữ liệu mới nhất từ Sheet
+            await loadRemoteData();
+          } else {
+            showToast("Lỗi: " + result.message, "error", 5000);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi khi mở khóa:", err);
+        showToast("Lỗi kết nối khi gửi yêu cầu mở khóa: " + err.message, "error", 5000);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // =========================================================================
+    // XỬ LÝ AUTOCOMPLETE TÌM TRẠM
+    // =========================================================================
+    function setupAutocomplete() {
+      const input = document.getElementById("searchStationInput");
+      const listEl = document.getElementById("autocompleteList");
+      const btnClear = document.getElementById("btnClearSearch");
+
+      input.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        if (query.length > 0) {
+          btnClear.style.display = "flex";
+        } else {
+          btnClear.style.display = "none";
+          listEl.style.display = "none";
+          return;
+        }
+
+        // Lọc các trạm thuộc tab hiện tại
+        const teamStations = getStationsForTeam(state.currentTeam);
+        const matches = teamStations.filter(st => {
+          const matchCode = (st.ma_tram || "").toLowerCase().includes(query);
+          const matchIdMoi = (st.id_tram_moi || "").toLowerCase().includes(query);
+          const matchTen = (st.ten_tram_moi || "").toLowerCase().includes(query);
+          return matchCode || matchIdMoi || matchTen;
+        }).slice(0, 15); // Giới hạn 15 gợi ý
+
+        if (matches.length === 0) {
+          listEl.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 0.85rem; text-align: center;">Không tìm thấy trạm nào thuộc đội này</div>`;
+          listEl.style.display = "block";
+          return;
+        }
+
+        let html = "";
+        matches.forEach(st => {
+          const statusIcon = st.trang_thai === "Hoàn thành" ? "✅" : "⏳";
+          const lockIcon = st.is_locked ? "🔒" : "🔓";
+          html += `
+            <div class="autocomplete-item" onclick="onSelectAutocomplete('${st.ma_tram}')">
+              <div>
+                <div class="ac-main">${st.ma_tram} - ${st.id_tram_moi || ''}</div>
+                <div class="ac-sub">${st.ten_tram_moi || 'Chưa có tên'} | Tổng: ${(st.tong || 0)}</div>
+              </div>
+              <div style="font-size: 0.85rem;">
+                ${statusIcon} ${lockIcon}
+              </div>
+            </div>
+          `;
+        });
+
+        listEl.innerHTML = html;
+        listEl.style.display = "block";
+      });
+
+      btnClear.addEventListener("click", () => {
+        input.value = "";
+        btnClear.style.display = "none";
+        listEl.style.display = "none";
+        input.focus();
+      });
+
+      // Ẩn autocomplete khi click ra ngoài
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".search-wrapper")) {
+          listEl.style.display = "none";
+        }
+      });
+    }
+
+    window.onSelectAutocomplete = function(maTram) {
+      document.getElementById("searchStationInput").value = maTram;
+      document.getElementById("autocompleteList").style.display = "none";
+      document.getElementById("btnClearSearch").style.display = "flex";
+      selectStationByMaTram(maTram);
+    };
+
+    // =========================================================================
+    // CÁC SỰ KIỆN GIAO DIỆN
+    // =========================================================================
+    function setupEvents() {
+      // 1. Chuyển Tab
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          tabBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          state.currentTeam = btn.getAttribute("data-team");
+          
+          // Reset tìm kiếm trạm
+          document.getElementById("searchStationInput").value = "";
+          document.getElementById("btnClearSearch").style.display = "none";
+          document.getElementById("autocompleteList").style.display = "none";
+
+          renderSummaryBar();
+          renderTable();
+        });
+      });
+
+      // 2. Nút Tải lại
+      document.getElementById("btnReload").addEventListener("click", () => {
+        if (state.isDemoMode) {
+          loadDemoData();
+          showToast("Đã làm mới dữ liệu giả lập!", "success");
+        } else {
+          loadRemoteData();
+        }
+      });
+
+      // 3. Form Events
+      document.getElementById("selectTrangThai").addEventListener("change", handleTrangThaiChange);
+      document.getElementById("inputHoanThanh").addEventListener("input", updateCalcPreview);
+      document.getElementById("inputXoa").addEventListener("input", updateCalcPreview);
+      document.getElementById("btnToday").addEventListener("click", fillTodayDate);
+      document.getElementById("btnSave").addEventListener("click", handleSave);
+      document.getElementById("btnUnlock").addEventListener("click", openPinModal);
+
+      // 4. Modal PIN Events
+      document.getElementById("btnCancelPin").addEventListener("click", closePinModal);
+      document.getElementById("btnConfirmPin").addEventListener("click", handleConfirmPin);
+      document.getElementById("modalPinInput").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") handleConfirmPin();
+      });
+
+      // 5. Lọc bảng
+      document.getElementById("tableFilterSearch").addEventListener("input", renderTable);
+      document.getElementById("tableFilterStatus").addEventListener("change", renderTable);
+      document.getElementById("tableFilterLock").addEventListener("change", renderTable);
+      const kf = document.getElementById("tableFilterKhuVuc");
+      if (kf) kf.addEventListener("change", renderTable);
+
+      // 6. Autocomplete
+      setupAutocomplete();
+
+      // 7. Network Monitor
+      window.addEventListener("online", () => updateNetworkStatus(true));
+      window.addEventListener("offline", () => updateNetworkStatus(false));
+    }
+
+    function updateNetworkStatus(isOnline) {
+      const netBadge = document.getElementById("networkBadge");
+      if (state.isDemoMode) {
+        netBadge.className = "network-badge network-demo";
+        netBadge.innerHTML = "🟡 Chế độ Demo";
+        return;
+      }
+
+      if (isOnline) {
+        netBadge.className = "network-badge network-online";
+        netBadge.innerHTML = "🟢 Trực tuyến";
+      } else {
+        netBadge.className = "network-badge network-offline";
+        netBadge.innerHTML = "🔴 Mất kết nối mạng";
+        showToast("Mất kết nối Internet! Vui lòng kiểm tra lại mạng.", "error");
+      }
+    }
+
+    // =========================================================================
+    // TIỆN ÍCH HIỂN THỊ (TOAST & LOADING)
+    // =========================================================================
+    function showLoading(msg = "Đang xử lý...") {
+      document.getElementById("loadingText").innerText = msg;
+      document.getElementById("loadingOverlay").classList.add("active");
+    }
+
+    function hideLoading() {
+      document.getElementById("loadingOverlay").classList.remove("active");
+    }
+
+    function showToast(message, type = "info", duration = 3500) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      
+      let icon = "ℹ️";
+      let typeClass = "toast-warning";
+      if (type === "success") { icon = "✅"; typeClass = "toast-success"; }
+      else if (type === "error") { icon = "❌"; typeClass = "toast-error"; }
+
+      toast.className = `toast ${typeClass}`;
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+        toast.style.transition = "all 0.3s";
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+  </script>
+</body>
+</html>
