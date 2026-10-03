@@ -353,12 +353,20 @@ function getAllData() {
         const khuVuc = map.khu_vuc > 0 ? String(row[map.khu_vuc - 1] || "").trim() : t.name;
 
         let isLocked = false;
-        if (map.khoa > 0) {
-          const lockVal = row[map.khoa - 1];
-          isLocked = lockVal === true || String(lockVal).toUpperCase() === "TRUE";
+        let soLanSua = 0;
+
+        if (trangThai === "Hoàn thành") {
+          if (map.khoa > 0) {
+            const lockVal = row[map.khoa - 1];
+            isLocked = lockVal === true || String(lockVal).toUpperCase() === "TRUE";
+          }
+          soLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(row[map.so_lan_sua - 1]) : 0;
+        } else {
+          // Trạng thái Chưa hoàn thành luôn ở trạng thái CHƯA LƯU ban đầu (không khóa, số lần sửa = 0)
+          isLocked = false;
+          soLanSua = 0;
         }
 
-        const soLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(row[map.so_lan_sua - 1]) : 0;
         const nguoiNhap = map.nguoi_nhap > 0 ? String(row[map.nguoi_nhap - 1] || "").trim() : "";
         const thoiGianNhap = map.thoi_gian_nhap > 0 ? formatDateVN(row[map.thoi_gian_nhap - 1]) : "";
         const conLai = tong - soLuongHoanThanh - xoa;
@@ -481,6 +489,8 @@ function findTargetSheetAndRow(ss, maTram, targetSheetName, targetTeamKey) {
 
 /**
  * Xử lý lưu số liệu trạm vào đúng Sheet của phòng/đội đó
+ * - Nếu chuyển sang "Chưa hoàn thành": Trả lại trạng thái ban đầu (Khóa = false, Số lần sửa = 0, Hoàn thành = 0, Xóa = 0, Ngày HT = '')
+ * - Nếu là "Hoàn thành": Khóa dòng tự động, giới hạn tối đa 3 lần sửa
  */
 function handleSaveStation(payload) {
   const lock = LockService.getScriptLock();
@@ -511,8 +521,7 @@ function handleSaveStation(payload) {
 
     const rowIndex = searchResult.rowIndex;
 
-    // Kiểm tra khóa
-    // Kiểm tra khóa & giới hạn số lần sửa
+    // Đọc dữ liệu hiện tại trong Sheet
     let currentLocked = false;
     if (map.khoa > 0) {
       const lockVal = sheet.getRange(rowIndex, map.khoa).getValue();
@@ -522,22 +531,6 @@ function handleSaveStation(payload) {
     let currentSoLanSua = map.so_lan_sua > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_lan_sua).getValue()) : 0;
     const isEditAction = currentLocked || payload.is_unlock_verified;
 
-    if (isEditAction && currentSoLanSua >= 3) {
-      return {
-        success: false,
-        message: `Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`
-      };
-    }
-
-    if (currentLocked && !payload.is_unlock_verified) {
-      return {
-        success: false,
-        isLocked: true,
-        message: `Trạm [${maTram}] hiện ĐANG BỊ KHÓA. Bạn cần bấm nút "Yêu cầu sửa" và nhập mã PIN để mở khóa trước khi sửa!`
-      };
-    }
-
-    // Đọc dữ liệu cũ
     const oldSlHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_luong_hoan_thanh).getValue()) : 0;
     const oldXoa = map.xoa > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.xoa).getValue()) : 0;
     const oldTrangThai = map.trang_thai > 0 ? String(sheet.getRange(rowIndex, map.trang_thai).getValue() || "").trim() : "";
@@ -550,20 +543,84 @@ function handleSaveStation(payload) {
       ngay_hoan_thanh: oldNgayHT
     };
 
+    const newTrangThai = payload.trang_thai === "Hoàn thành" ? "Hoàn thành" : "Chưa hoàn thành";
+    const isResetToInitial = (newTrangThai === "Chưa hoàn thành");
+    const nguoiNhap = String(payload.nguoi_nhap || "").trim();
+    const thoiGianNhap = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+7", "dd/MM/yyyy HH:mm:ss");
+    const tong = map.tong > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.tong).getValue()) : 0;
+
+    // TRƯỜNG HỢP 1: CHUYỂN VỀ CHƯA HOÀN THÀNH -> TRẢ LẠI TRẠNG THÁI BAN ĐẦU (CHƯA LƯU)
+    if (isResetToInitial) {
+      if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(0);
+      if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).setValue(0);
+      if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue("Chưa hoàn thành");
+      if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setValue("");
+      
+      // Mở khóa và reset số lần sửa về 0
+      if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).setValue(false);
+      if (map.so_lan_sua > 0) sheet.getRange(rowIndex, map.so_lan_sua).setValue(0);
+      if (map.nguoi_nhap > 0) sheet.getRange(rowIndex, map.nguoi_nhap).setValue("");
+      if (map.thoi_gian_nhap > 0) sheet.getRange(rowIndex, map.thoi_gian_nhap).setValue("");
+
+      const newValues = {
+        so_luong_hoan_thanh: 0,
+        xoa: 0,
+        trang_thai: "Chưa hoàn thành",
+        ngay_hoan_thanh: "",
+        khoa: false,
+        so_lan_sua: 0
+      };
+
+      logAction(ss, sheet.getName(), maTram, "Trả về trạng thái ban đầu (Chưa lưu)", oldValues, newValues, nguoiNhap || "Cán bộ hiện trường");
+
+      return {
+        success: true,
+        message: `Đã đưa trạm [${maTram}] về trạng thái CHƯA LƯU ban đầu trong Google Sheet (Mở khóa, số lần sửa = 0)!`,
+        updatedStation: {
+          sheetName: sheet.getName(),
+          rowIndex: rowIndex,
+          ma_tram: maTram,
+          tong: tong,
+          so_luong_hoan_thanh: 0,
+          xoa: 0,
+          con_lai: tong,
+          trang_thai: "Chưa hoàn thành",
+          ngay_hoan_thanh: "",
+          is_locked: false,
+          so_lan_sua: 0,
+          nguoi_nhap: "",
+          thoi_gian_nhap: ""
+        }
+      };
+    }
+
+    // TRƯỜNG HỢP 2: LƯU TRẠNG THÁI HOÀN THÀNH (ÁP DỤNG KHÓA VÀ GIỚI HẠN 3 LẦN SỬA)
+    if (isEditAction && currentSoLanSua >= 3) {
+      return {
+        success: false,
+        message: `Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống KHÔNG CHO PHÉP sửa thêm.`
+      };
+    }
+
+    if (currentLocked && !payload.is_unlock_verified) {
+      return {
+        success: false,
+        isLocked: true,
+        message: `Trạm [${maTram}] hiện ĐANG BỊ KHÓA. Bạn cần bấm nút "Sửa" và nhập mã PIN để mở khóa trước khi sửa!`
+      };
+    }
+
     const newSlHoanThanh = parseNonNegativeInt(payload.so_luong_hoan_thanh);
     const newXoa = parseNonNegativeInt(payload.xoa);
-    const newTrangThai = payload.trang_thai === "Hoàn thành" ? "Hoàn thành" : "Chưa hoàn thành";
     let newNgayHT = formatDateVN(payload.ngay_hoan_thanh);
 
-    if (newTrangThai === "Hoàn thành" && !newNgayHT) {
+    if (!newNgayHT) {
       return { success: false, message: "Khi chọn trạng thái 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!" };
     }
 
-    const nguoiNhap = String(payload.nguoi_nhap || "").trim();
     if (!nguoiNhap) {
       return { success: false, message: `Vui lòng nhập tên 'Người nhập' trên dòng trạm [${maTram}] trước khi lưu!` };
     }
-    const thoiGianNhap = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || "GMT+7", "dd/MM/yyyy HH:mm:ss");
 
     // Cập nhật số lần sửa nếu là thao tác sửa
     if (isEditAction) {
@@ -574,7 +631,7 @@ function handleSaveStation(payload) {
     // Cập nhật vào Sheet
     if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(newSlHoanThanh);
     if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).setValue(newXoa);
-    if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue(newTrangThai);
+    if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue("Hoàn thành");
     if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setNumberFormat("@").setValue(newNgayHT);
     
     // Tự động khóa dòng lại sau khi lưu
@@ -585,14 +642,13 @@ function handleSaveStation(payload) {
     const newValues = {
       so_luong_hoan_thanh: newSlHoanThanh,
       xoa: newXoa,
-      trang_thai: newTrangThai,
+      trang_thai: "Hoàn thành",
       ngay_hoan_thanh: newNgayHT
     };
 
     const actionName = isEditAction ? `Sửa (Lần ${currentSoLanSua}/3)` : "Lưu";
     logAction(ss, sheet.getName(), maTram, actionName, oldValues, newValues, nguoiNhap);
 
-    const tong = map.tong > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.tong).getValue()) : 0;
     const conLai = tong - newSlHoanThanh - newXoa;
 
     return {
@@ -608,7 +664,7 @@ function handleSaveStation(payload) {
         so_luong_hoan_thanh: newSlHoanThanh,
         xoa: newXoa,
         con_lai: conLai,
-        trang_thai: newTrangThai,
+        trang_thai: "Hoàn thành",
         ngay_hoan_thanh: newNgayHT,
         is_locked: true,
         so_lan_sua: currentSoLanSua,

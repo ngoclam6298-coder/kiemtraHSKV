@@ -1673,8 +1673,10 @@
 
       let html = "";
       filtered.forEach((st, idx) => {
+        const isCompleted = (st.trang_thai === "Hoàn thành");
         const isUnlocked = state.unlockedStations[st.ma_tram] === true;
-        const isEffectivelyLocked = st.is_locked && !isUnlocked;
+        // Trạm chỉ bị khóa khi ở trạng thái "Hoàn thành". Nếu là "Chưa hoàn thành" thì luôn ở trạng thái CHƯA LƯU!
+        const isEffectivelyLocked = isCompleted && st.is_locked && !isUnlocked;
         const rowClass = isUnlocked ? "row-unlocked-editing" : "";
 
         // Tính còn lại
@@ -1695,7 +1697,7 @@
         let actionBtn = "";
         let editBadgeHtml = "";
 
-        if (isUnlocked) {
+        if (isCompleted && isUnlocked) {
           // Trạng thái vừa xác thực PIN 1111 mở khóa thành công -> Cho phép sửa và Lưu lại
           actionBtn = `
             <button type="button" class="btn-tbl-save-edit" id="btn_save_${st.ma_tram}" onclick="saveInlineStation('${st.ma_tram}')" title="Lưu số liệu chỉnh sửa (Lần sửa ${soLanSua + 1}/3)">
@@ -1724,7 +1726,7 @@
             }
           }
         } else {
-          // Chưa lưu lần nào -> Nút Lưu ban đầu
+          // Chưa lưu lần nào (hoặc Chưa hoàn thành) -> Nút Lưu ban đầu
           actionBtn = `
             <button type="button" class="btn-tbl-save" id="btn_save_${st.ma_tram}" onclick="saveInlineStation('${st.ma_tram}')" title="Lưu số liệu trạm này vào Google Sheet">
               💾 Lưu
@@ -1949,14 +1951,57 @@
     };
 
     /**
-     * Tự động điền ngày hôm nay khi chọn Trạng thái Hoàn thành
+     * Tự động xử lý khi thay đổi Trạng thái trên hàng ngang
+     * - Khi chọn "Chưa hoàn thành": Trả ngay về trạng thái CHƯA LƯU (Nút 'Lưu', xóa ngày HT, đặt SL=0, xóa badge sửa)
+     * - Khi chọn "Hoàn thành": Tự động điền ngày hôm nay
      */
     window.onInlineTrangThaiChange = function(maTram) {
       const ttEl = document.getElementById(`inline_tt_${maTram}`);
       const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
-      if (!ttEl || !ngayEl) return;
+      const htEl = document.getElementById(`inline_ht_${maTram}`);
+      const xoaEl = document.getElementById(`inline_xoa_${maTram}`);
+      const conLaiEl = document.getElementById(`inline_conlai_${maTram}`);
+      const st = state.allStations.find(s => s.ma_tram === maTram);
+      if (!ttEl || !st) return;
 
-      if (ttEl.value === "Hoàn thành") {
+      if (ttEl.value === "Chưa hoàn thành") {
+        // 1. Tự động xóa ngày hoàn thành
+        if (ngayEl) ngayEl.value = "";
+        // 2. Đặt Hoàn thành = 0, Xóa = 0
+        if (htEl) htEl.value = 0;
+        if (xoaEl) xoaEl.value = 0;
+
+        // 3. Tính lại Còn lại = Tổng
+        const tong = parseInt(st.tong, 10) || 0;
+        if (conLaiEl) {
+          conLaiEl.innerText = tong.toLocaleString("vi-VN");
+          conLaiEl.className = `remaining-badge ${tong > 0 ? 'remaining-positive' : 'remaining-zero'}`;
+        }
+
+        // 4. Chuyển nút Thao tác về "💾 Lưu" (trạng thái chưa lưu ban đầu)
+        const btnSave = document.getElementById(`btn_save_${maTram}`);
+        if (btnSave) {
+          btnSave.className = "btn-tbl-save";
+          btnSave.innerHTML = "💾 Lưu";
+          btnSave.title = "Lưu số liệu trạm này vào Google Sheet (Trạng thái Chưa hoàn thành)";
+        }
+
+        // 5. Cập nhật state nội bộ
+        delete state.unlockedStations[maTram];
+        st.trang_thai = "Chưa hoàn thành";
+        st.is_locked = false;
+        st.so_lan_sua = 0;
+
+        // 6. Xóa badge và class sửa
+        const rowEl = document.getElementById(`row_${maTram}`);
+        if (rowEl) {
+          rowEl.classList.remove("row-locked", "row-unlocked-editing");
+          const badges = rowEl.querySelectorAll(".edit-count-badge");
+          badges.forEach(b => b.remove());
+        }
+
+        showToast(`[${maTram}] Đã chuyển về 'Chưa hoàn thành' (Chưa lưu). Bấm '💾 Lưu' để đồng bộ trả lại ban đầu trong Google Sheet!`, "info", 4000);
+      } else if (ttEl.value === "Hoàn thành") {
         if (!ngayEl.value && !ngayEl.disabled) {
           ngayEl.value = getTodayVN();
         }
@@ -1987,70 +2032,78 @@
     async function saveInlineStation(maTram) {
       if (state.isSubmitting) return;
 
-      // 1. Kiểm tra tên người nhập trực tiếp trên dòng trạm đó
-      const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
-      const valNguoiNhap = nguoiEl ? nguoiEl.value.trim() : "";
-      if (!valNguoiNhap) {
-        showToast(`[${maTram}] Vui lòng nhập họ tên 'Người nhập' trên dòng trạm này trước khi lưu!`, "warning", 4500);
-        if (nguoiEl) nguoiEl.focus();
-        return;
-      }
-      state.defaultNguoiNhap = valNguoiNhap;
-      localStorage.setItem("pcvt_gis_nguoi_nhap", valNguoiNhap);
-
-      // 2. Tìm trạm trong state
       const station = state.allStations.find(s => s.ma_tram === maTram);
       if (!station) {
         showToast(`Không tìm thấy dữ liệu trạm ${maTram}`, "error");
         return;
       }
 
-      const isUnlocked = state.unlockedStations[maTram] === true;
-      const soLanSua = parseInt(station.so_lan_sua, 10) || 0;
-
-      // Chặn nếu trạm đã sửa đủ 3 lần
-      if ((station.is_locked || isUnlocked) && soLanSua >= 3 && !isUnlocked) {
-        showToast(`Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống không cho phép sửa thêm.`, "error", 5000);
-        return;
-      }
-
-      // 3. Đọc dữ liệu từ hàng đó
       const htEl = document.getElementById(`inline_ht_${maTram}`);
       const xoaEl = document.getElementById(`inline_xoa_${maTram}`);
       const ttEl = document.getElementById(`inline_tt_${maTram}`);
       const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
+      const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
 
-      const valHtRaw = htEl ? htEl.value.trim() : "0";
-      const valXoaRaw = xoaEl ? xoaEl.value.trim() : "0";
       const valTrangThai = ttEl ? ttEl.value : "Chưa hoàn thành";
-      const valNgayRaw = ngayEl ? ngayEl.value : "";
+      const isResetToInitial = (valTrangThai === "Chưa hoàn thành");
+      const valNguoiNhap = nguoiEl ? nguoiEl.value.trim() : "";
 
-      const soLuongHoanThanh = valHtRaw === "" ? 0 : parseInt(valHtRaw, 10);
-      const xoa = valXoaRaw === "" ? 0 : parseInt(valXoaRaw, 10);
+      // 1. Kiểm tra Người nhập: chỉ bắt buộc khi 'Hoàn thành'
+      if (!isResetToInitial && !valNguoiNhap) {
+        showToast(`[${maTram}] Vui lòng nhập họ tên 'Người nhập' trên dòng trạm này trước khi lưu!`, "warning", 4500);
+        if (nguoiEl) nguoiEl.focus();
+        return;
+      }
+      if (valNguoiNhap) {
+        state.defaultNguoiNhap = valNguoiNhap;
+        localStorage.setItem("pcvt_gis_nguoi_nhap", valNguoiNhap);
+      }
 
-      if (isNaN(soLuongHoanThanh) || soLuongHoanThanh < 0) {
-        showToast(`[${maTram}] Số lượng hoàn thành phải là số >= 0!`, "error");
-        if (htEl) htEl.focus();
+      const isUnlocked = state.unlockedStations[maTram] === true;
+      const soLanSua = parseInt(station.so_lan_sua, 10) || 0;
+
+      // Chặn nếu trạm đã sửa đủ 3 lần (chỉ áp dụng khi lưu Hoàn thành)
+      if (!isResetToInitial && (station.is_locked || isUnlocked) && soLanSua >= 3 && !isUnlocked) {
+        showToast(`Trạm [${maTram}] đã sửa đủ 3 lần (tối đa 3 lần)! Hệ thống không cho phép sửa thêm.`, "error", 5000);
         return;
       }
 
-      if (isNaN(xoa) || xoa < 0) {
-        showToast(`[${maTram}] Số lượng xóa phải là số >= 0!`, "error");
-        if (xoaEl) xoaEl.focus();
-        return;
-      }
+      let soLuongHoanThanh = 0;
+      let xoa = 0;
+      let ngayHoanThanhVN = "";
 
-      let ngayHoanThanhVN = formatToVN(valNgayRaw);
-      if (valTrangThai === "Hoàn thành") {
-        if (!ngayHoanThanhVN) {
-          showToast(`[${maTram}] Khi trạng thái là 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!`, "error");
-          if (ngayEl) ngayEl.focus();
+      if (!isResetToInitial) {
+        const valHtRaw = htEl ? htEl.value.trim() : "0";
+        const valXoaRaw = xoaEl ? xoaEl.value.trim() : "0";
+        const valNgayRaw = ngayEl ? ngayEl.value : "";
+
+        soLuongHoanThanh = valHtRaw === "" ? 0 : parseInt(valHtRaw, 10);
+        xoa = valXoaRaw === "" ? 0 : parseInt(valXoaRaw, 10);
+
+        if (isNaN(soLuongHoanThanh) || soLuongHoanThanh < 0) {
+          showToast(`[${maTram}] Số lượng hoàn thành phải là số >= 0!`, "error");
+          if (htEl) htEl.focus();
           return;
         }
-        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(ngayHoanThanhVN)) {
-          showToast(`[${maTram}] Ngày hoàn thành phải theo đúng định dạng dd/mm/yyyy (ví dụ: 03/10/2026)!`, "error");
-          if (ngayEl) ngayEl.focus();
+
+        if (isNaN(xoa) || xoa < 0) {
+          showToast(`[${maTram}] Số lượng xóa phải là số >= 0!`, "error");
+          if (xoaEl) xoaEl.focus();
           return;
+        }
+
+        ngayHoanThanhVN = formatToVN(valNgayRaw);
+        if (valTrangThai === "Hoàn thành") {
+          if (!ngayHoanThanhVN) {
+            showToast(`[${maTram}] Khi trạng thái là 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!`, "error");
+            if (ngayEl) ngayEl.focus();
+            return;
+          }
+          if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(ngayHoanThanhVN)) {
+            showToast(`[${maTram}] Ngày hoàn thành phải theo đúng định dạng dd/mm/yyyy (ví dụ: 03/10/2026)!`, "error");
+            if (ngayEl) ngayEl.focus();
+            return;
+          }
         }
       }
 
@@ -2064,7 +2117,8 @@
         trang_thai: valTrangThai,
         ngay_hoan_thanh: ngayHoanThanhVN,
         nguoi_nhap: valNguoiNhap,
-        is_unlock_verified: isUnlocked
+        is_unlock_verified: isUnlocked,
+        is_reset_initial: isResetToInitial
       };
 
       // === DEMO MODE ===
@@ -2072,6 +2126,22 @@
         showLoading(`Đang lưu trạm ${maTram} (Demo Mode)...`);
         setTimeout(() => {
           hideLoading();
+          if (isResetToInitial) {
+            station.so_lan_sua = 0;
+            station.so_luong_hoan_thanh = 0;
+            station.xoa = 0;
+            station.trang_thai = "Chưa hoàn thành";
+            station.ngay_hoan_thanh = "";
+            station.con_lai = station.tong;
+            station.is_locked = false;
+            station.nguoi_nhap = "";
+            station.thoi_gian_nhap = "";
+            delete state.unlockedStations[maTram];
+            renderAll();
+            showToast(`Đã đưa trạm [${maTram}] về trạng thái CHƯA LƯU ban đầu thành công!`, "success");
+            return;
+          }
+
           if (isUnlocked) {
             station.so_lan_sua = soLanSua + 1;
           }
@@ -2098,7 +2168,7 @@
       }
 
       state.isSubmitting = true;
-      showLoading(`Đang ghi số liệu [${maTram}] vào Google Sheet...`);
+      showLoading(`Đang đồng bộ số liệu [${maTram}] vào Google Sheet...`);
 
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
