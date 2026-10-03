@@ -1553,17 +1553,22 @@
       let completedVolume = 0;
       let deletedVolume = 0;
       let completedStations = 0;
+      let completedStationsTotalVolume = 0;
 
       teamStations.forEach(s => {
-        totalVolume += (parseInt(s.tong, 10) || 0);
+        const stTong = (parseInt(s.tong, 10) || 0);
+        totalVolume += stTong;
         completedVolume += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
         deletedVolume += (parseInt(s.xoa, 10) || 0);
         if (s.trang_thai === "Hoàn thành") {
           completedStations++;
+          completedStationsTotalVolume += stTong;
         }
       });
 
-      const remainingVolume = totalVolume - completedVolume - deletedVolume;
+      // CÔNG THỨC MỚI: Còn lại = Tổng khối lượng - Cột Tổng (của các trạm đã hoàn thành)
+      // chứ không phải bằng Tổng khối lượng trừ đi hoàn thành và xóa
+      const remainingVolume = totalVolume - completedStationsTotalVolume;
       // Tỉ lệ % thực hiện được tính theo % số lượng trạm thực hiện
       const progressPercent = totalStations > 0 
         ? (Math.round((completedStations / totalStations) * 1000) / 10) 

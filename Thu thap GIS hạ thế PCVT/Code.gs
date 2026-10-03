@@ -436,8 +436,18 @@ function getAllData() {
     }
 
     const totalStations = teamStations.length;
-    const completedStationsCount = teamStations.filter(s => s.trang_thai === "Hoàn thành").length;
-    const remainingVolume = totalVolume - completedVolume - deletedVolume;
+    let completedStationsCount = 0;
+    let completedStationsTotalVolume = 0;
+
+    teamStations.forEach(s => {
+      if (s.trang_thai === "Hoàn thành") {
+        completedStationsCount++;
+        completedStationsTotalVolume += (parseInt(s.tong, 10) || 0);
+      }
+    });
+
+    // CÔNG THỨC MỚI: Còn lại = Tổng khối lượng - Cột Tổng (của các trạm đã hoàn thành)
+    const remainingVolume = totalVolume - completedStationsTotalVolume;
 
     // TỈ LỆ % THỰC HIỆN TÍNH THEO % SỐ LƯỢNG TRẠM THỰC HIỆN
     const progressPercent = totalStations > 0 
