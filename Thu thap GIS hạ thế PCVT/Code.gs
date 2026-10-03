@@ -26,17 +26,20 @@ const TEAM_CONFIG = [
   { 
     key: 'kinh_doanh', 
     name: 'Phòng Kinh Doanh', 
-    keywords: ['kinh doanh', 'pkd', 'kd', 'phong kinh doanh'] 
+    sheetName: 'Kinh doanh',
+    keywords: ['kinh doanh', 'kinhdoanh', 'pkd', 'kd', 'phong kinh doanh'] 
   },
   { 
     key: 'do_dem', 
     name: 'Đội Quản lý hệ thống đo đếm', 
-    keywords: ['do dem', 'htdd', 'he thong do dem', 'dd', 'doi do dem'] 
+    sheetName: 'Đội Quản lý HTĐĐ',
+    keywords: ['doi quan ly htdd', 'htdd', 'do dem', 'dodem', 'he thong do dem', 'dd'] 
   },
   { 
     key: 'thu_ghi', 
     name: 'Đội quản lý thu ghi', 
-    keywords: ['thu ghi', 'qltg', 'tg', 'doi thu ghi'] 
+    sheetName: 'Đội Quản lý Thu Ghi',
+    keywords: ['doi quan ly thu ghi', 'thu ghi', 'thughi', 'qltg', 'tg'] 
   }
 ];
 
@@ -90,8 +93,20 @@ function getTeamSheetMapping(ss) {
   const mapping = {};
   const usedSheetNames = new Set();
 
-  // 1. Tìm theo tên Sheet khớp từ khóa
+  // 1. Kiểm tra chính xác theo tên sheet đã định nghĩa
   TEAM_CONFIG.forEach(t => {
+    if (t.sheetName) {
+      const exactSheet = ss.getSheetByName(t.sheetName);
+      if (exactSheet) {
+        mapping[t.key] = exactSheet;
+        usedSheetNames.add(exactSheet.getName());
+      }
+    }
+  });
+
+  // 2. Tìm theo từ khóa nếu tên sheet có biến thể
+  TEAM_CONFIG.forEach(t => {
+    if (mapping[t.key]) return;
     for (let i = 0; i < allSheets.length; i++) {
       const s = allSheets[i];
       if (usedSheetNames.has(s.getName())) continue;
@@ -105,7 +120,7 @@ function getTeamSheetMapping(ss) {
     }
   });
 
-  // 2. Nếu tên Sheet không chứa từ khóa (ví dụ: Sheet1, Sheet2, Sheet3), gán theo thứ tự
+  // 3. Nếu tên Sheet không chứa từ khóa, gán theo thứ tự các sheet còn lại
   const remainingSheets = allSheets.filter(s => !usedSheetNames.has(s.getName()));
   let remIdx = 0;
   TEAM_CONFIG.forEach(t => {

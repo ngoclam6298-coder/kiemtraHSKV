@@ -1156,21 +1156,22 @@
 
     // Dữ liệu mẫu EVN PC Vũng Tàu dùng cho Chế độ Giả lập (Demo Mode)
     const DEMO_STATIONS = [
-      // 1. Phòng Kinh Doanh
-      { teamKey: "kinh_doanh", rowIndex: 2, stt: 1, ma_tram: "TRAM_KD01", id_tram_moi: "VT_KD_001", ten_tram_moi: "Trạm Biến Áp Thùy Vân 1", tong: 120, so_luong_hoan_thanh: 100, xoa: 5, con_lai: 15, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
-      { teamKey: "kinh_doanh", rowIndex: 3, stt: 2, ma_tram: "TRAM_KD02", id_tram_moi: "VT_KD_002", ten_tram_moi: "Trạm Biến Áp Hoàng Hoa Thám", tong: 85, so_luong_hoan_thanh: 85, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
-      { teamKey: "kinh_doanh", rowIndex: 4, stt: 3, ma_tram: "TRAM_KD03", id_tram_moi: "VT_KD_003", ten_tram_moi: "Trạm Biến Áp Lê Hồng Phong", tong: 210, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 210, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Phòng Kinh Doanh", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "kinh_doanh", rowIndex: 5, stt: 4, ma_tram: "TRAM_KD04", id_tram_moi: "VT_KD_004", ten_tram_moi: "Trạm Biến Áp Ba Cu", tong: 95, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Phòng Kinh Doanh", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
+      // 1. Phòng Kinh Doanh (Khớp dữ liệu thực tế)
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 2, stt: 1, ma_tram: "150110180", id_tram_moi: "105002", ten_tram_moi: "Tập thể Quốc lộ 51A", tong: 116, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 116, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 3, stt: 2, ma_tram: "150110200", id_tram_moi: "105004", ten_tram_moi: "Khu nhà ở 41D", tong: 14, so_luong_hoan_thanh: 14, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 4, stt: 3, ma_tram: "150110220", id_tram_moi: "105007", ten_tram_moi: "Tập thể Thông Tin", tong: 58, so_luong_hoan_thanh: 50, xoa: 8, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 5, stt: 4, ma_tram: "150160202", id_tram_moi: "105381", ten_tram_moi: "Yên Bái", tong: 80, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 80, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 6, stt: 5, ma_tram: "150160220", id_tram_moi: "105369", ten_tram_moi: "Nguyễn Văn Trỗi 4", tong: 99, so_luong_hoan_thanh: 90, xoa: 9, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
       
       // 2. Đội Quản lý hệ thống đo đếm
-      { teamKey: "do_dem", rowIndex: 6, stt: 1, ma_tram: "TRAM_DD01", id_tram_moi: "VT_DD_101", ten_tram_moi: "Trạm Biến Áp Bến Đình", tong: 150, so_luong_hoan_thanh: 130, xoa: 10, con_lai: 10, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "do_dem", rowIndex: 7, stt: 2, ma_tram: "TRAM_DD02", id_tram_moi: "VT_DD_102", ten_tram_moi: "Trạm Biến Áp Trần Phú", tong: 180, so_luong_hoan_thanh: 180, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "30/09/2026", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "30/09/2026 15:20:00" },
-      { teamKey: "do_dem", rowIndex: 8, stt: 3, ma_tram: "TRAM_DD03", id_tram_moi: "VT_DD_103", ten_tram_moi: "Trạm Biến Áp Bãi Trước", tong: 110, so_luong_hoan_thanh: 50, xoa: 0, con_lai: 60, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội Quản lý hệ thống đo đếm", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 2, stt: 1, ma_tram: "150160227", id_tram_moi: "105370", ten_tram_moi: "Cô Giang", tong: 35, so_luong_hoan_thanh: 30, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "02/10/2026 11:20:00" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 3, stt: 2, ma_tram: "150160250", id_tram_moi: "105362", ten_tram_moi: "Trần Hưng Đạo 9", tong: 27, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 27, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 4, stt: 3, ma_tram: "150160255", id_tram_moi: "105363", ten_tram_moi: "Trần Hưng Đạo 10", tong: 33, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 33, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
 
       // 3. Đội quản lý thu ghi
-      { teamKey: "thu_ghi", rowIndex: 9, stt: 1, ma_tram: "TRAM_TG01", id_tram_moi: "VT_TG_201", ten_tram_moi: "Trạm Biến Áp Nguyễn An Ninh", tong: 160, so_luong_hoan_thanh: 140, xoa: 20, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 11:30:00" },
-      { teamKey: "thu_ghi", rowIndex: 10, stt: 2, ma_tram: "TRAM_TG02", id_tram_moi: "VT_TG_202", ten_tram_moi: "Trạm Biến Áp Trương Công Định", tong: 140, so_luong_hoan_thanh: 90, xoa: 5, con_lai: 45, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Đội quản lý thu ghi", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "thu_ghi", rowIndex: 11, stt: 3, ma_tram: "TRAM_TG03", id_tram_moi: "VT_TG_203", ten_tram_moi: "Trạm Biến Áp Võ Thị Sáu", tong: 130, so_luong_hoan_thanh: 130, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Đội quản lý thu ghi", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 08:45:00" }
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 2, stt: 1, ma_tram: "150160285", id_tram_moi: "105081", ten_tram_moi: "Trần Hưng Đạo 8", tong: 37, so_luong_hoan_thanh: 35, xoa: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 14:10:00" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 3, stt: 2, ma_tram: "1501M0030", id_tram_moi: "105282", ten_tram_moi: "Lê Hồng Phong 6", tong: 48, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 48, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 4, stt: 3, ma_tram: "1501M0047", id_tram_moi: "105300", ten_tram_moi: "CC Nam Kỳ Khởi Nghĩa", tong: 16, so_luong_hoan_thanh: 16, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 09:30:00" }
     ];
 
     // =========================================================================
@@ -1218,10 +1219,46 @@
     function loadDemoData() {
       showLoading("Đang nạp dữ liệu giả lập...");
       setTimeout(() => {
-        state.allStations = JSON.parse(JSON.stringify(DEMO_STATIONS));
+        state.allStations = normalizeStations(JSON.parse(JSON.stringify(DEMO_STATIONS)));
         hideLoading();
         renderAll();
       }, 300);
+    }
+
+    /**
+     * Chuẩn hóa danh sách trạm: gán chính xác teamKey và sheetName
+     * Đảm bảo cả khi Google Apps Script chưa kịp Deploy phiên bản mới,
+     * các trạm của sheet đầu tiên (Kinh doanh) vẫn lập tức hiển thị đủ!
+     */
+    function normalizeStations(stations) {
+      return (stations || []).map((st, idx) => {
+        let teamKey = st.teamKey;
+        let sheetName = st.sheetName || "";
+
+        // Nếu dữ liệu trả về chưa có teamKey (phiên bản cũ của Apps Script)
+        if (!teamKey) {
+          const normSheet = (sheetName || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+          const normKv = (st.khu_vuc || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+
+          if (normSheet.includes("htdd") || normSheet.includes("do dem") || normKv.includes("htdd") || normKv.includes("do dem")) {
+            teamKey = "do_dem";
+            sheetName = sheetName || "Đội Quản lý HTĐĐ";
+          } else if (normSheet.includes("thu ghi") || normSheet.includes("qltg") || normSheet.includes("tg") || normKv.includes("thu ghi") || normKv.includes("qltg")) {
+            teamKey = "thu_ghi";
+            sheetName = sheetName || "Đội Quản lý Thu Ghi";
+          } else {
+            // Mặc định các trạm hiện có của sheet đầu tiên là Phòng Kinh Doanh (sheet "Kinh doanh")
+            teamKey = "kinh_doanh";
+            sheetName = sheetName || "Kinh doanh";
+          }
+        }
+
+        return {
+          ...st,
+          teamKey: teamKey,
+          sheetName: sheetName
+        };
+      });
     }
 
     async function loadRemoteData() {
@@ -1245,13 +1282,13 @@
 
         const data = await response.json();
         if (data.success) {
-          state.allStations = data.stations || [];
+          state.allStations = normalizeStations(data.stations || []);
           
           if (data.duplicates && data.duplicates.length > 0) {
             const uniqueDupes = [...new Set(data.duplicates)];
             showToast(`Cảnh báo: Có ${uniqueDupes.length} mã trạm bị trùng lặp trên Sheet: ${uniqueDupes.join(', ')}`, "warning", 6000);
           } else {
-            showToast("Đồng bộ dữ liệu Google Sheet thành công!", "success");
+            showToast(`Đã đồng bộ ${state.allStations.length} trạm từ Google Sheet!`, "success");
           }
           
           updateNetworkStatus(true);
@@ -1276,18 +1313,7 @@
         if (st.teamKey) {
           return st.teamKey === teamKey;
         }
-        const rawKv = (st.khu_vuc || "").trim();
-        const kv = rawKv.toLowerCase()
-          .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
-
-        if (teamKey === 'kinh_doanh') {
-          return kv.includes("kinh doanh") || kv.includes("pkd") || kv.includes("kd");
-        } else if (teamKey === 'do_dem') {
-          return kv.includes("do dem") || kv.includes("htdd") || kv.includes("he thong do dem");
-        } else if (teamKey === 'thu_ghi') {
-          return kv.includes("thu ghi") || kv.includes("qltg") || kv.includes("tg");
-        }
-        return false;
+        return teamKey === 'kinh_doanh';
       });
     }
 
@@ -1407,6 +1433,30 @@
       document.getElementById("tableRecordCount").innerText = `${filtered.length} / ${teamStations.length} trạm`;
 
       const tbody = document.getElementById("tableBody");
+      if (teamStations.length === 0) {
+        const teamNames = {
+          'kinh_doanh': 'Phòng Kinh Doanh (Sheet "Kinh doanh")',
+          'do_dem': 'Đội Quản lý HTĐĐ (Sheet "Đội Quản lý HTĐĐ")',
+          'thu_ghi': 'Đội Quản lý Thu Ghi (Sheet "Đội Quản lý Thu Ghi")'
+        };
+        const currentName = teamNames[state.currentTeam] || state.currentTeam;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="text-center" style="padding: 36px 16px; color: var(--text-muted);">
+              <div style="font-size: 1.05rem; font-weight: 800; color: #b45309; margin-bottom: 8px;">
+                ⚡ Đang chờ nạp trạm từ: ${currentName}
+              </div>
+              <div style="font-size: 0.85rem; max-width: 560px; margin: 0 auto; line-height: 1.5; color: #475569;">
+                Sheet này chưa được đồng bộ từ Google Sheet lên Web App.
+                <br>👉 Hãy copy file <code>Code.gs</code> mới dán vào Google Apps Script và chọn:
+                <br><strong>Triển khai (Deploy) &gt; Quản lý bản triển khai (Manage deployments) &gt; Chỉnh sửa (Bút chì) &gt; Phiên bản mới (New version) &gt; Triển khai</strong>.
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
@@ -1703,7 +1753,7 @@
       const payload = {
         action: "saveStation",
         ma_tram: maTram,
-        sheet_name: station.sheetName || "",
+        sheet_name: station.sheetName || (state.currentTeam === 'kinh_doanh' ? "Kinh doanh" : (state.currentTeam === 'do_dem' ? "Đội Quản lý HTĐĐ" : "Đội Quản lý Thu Ghi")),
         team_key: station.teamKey || state.currentTeam,
         so_luong_hoan_thanh: soLuongHoanThanh,
         xoa: xoa,
