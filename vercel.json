@@ -1,20 +1,4 @@
 {
   "version": 2,
-  "name": "kiem-tra-hskv",
-  "cleanUrls": true,
-  "routes": [
-    {
-      "src": "/gis",
-      "dest": "/Thu thap GIS hạ thế PCVT/index.html"
-    },
-    {
-      "src": "/thu-thap-gis",
-      "dest": "/Thu thap GIS hạ thế PCVT/index.html"
-    },
-    { "handle": "filesystem" },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "cleanUrls": true
 }
