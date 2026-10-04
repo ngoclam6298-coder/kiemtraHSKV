@@ -147,8 +147,9 @@ function getColumnMapping(sheet) {
     id_tram_moi: -1,
     ten_tram_moi: -1,
     tong: -1,
-    so_luong_hoan_thanh: -1,
     xoa: -1,
+    them: -1,
+    so_luong_hoan_thanh: -1,
     trang_thai: -1,
     ngay_hoan_thanh: -1,
     khu_vuc: -1,
@@ -164,19 +165,34 @@ function getColumnMapping(sheet) {
 
     if (norm === "stt" || norm === "sothutu") map.stt = idx + 1;
     else if (norm === "matram" || norm === "matrambienap") map.ma_tram = idx + 1;
-    else if (norm.includes("idtrammoi") || norm === "idtram") map.id_tram_moi = idx + 1;
+    else if (norm.includes("idtrammoi") || norm === "idtram" || norm.includes("idtram")) map.id_tram_moi = idx + 1;
     else if (norm.includes("tentram") || norm.includes("trentram")) map.ten_tram_moi = idx + 1;
     else if (norm === "tong" || norm === "tongso") map.tong = idx + 1;
-    else if (norm.includes("soluonghoanthanh") || norm === "slhoanthanh") map.so_luong_hoan_thanh = idx + 1;
-    else if (norm === "xoa" || norm === "daxoa") map.xoa = idx + 1;
+    else if (norm === "xoa" || norm === "daxoa" || norm.includes("xoa")) map.xoa = idx + 1;
+    else if (norm === "them" || norm === "vitrithem" || norm.includes("them")) map.them = idx + 1;
+    else if (norm.includes("ngayhoanthanh") || norm.includes("ngayht") || (norm.includes("ngay") && norm.includes("ht"))) map.ngay_hoan_thanh = idx + 1;
+    else if (norm.includes("soluonghoanthanh") || norm === "slhoanthanh" || norm === "hoanthanh" || norm === "slht") map.so_luong_hoan_thanh = idx + 1;
     else if (norm === "trangthai" || norm === "tinhtrang") map.trang_thai = idx + 1;
-    else if (norm.includes("ngayhoanthanh") || norm.includes("ngayht")) map.ngay_hoan_thanh = idx + 1;
     else if (norm.includes("khuvuc") || norm.includes("donvi") || norm.includes("doi")) map.khu_vuc = idx + 1;
     else if (norm === "khoa" || norm === "dakhoa" || norm === "islocked") map.khoa = idx + 1;
     else if (norm.includes("solansua") || norm.includes("solanedit") || norm === "sua") map.so_lan_sua = idx + 1;
     else if (norm.includes("nguoinhap") || norm.includes("nguoithuchien")) map.nguoi_nhap = idx + 1;
     else if (norm.includes("thoigiannhap") || norm.includes("thoigiancapnhat")) map.thoi_gian_nhap = idx + 1;
   });
+
+  // Fallback theo đúng cấu trúc cột mới của người dùng nếu tiêu đề chưa chuẩn:
+  // STT (1) | MA_TRAM (2) | ID trạm mới (3) | Trên trạm (mới) (4) | Tổng (5) | Xóa (6) | Thêm (7) | Số lượng hoàn thành (8) | Trạng thái (9) | Ngày hoàn thành (10) | Khu vực (11)
+  if (map.stt === -1 && headers.length >= 1) map.stt = 1;
+  if (map.ma_tram === -1 && headers.length >= 2) map.ma_tram = 2;
+  if (map.id_tram_moi === -1 && headers.length >= 3) map.id_tram_moi = 3;
+  if (map.ten_tram_moi === -1 && headers.length >= 4) map.ten_tram_moi = 4;
+  if (map.tong === -1 && headers.length >= 5) map.tong = 5;
+  if (map.xoa === -1 && headers.length >= 6) map.xoa = 6;
+  if (map.them === -1 && headers.length >= 7) map.them = 7;
+  if (map.so_luong_hoan_thanh === -1 && headers.length >= 8) map.so_luong_hoan_thanh = 8;
+  if (map.trang_thai === -1 && headers.length >= 9) map.trang_thai = 9;
+  if (map.ngay_hoan_thanh === -1 && headers.length >= 10) map.ngay_hoan_thanh = 10;
+  if (map.khu_vuc === -1 && headers.length >= 11) map.khu_vuc = 11;
 
   // Tự động thêm cột phụ vào cuối bảng nếu chưa có
   let currentMaxCol = sheet.getLastColumn();
@@ -323,6 +339,7 @@ function getAllData() {
     let totalVolume = 0;
     let completedVolume = 0;
     let deletedVolume = 0;
+    let addedVolume = 0;
 
     if (lastRow > 1) {
       const data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
@@ -345,8 +362,7 @@ function getAllData() {
         const idTramMoi = map.id_tram_moi > 0 ? String(row[map.id_tram_moi - 1] || "").trim() : "";
         const tenTramMoi = map.ten_tram_moi > 0 ? String(row[map.ten_tram_moi - 1] || "").trim() : "";
         const tong = map.tong > 0 ? parseNonNegativeInt(row[map.tong - 1]) : 0;
-        const soLuongHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(row[map.so_luong_hoan_thanh - 1]) : 0;
-        const xoa = map.xoa > 0 ? parseNonNegativeInt(row[map.xoa - 1]) : 0;
+        const khuVuc = map.khu_vuc > 0 ? String(row[map.khu_vuc - 1] || "").trim() : "";
         const trangThaiRaw = map.trang_thai > 0 ? String(row[map.trang_thai - 1] || "").trim() : "";
         const isHoanThanh = (trangThaiRaw === "Hoàn thành");
         const trangThai = isHoanThanh ? "Hoàn thành" : "Chưa hoàn thành";
@@ -355,6 +371,7 @@ function getAllData() {
         let soLanSua = 0;
         let soLuongHoanThanh = 0;
         let xoa = 0;
+        let them = 0;
         let ngayHoanThanh = "";
         let nguoiNhap = "";
         let thoiGianNhap = "";
@@ -362,6 +379,7 @@ function getAllData() {
         if (isHoanThanh) {
           soLuongHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(row[map.so_luong_hoan_thanh - 1]) : 0;
           xoa = map.xoa > 0 ? parseNonNegativeInt(row[map.xoa - 1]) : 0;
+          them = map.them > 0 ? parseNonNegativeInt(row[map.them - 1]) : 0;
           ngayHoanThanh = map.ngay_hoan_thanh > 0 ? formatDateVN(row[map.ngay_hoan_thanh - 1]) : "";
           if (map.khoa > 0) {
             const lockVal = row[map.khoa - 1];
@@ -376,6 +394,7 @@ function getAllData() {
           soLanSua = 0;
           soLuongHoanThanh = 0;
           xoa = 0;
+          them = 0;
           ngayHoanThanh = "";
           nguoiNhap = "";
           thoiGianNhap = "";
@@ -383,6 +402,7 @@ function getAllData() {
           // Tự động xóa sạch các giá trị thừa trong Sheet nếu dòng này chưa hoàn thành nhưng có rác từ phiên bản cũ
           const hasResidual = (map.so_luong_hoan_thanh > 0 && row[map.so_luong_hoan_thanh - 1] !== "") ||
                               (map.xoa > 0 && row[map.xoa - 1] !== "") ||
+                              (map.them > 0 && row[map.them - 1] !== "") ||
                               (map.khoa > 0 && row[map.khoa - 1] !== "") ||
                               (map.so_lan_sua > 0 && row[map.so_lan_sua - 1] !== "") ||
                               (map.nguoi_nhap > 0 && row[map.nguoi_nhap - 1] !== "") ||
@@ -392,6 +412,7 @@ function getAllData() {
             try {
               if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).clearContent();
               if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).clearContent();
+              if (map.them > 0) sheet.getRange(rowIndex, map.them).clearContent();
               if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).clearContent();
               if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).clearContent();
               if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).clearContent();
@@ -407,6 +428,7 @@ function getAllData() {
         totalVolume += tong;
         completedVolume += soLuongHoanThanh;
         deletedVolume += xoa;
+        addedVolume += them;
 
         const stObj = {
           teamKey: t.key,
@@ -420,6 +442,7 @@ function getAllData() {
           tong: tong,
           so_luong_hoan_thanh: soLuongHoanThanh,
           xoa: xoa,
+          them: them,
           con_lai: conLai,
           trang_thai: trangThai,
           ngay_hoan_thanh: ngayHoanThanh,
@@ -463,6 +486,7 @@ function getAllData() {
       totalVolume: totalVolume,
       completedVolume: completedVolume,
       deletedVolume: deletedVolume,
+      addedVolume: addedVolume,
       remainingVolume: remainingVolume,
       progressPercent: progressPercent
     };
@@ -585,12 +609,14 @@ function handleSaveStation(payload) {
 
     const oldSlHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_luong_hoan_thanh).getValue()) : 0;
     const oldXoa = map.xoa > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.xoa).getValue()) : 0;
+    const oldThem = map.them > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.them).getValue()) : 0;
     const oldTrangThai = map.trang_thai > 0 ? String(sheet.getRange(rowIndex, map.trang_thai).getValue() || "").trim() : "";
     const oldNgayHT = map.ngay_hoan_thanh > 0 ? formatDateVN(sheet.getRange(rowIndex, map.ngay_hoan_thanh).getValue()) : "";
 
     const oldValues = {
       so_luong_hoan_thanh: oldSlHoanThanh,
       xoa: oldXoa,
+      them: oldThem,
       trang_thai: oldTrangThai,
       ngay_hoan_thanh: oldNgayHT
     };
@@ -606,6 +632,7 @@ function handleSaveStation(payload) {
     if (isResetToInitial) {
       if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).clearContent();
       if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).clearContent();
+      if (map.them > 0) sheet.getRange(rowIndex, map.them).clearContent();
       if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).clearContent();
       if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).clearContent();
       if (map.khoa > 0) sheet.getRange(rowIndex, map.khoa).clearContent();
@@ -616,6 +643,7 @@ function handleSaveStation(payload) {
       const newValues = {
         so_luong_hoan_thanh: "",
         xoa: "",
+        them: "",
         trang_thai: "",
         ngay_hoan_thanh: "",
         khoa: "",
@@ -636,6 +664,7 @@ function handleSaveStation(payload) {
           tong: tong,
           so_luong_hoan_thanh: 0,
           xoa: 0,
+          them: 0,
           con_lai: tong,
           trang_thai: "Chưa hoàn thành",
           ngay_hoan_thanh: "",
@@ -665,7 +694,18 @@ function handleSaveStation(payload) {
 
     const newSlHoanThanh = parseNonNegativeInt(payload.so_luong_hoan_thanh);
     const newXoa = parseNonNegativeInt(payload.xoa);
+    const newThem = parseNonNegativeInt(payload.them);
     let newNgayHT = formatDateVN(payload.ngay_hoan_thanh);
+
+    // CÔNG THỨC KIỂM TRA ĐIỀU KIỆN LƯU: Tổng = Xóa + Số lượng hoàn thành
+    if (tong !== (newXoa + newSlHoanThanh)) {
+      const diff = tong - (newXoa + newSlHoanThanh);
+      const diffText = diff > 0 ? `thiếu ${diff}` : `dư ${Math.abs(diff)}`;
+      return {
+        success: false,
+        message: `Chưa đủ điều kiện lưu trạm [${maTram}]: Bắt buộc Tổng (${tong}) = Xóa (${newXoa}) + Hoàn thành (${newSlHoanThanh})! Hiện đang ${diffText} vị trí. Vui lòng kiểm tra lại.`
+      };
+    }
 
     if (!newNgayHT) {
       return { success: false, message: "Khi chọn trạng thái 'Hoàn thành', bắt buộc phải nhập Ngày hoàn thành!" };
@@ -684,6 +724,7 @@ function handleSaveStation(payload) {
     // Cập nhật vào Sheet
     if (map.so_luong_hoan_thanh > 0) sheet.getRange(rowIndex, map.so_luong_hoan_thanh).setValue(newSlHoanThanh);
     if (map.xoa > 0) sheet.getRange(rowIndex, map.xoa).setValue(newXoa);
+    if (map.them > 0) sheet.getRange(rowIndex, map.them).setValue(newThem);
     if (map.trang_thai > 0) sheet.getRange(rowIndex, map.trang_thai).setValue("Hoàn thành");
     if (map.ngay_hoan_thanh > 0) sheet.getRange(rowIndex, map.ngay_hoan_thanh).setNumberFormat("@").setValue(newNgayHT);
     
@@ -695,6 +736,7 @@ function handleSaveStation(payload) {
     const newValues = {
       so_luong_hoan_thanh: newSlHoanThanh,
       xoa: newXoa,
+      them: newThem,
       trang_thai: "Hoàn thành",
       ngay_hoan_thanh: newNgayHT
     };
@@ -716,6 +758,7 @@ function handleSaveStation(payload) {
         tong: tong,
         so_luong_hoan_thanh: newSlHoanThanh,
         xoa: newXoa,
+        them: newThem,
         con_lai: conLai,
         trang_thai: "Hoàn thành",
         ngay_hoan_thanh: newNgayHT,
@@ -784,16 +827,19 @@ function handleUnlockStation(payload) {
 
     const sheetSlHoanThanh = map.so_luong_hoan_thanh > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.so_luong_hoan_thanh).getValue()) : 0;
     const sheetXoa = map.xoa > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.xoa).getValue()) : 0;
+    const sheetThem = map.them > 0 ? parseNonNegativeInt(sheet.getRange(rowIndex, map.them).getValue()) : 0;
     const sheetTrangThai = map.trang_thai > 0 ? String(sheet.getRange(rowIndex, map.trang_thai).getValue() || "").trim() : "";
     const sheetNgayHT = map.ngay_hoan_thanh > 0 ? formatDateVN(sheet.getRange(rowIndex, map.ngay_hoan_thanh).getValue()) : "";
 
     const clientSlHoanThanh = parseNonNegativeInt(clientData.so_luong_hoan_thanh);
     const clientXoa = parseNonNegativeInt(clientData.xoa);
+    const clientThem = parseNonNegativeInt(clientData.them);
     const clientTrangThai = String(clientData.trang_thai || "").trim();
     const clientNgayHT = formatDateVN(clientData.ngay_hoan_thanh);
 
     const isMatch = (sheetSlHoanThanh === clientSlHoanThanh) &&
                     (sheetXoa === clientXoa) &&
+                    (sheetThem === clientThem) &&
                     (sheetTrangThai === clientTrangThai) &&
                     (sheetNgayHT === clientNgayHT);
 
@@ -805,6 +851,7 @@ function handleUnlockStation(payload) {
         serverData: {
           so_luong_hoan_thanh: sheetSlHoanThanh,
           xoa: sheetXoa,
+          them: sheetThem,
           trang_thai: sheetTrangThai,
           ngay_hoan_thanh: sheetNgayHT
         }
@@ -824,6 +871,7 @@ function handleUnlockStation(payload) {
       {
         so_luong_hoan_thanh: sheetSlHoanThanh,
         xoa: sheetXoa,
+        them: sheetThem,
         trang_thai: sheetTrangThai,
         ngay_hoan_thanh: sheetNgayHT
       },

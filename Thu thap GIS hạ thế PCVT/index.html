@@ -464,11 +464,11 @@
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 8px;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .summary-grid {
         grid-template-columns: repeat(3, 1fr);
       }
@@ -501,6 +501,7 @@
 
     .metric-value.completed { color: var(--status-completed); }
     .metric-value.deleted { color: #dc2626; }
+    .metric-value.added { color: #7c3aed; }
     .metric-value.remaining { color: #d97706; }
     .metric-value.negative { color: #ef4444; }
 
@@ -1199,6 +1200,10 @@
           <div class="metric-label">Đã xóa</div>
           <div class="metric-value deleted" id="metricDeleted">0</div>
         </div>
+        <div class="metric-box">
+          <div class="metric-label">Vị trí thêm</div>
+          <div class="metric-value added" id="metricAdded">0</div>
+        </div>
         <div class="metric-box col-span-mobile">
           <div class="metric-label">Còn lại</div>
           <div class="metric-value remaining" id="metricRemaining">0</div>
@@ -1206,7 +1211,7 @@
       </div>
     </section>
 
-    <!-- 4. BẢNG NHẬP 4 HẠNG MỤC THEO PHƯƠNG NGANG -->
+    <!-- 4. BẢNG NHẬP CÁC HẠNG MỤC THEO PHƯƠNG NGANG -->
     <section class="card">
       <div class="card-title">
         <span>📋 Danh Sách Trạm & Nhập Số Liệu Theo Phương Ngang</span>
@@ -1235,7 +1240,7 @@
           </select>
         </div>
         <div style="font-size: 0.78rem; color: var(--text-muted);">
-          💡 <em>Nhập trực tiếp các ô theo hàng ngang rồi bấm <strong>💾 Lưu</strong> (Mỗi trạm tối đa 3 lần sửa)</em>
+          💡 <em>Điều kiện lưu: Bắt buộc <strong>Tổng = Xóa + Số lượng hoàn thành</strong> (Mỗi trạm tối đa 3 lần sửa)</em>
         </div>
       </div>
 
@@ -1250,9 +1255,10 @@
               <th>Tên trạm (mới)</th>
               <th class="text-right" style="width: 65px;">Tổng</th>
               <!-- CÁC HẠNG MỤC NHẬP THEO PHƯƠNG NGANG -->
-              <th class="text-center" style="min-width: 95px;">Hoàn thành *</th>
               <th class="text-center" style="min-width: 85px;">Xóa *</th>
-              <th class="text-right" style="min-width: 80px;">Còn lại</th>
+              <th class="text-center" style="min-width: 85px;">Thêm *</th>
+              <th class="text-center" style="min-width: 95px;">Hoàn thành *</th>
+              <th class="text-center" style="min-width: 100px;">Còn lại</th>
               <th class="text-center" style="min-width: 145px;">Trạng thái *</th>
               <th class="text-center" style="min-width: 185px;">Ngày hoàn thành</th>
               <th class="text-center" style="min-width: 155px;">Người nhập *</th>
@@ -1262,7 +1268,7 @@
           </thead>
           <tbody id="tableBody">
             <tr>
-              <td colspan="12" class="text-center" style="padding: 30px; color: var(--text-muted);">
+              <td colspan="13" class="text-center" style="padding: 30px; color: var(--text-muted);">
                 Đang nạp danh sách trạm...
               </td>
             </tr>
@@ -1325,21 +1331,21 @@
     // Dữ liệu mẫu EVN PC Vũng Tàu dùng cho Chế độ Giả lập (Demo Mode)
     const DEMO_STATIONS = [
       // 1. Phòng Kinh Doanh (Khớp dữ liệu thực tế)
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 2, stt: 1, ma_tram: "150110180", id_tram_moi: "105002", ten_tram_moi: "Tập thể Quốc lộ 51A", tong: 116, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 116, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 3, stt: 2, ma_tram: "150110200", id_tram_moi: "105004", ten_tram_moi: "Khu nhà ở 41D", tong: 14, so_luong_hoan_thanh: 14, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 4, stt: 3, ma_tram: "150110220", id_tram_moi: "105007", ten_tram_moi: "Tập thể Thông Tin", tong: 58, so_luong_hoan_thanh: 50, xoa: 8, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 5, stt: 4, ma_tram: "150160202", id_tram_moi: "105381", ten_tram_moi: "Yên Bái", tong: 80, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 80, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 6, stt: 5, ma_tram: "150160220", id_tram_moi: "105369", ten_tram_moi: "Nguyễn Văn Trỗi 4", tong: 99, so_luong_hoan_thanh: 90, xoa: 9, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 2, stt: 1, ma_tram: "150110180", id_tram_moi: "105002", ten_tram_moi: "Tập thể Quốc lộ 51A", tong: 116, so_luong_hoan_thanh: 0, xoa: 0, them: 0, con_lai: 116, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 3, stt: 2, ma_tram: "150110200", id_tram_moi: "105004", ten_tram_moi: "Khu nhà ở 41D", tong: 14, so_luong_hoan_thanh: 14, xoa: 0, them: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "01/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Trần Minh Đức", thoi_gian_nhap: "01/10/2026 16:45:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 4, stt: 3, ma_tram: "150110220", id_tram_moi: "105007", ten_tram_moi: "Tập thể Thông Tin", tong: 58, so_luong_hoan_thanh: 50, xoa: 8, them: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Nguyễn Văn Tuấn", thoi_gian_nhap: "02/10/2026 14:30:00" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 5, stt: 4, ma_tram: "150160202", id_tram_moi: "105381", ten_tram_moi: "Yên Bái", tong: 80, so_luong_hoan_thanh: 0, xoa: 0, them: 0, con_lai: 80, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "kinh_doanh", sheetName: "Kinh doanh", rowIndex: 6, stt: 5, ma_tram: "150160220", id_tram_moi: "105369", ten_tram_moi: "Nguyễn Văn Trỗi 4", tong: 99, so_luong_hoan_thanh: 90, xoa: 9, them: 3, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Lê Hoàng Long", thoi_gian_nhap: "02/10/2026 09:15:00" },
       
       // 2. Đội Quản lý hệ thống đo đếm
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 2, stt: 1, ma_tram: "150160227", id_tram_moi: "105370", ten_tram_moi: "Cô Giang", tong: 35, so_luong_hoan_thanh: 30, xoa: 5, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "02/10/2026 11:20:00" },
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 3, stt: 2, ma_tram: "150160250", id_tram_moi: "105362", ten_tram_moi: "Trần Hưng Đạo 9", tong: 27, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 27, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 4, stt: 3, ma_tram: "150160255", id_tram_moi: "105363", ten_tram_moi: "Trần Hưng Đạo 10", tong: 33, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 33, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 2, stt: 1, ma_tram: "150160227", id_tram_moi: "105370", ten_tram_moi: "Cô Giang", tong: 35, so_luong_hoan_thanh: 30, xoa: 5, them: 1, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Phạm Văn Nam", thoi_gian_nhap: "02/10/2026 11:20:00" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 3, stt: 2, ma_tram: "150160250", id_tram_moi: "105362", ten_tram_moi: "Trần Hưng Đạo 9", tong: 27, so_luong_hoan_thanh: 0, xoa: 0, them: 0, con_lai: 27, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "do_dem", sheetName: "Đội Quản lý HTĐĐ", rowIndex: 4, stt: 3, ma_tram: "150160255", id_tram_moi: "105363", ten_tram_moi: "Trần Hưng Đạo 10", tong: 33, so_luong_hoan_thanh: 0, xoa: 0, them: 0, con_lai: 33, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
 
       // 3. Đội quản lý thu ghi
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 2, stt: 1, ma_tram: "150160285", id_tram_moi: "105081", ten_tram_moi: "Trần Hưng Đạo 8", tong: 37, so_luong_hoan_thanh: 35, xoa: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 14:10:00" },
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 3, stt: 2, ma_tram: "1501M0030", id_tram_moi: "105282", ten_tram_moi: "Lê Hồng Phong 6", tong: 48, so_luong_hoan_thanh: 0, xoa: 0, con_lai: 48, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
-      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 4, stt: 3, ma_tram: "1501M0047", id_tram_moi: "105300", ten_tram_moi: "CC Nam Kỳ Khởi Nghĩa", tong: 16, so_luong_hoan_thanh: 16, xoa: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 09:30:00" }
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 2, stt: 1, ma_tram: "150160285", id_tram_moi: "105081", ten_tram_moi: "Trần Hưng Đạo 8", tong: 37, so_luong_hoan_thanh: 35, xoa: 2, them: 0, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "02/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Võ Thị Mai", thoi_gian_nhap: "02/10/2026 14:10:00" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 3, stt: 2, ma_tram: "1501M0030", id_tram_moi: "105282", ten_tram_moi: "Lê Hồng Phong 6", tong: 48, so_luong_hoan_thanh: 0, xoa: 0, them: 0, con_lai: 48, trang_thai: "Chưa hoàn thành", ngay_hoan_thanh: "", khu_vuc: "Vũng Tàu", is_locked: false, so_lan_sua: 0, nguoi_nhap: "", thoi_gian_nhap: "" },
+      { teamKey: "thu_ghi", sheetName: "Đội Quản lý Thu Ghi", rowIndex: 4, stt: 3, ma_tram: "1501M0047", id_tram_moi: "105300", ten_tram_moi: "CC Nam Kỳ Khởi Nghĩa", tong: 16, so_luong_hoan_thanh: 16, xoa: 0, them: 2, con_lai: 0, trang_thai: "Hoàn thành", ngay_hoan_thanh: "03/10/2026", khu_vuc: "Vũng Tàu", is_locked: true, so_lan_sua: 1, nguoi_nhap: "Đặng Hữu Tài", thoi_gian_nhap: "03/10/2026 09:30:00" }
     ];
 
     // =========================================================================
@@ -1416,6 +1422,7 @@
 
         return {
           ...st,
+          them: parseInt(st.them, 10) || 0,
           teamKey: teamKey,
           sheetName: sheetName
         };
@@ -1552,6 +1559,7 @@
       let totalVolume = 0;
       let completedVolume = 0;
       let deletedVolume = 0;
+      let addedVolume = 0;
       let completedStations = 0;
       let completedStationsTotalVolume = 0;
 
@@ -1560,6 +1568,7 @@
         totalVolume += stTong;
         completedVolume += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
         deletedVolume += (parseInt(s.xoa, 10) || 0);
+        addedVolume += (parseInt(s.them, 10) || 0);
         if (s.trang_thai === "Hoàn thành") {
           completedStations++;
           completedStationsTotalVolume += stTong;
@@ -1578,6 +1587,8 @@
       document.getElementById("metricTotalVolume").innerText = totalVolume.toLocaleString("vi-VN");
       document.getElementById("metricCompleted").innerText = completedVolume.toLocaleString("vi-VN");
       document.getElementById("metricDeleted").innerText = deletedVolume.toLocaleString("vi-VN");
+      const addedEl = document.getElementById("metricAdded");
+      if (addedEl) addedEl.innerText = addedVolume.toLocaleString("vi-VN");
       
       const remEl = document.getElementById("metricRemaining");
       remEl.innerText = remainingVolume.toLocaleString("vi-VN");
@@ -1636,7 +1647,7 @@
         const currentName = teamNames[state.currentTeam] || state.currentTeam;
         tbody.innerHTML = `
           <tr>
-            <td colspan="12" class="text-center" style="padding: 36px 16px; color: var(--text-muted);">
+            <td colspan="13" class="text-center" style="padding: 36px 16px; color: var(--text-muted);">
               <div style="font-size: 1.05rem; font-weight: 800; color: #b45309; margin-bottom: 8px;">
                 ⚡ Đang chờ nạp trạm từ: ${currentName}
               </div>
@@ -1676,7 +1687,7 @@
         }
         tbody.innerHTML = `
           <tr>
-            <td colspan="12" class="text-center" style="padding: 24px; color: var(--text-muted);">
+            <td colspan="13" class="text-center" style="padding: 24px; color: var(--text-muted);">
               ${emptyHtml}
             </td>
           </tr>
@@ -1770,21 +1781,7 @@
               ${tong.toLocaleString("vi-VN")}
             </td>
 
-            <!-- 6. HẠNG MỤC 1: SỐ LƯỢNG HOÀN THÀNH (PHƯƠNG NGANG) -->
-            <td class="text-center">
-              <input type="number" 
-                     id="inline_ht_${st.ma_tram}" 
-                     class="tbl-input-num" 
-                     inputmode="numeric" 
-                     min="0" 
-                     step="1" 
-                     placeholder="0"
-                     value="${st.so_luong_hoan_thanh ? st.so_luong_hoan_thanh : ''}" 
-                     ${disabledAttr} 
-                     oninput="onInlineChange('${st.ma_tram}')">
-            </td>
-
-            <!-- 7. HẠNG MỤC 2: XÓA (PHƯƠNG NGANG) -->
+            <!-- 6. HẠNG MỤC 1: XÓA (PHƯƠNG NGANG) -->
             <td class="text-center">
               <input type="number" 
                      id="inline_xoa_${st.ma_tram}" 
@@ -1798,14 +1795,43 @@
                      oninput="onInlineChange('${st.ma_tram}')">
             </td>
 
-            <!-- 8. CÒN LẠI (TỰ ĐỘNG TÍNH TOÁN REAL-TIME) -->
-            <td class="text-right font-mono">
-              <span id="inline_conlai_${st.ma_tram}" class="remaining-badge ${remClass}">
-                ${conLai.toLocaleString("vi-VN")}
+            <!-- 7. HẠNG MỤC 2: THÊM (VỊ TRÍ THÊM) -->
+            <td class="text-center">
+              <input type="number" 
+                     id="inline_them_${st.ma_tram}" 
+                     class="tbl-input-num" 
+                     inputmode="numeric" 
+                     min="0" 
+                     step="1" 
+                     placeholder="0"
+                     style="color: #6d28d9; font-weight: 700;"
+                     value="${st.them ? st.them : ''}" 
+                     ${disabledAttr} 
+                     oninput="onInlineChange('${st.ma_tram}')">
+            </td>
+
+            <!-- 8. HẠNG MỤC 3: SỐ LƯỢNG HOÀN THÀNH (PHƯƠNG NGANG) -->
+            <td class="text-center">
+              <input type="number" 
+                     id="inline_ht_${st.ma_tram}" 
+                     class="tbl-input-num" 
+                     inputmode="numeric" 
+                     min="0" 
+                     step="1" 
+                     placeholder="0"
+                     value="${st.so_luong_hoan_thanh ? st.so_luong_hoan_thanh : ''}" 
+                     ${disabledAttr} 
+                     oninput="onInlineChange('${st.ma_tram}')">
+            </td>
+
+            <!-- 9. CÒN LẠI (TỰ ĐỘNG TÍNH TOÁN REAL-TIME & ĐIỀU KIỆN LƯU) -->
+            <td class="text-center font-mono">
+              <span id="inline_conlai_${st.ma_tram}" class="remaining-badge ${remClass}" title="${conLai === 0 ? 'Đã cân bằng: Tổng = Xóa + Hoàn thành (Đủ điều kiện lưu)' : (conLai > 0 ? 'Chưa đủ điều kiện lưu: Còn thiếu ' + conLai + ' vị trí' : 'Chưa đủ điều kiện lưu: Bị dư ' + Math.abs(conLai) + ' vị trí')}">
+                ${conLai === 0 ? '0 ✓' : (conLai > 0 ? '+' + conLai.toLocaleString("vi-VN") : conLai.toLocaleString("vi-VN"))}
               </span>
             </td>
 
-            <!-- 9. HẠNG MỤC 3: TRẠNG THÁI (PHƯƠNG NGANG) -->
+            <!-- 10. HẠNG MỤC 4: TRẠNG THÁI (PHƯƠNG NGANG) -->
             <td class="text-center">
               <select id="inline_tt_${st.ma_tram}" 
                       class="tbl-select" 
@@ -1873,6 +1899,7 @@
 
     /**
      * Tính toán Còn lại tự động theo hàng ngang khi người dùng gõ
+     * Điều kiện tiên quyết: Bắt buộc Tổng = Xóa + Số lượng hoàn thành thì mới đủ điều kiện cho lưu
      */
     window.onInlineChange = function(maTram) {
       const st = state.allStations.find(s => s.ma_tram === maTram);
@@ -1888,8 +1915,19 @@
       const xoa = parseInt(xoaEl ? xoaEl.value : 0, 10) || 0;
       const conLai = tong - ht - xoa;
 
-      conLaiEl.innerText = conLai.toLocaleString("vi-VN");
-      conLaiEl.className = `remaining-badge ${conLai > 0 ? 'remaining-positive' : (conLai < 0 ? 'remaining-negative' : 'remaining-zero')}`;
+      if (conLai === 0) {
+        conLaiEl.innerText = "0 ✓";
+        conLaiEl.className = "remaining-badge remaining-zero";
+        conLaiEl.title = "Đã cân bằng: Tổng = Xóa + Hoàn thành (Đủ điều kiện lưu)";
+      } else if (conLai > 0) {
+        conLaiEl.innerText = `+${conLai.toLocaleString("vi-VN")}`;
+        conLaiEl.className = "remaining-badge remaining-positive";
+        conLaiEl.title = `Chưa đủ điều kiện lưu: Còn thiếu ${conLai} vị trí (Tổng > Xóa + Hoàn thành)`;
+      } else {
+        conLaiEl.innerText = `${conLai.toLocaleString("vi-VN")}`;
+        conLaiEl.className = "remaining-badge remaining-negative";
+        conLaiEl.title = `Chưa đủ điều kiện lưu: Bị dư ${Math.abs(conLai)} vị trí (Tổng < Xóa + Hoàn thành)`;
+      }
     };
 
     /**
@@ -1974,6 +2012,7 @@
       const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
       const htEl = document.getElementById(`inline_ht_${maTram}`);
       const xoaEl = document.getElementById(`inline_xoa_${maTram}`);
+      const themEl = document.getElementById(`inline_them_${maTram}`);
       const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
       const conLaiEl = document.getElementById(`inline_conlai_${maTram}`);
       const st = state.allStations.find(s => s.ma_tram === maTram);
@@ -1983,15 +2022,17 @@
         // 1. Tự động xóa trắng ngày hoàn thành và người nhập
         if (ngayEl) ngayEl.value = "";
         if (nguoiEl) nguoiEl.value = "";
-        // 2. Đặt Hoàn thành = trống, Xóa = trống
+        // 2. Đặt Hoàn thành = trống, Xóa = trống, Thêm = trống
         if (htEl) htEl.value = "";
         if (xoaEl) xoaEl.value = "";
+        if (themEl) themEl.value = "";
 
         // 3. Tính lại Còn lại = Tổng
         const tong = parseInt(st.tong, 10) || 0;
         if (conLaiEl) {
-          conLaiEl.innerText = tong.toLocaleString("vi-VN");
+          conLaiEl.innerText = `+${tong.toLocaleString("vi-VN")}`;
           conLaiEl.className = `remaining-badge ${tong > 0 ? 'remaining-positive' : 'remaining-zero'}`;
+          conLaiEl.title = `Chưa hoàn thành: Còn thiếu ${tong} vị trí`;
         }
 
         // 4. Chuyển nút Thao tác về "💾 Lưu" (trạng thái chưa lưu ban đầu)
@@ -2009,6 +2050,7 @@
         st.so_lan_sua = 0;
         st.so_luong_hoan_thanh = 0;
         st.xoa = 0;
+        st.them = 0;
         st.ngay_hoan_thanh = "";
         st.nguoi_nhap = "";
 
@@ -2052,6 +2094,7 @@
 
       const htEl = document.getElementById(`inline_ht_${maTram}`);
       const xoaEl = document.getElementById(`inline_xoa_${maTram}`);
+      const themEl = document.getElementById(`inline_them_${maTram}`);
       const ttEl = document.getElementById(`inline_tt_${maTram}`);
       const ngayEl = document.getElementById(`inline_ngay_${maTram}`);
       const nguoiEl = document.getElementById(`inline_nguoi_${maTram}`);
@@ -2078,15 +2121,18 @@
 
       let soLuongHoanThanh = 0;
       let xoa = 0;
+      let them = 0;
       let ngayHoanThanhVN = "";
 
       if (!isResetToInitial) {
         const valHtRaw = htEl ? htEl.value.trim() : "0";
         const valXoaRaw = xoaEl ? xoaEl.value.trim() : "0";
+        const valThemRaw = themEl ? themEl.value.trim() : "0";
         const valNgayRaw = ngayEl ? ngayEl.value : "";
 
         soLuongHoanThanh = valHtRaw === "" ? 0 : parseInt(valHtRaw, 10);
         xoa = valXoaRaw === "" ? 0 : parseInt(valXoaRaw, 10);
+        them = valThemRaw === "" ? 0 : parseInt(valThemRaw, 10);
 
         if (isNaN(soLuongHoanThanh) || soLuongHoanThanh < 0) {
           showToast(`[${maTram}] Số lượng hoàn thành phải là số >= 0!`, "error");
@@ -2097,6 +2143,24 @@
         if (isNaN(xoa) || xoa < 0) {
           showToast(`[${maTram}] Số lượng xóa phải là số >= 0!`, "error");
           if (xoaEl) xoaEl.focus();
+          return;
+        }
+
+        if (isNaN(them) || them < 0) {
+          showToast(`[${maTram}] Số lượng vị trí thêm phải là số >= 0!`, "error");
+          if (themEl) themEl.focus();
+          return;
+        }
+
+        // CÔNG THỨC KIỂM TRA ĐIỀU KIỆN LƯU: Bắt buộc Tổng = Xóa + Số lượng hoàn thành
+        const tong = parseInt(station.tong, 10) || 0;
+        if (tong !== (xoa + soLuongHoanThanh)) {
+          const diff = tong - (xoa + soLuongHoanThanh);
+          const diffText = diff > 0 
+            ? `còn thiếu ${diff} vị trí (Tổng ${tong} > Xóa ${xoa} + Hoàn thành ${soLuongHoanThanh})`
+            : `bị dư ${Math.abs(diff)} vị trí (Tổng ${tong} < Xóa ${xoa} + Hoàn thành ${soLuongHoanThanh})`;
+          showToast(`[${maTram}] CHƯA ĐỦ ĐIỀU KIỆN LƯU: Bắt buộc Tổng = Xóa + Số lượng hoàn thành! Hiện đang ${diffText}. Vui lòng kiểm tra lại!`, "error", 7000);
+          if (htEl) htEl.focus();
           return;
         }
 
@@ -2122,6 +2186,7 @@
         team_key: station.teamKey || state.currentTeam,
         so_luong_hoan_thanh: soLuongHoanThanh,
         xoa: xoa,
+        them: them,
         trang_thai: valTrangThai,
         ngay_hoan_thanh: ngayHoanThanhVN,
         nguoi_nhap: valNguoiNhap,
@@ -2138,6 +2203,7 @@
             station.so_lan_sua = 0;
             station.so_luong_hoan_thanh = 0;
             station.xoa = 0;
+            station.them = 0;
             station.trang_thai = "Chưa hoàn thành";
             station.ngay_hoan_thanh = "";
             station.con_lai = station.tong;
@@ -2155,6 +2221,7 @@
           }
           station.so_luong_hoan_thanh = soLuongHoanThanh;
           station.xoa = xoa;
+          station.them = them;
           station.trang_thai = valTrangThai;
           station.ngay_hoan_thanh = ngayHoanThanhVN;
           station.con_lai = station.tong - soLuongHoanThanh - xoa;
@@ -2264,6 +2331,7 @@
       const currentClientData = {
         so_luong_hoan_thanh: st.so_luong_hoan_thanh || 0,
         xoa: st.xoa || 0,
+        them: st.them || 0,
         trang_thai: st.trang_thai || "Chưa hoàn thành",
         ngay_hoan_thanh: st.ngay_hoan_thanh || ""
       };
