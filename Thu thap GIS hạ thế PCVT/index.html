@@ -69,9 +69,39 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       max-width: 1200px;
       margin: 0 auto;
+    }
+
+    .header-brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      height: 48px;
+      width: auto;
+      max-width: 150px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 3px 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+    }
+
+    @media (max-width: 600px) {
+      .header-logo {
+        height: 38px;
+        padding: 2px 6px;
+      }
+      .brand-title {
+        font-size: 0.92rem;
+      }
+      .brand-title span {
+        font-size: 0.72rem;
+      }
     }
 
     .brand-title {
@@ -79,8 +109,8 @@
       font-weight: 800;
       letter-spacing: -0.2px;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      gap: 2px;
       line-height: 1.2;
     }
 
@@ -504,6 +534,171 @@
     .metric-value.added { color: #7c3aed; }
     .metric-value.remaining { color: #d97706; }
     .metric-value.negative { color: #ef4444; }
+
+    /* EXECUTIVE BREAKDOWN & OVERVIEW FOR 3 TEAMS */
+    .breakdown-section {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1.5px dashed #cbd5e1;
+    }
+
+    .breakdown-header {
+      font-size: 0.90rem;
+      font-weight: 800;
+      color: var(--evn-dark-blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .breakdown-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .breakdown-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .breakdown-card:hover {
+      border-color: var(--evn-blue);
+      box-shadow: 0 4px 14px rgba(0, 91, 170, 0.14);
+      transform: translateY(-2px);
+      background: #ffffff;
+    }
+
+    .breakdown-card-title {
+      font-weight: 800;
+      font-size: 0.90rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--evn-dark-blue);
+    }
+
+    .breakdown-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      text-align: center;
+      margin-bottom: 8px;
+      background: #ffffff;
+      padding: 8px 4px;
+      border-radius: 6px;
+      border: 1px solid #edf2f7;
+    }
+
+    .breakdown-mini-label {
+      font-size: 0.70rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .breakdown-mini-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .breakdown-progress-line {
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .breakdown-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* BẢNG TỔNG HỢP SO SÁNH 3 ĐỘI TRONG TAB CHỨC NĂNG CHUNG */
+    .overview-table-wrap {
+      margin-top: 14px;
+      overflow-x: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: #ffffff;
+    }
+
+    .overview-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    .overview-summary-table th {
+      background: #f1f5f9;
+      color: var(--evn-dark-blue);
+      font-weight: 800;
+      padding: 10px 12px;
+      border-bottom: 2px solid #cbd5e1;
+      white-space: nowrap;
+    }
+
+    .overview-summary-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+      font-weight: 600;
+    }
+
+    .overview-summary-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .overview-summary-table tfoot td {
+      background: #f8fafc;
+      font-weight: 800;
+      border-top: 2px solid var(--evn-blue);
+      color: var(--evn-dark-blue);
+    }
+
+    .btn-team-jump {
+      background: var(--evn-light-blue);
+      color: var(--evn-dark-blue);
+      border: 1px solid #bfdbfe;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-team-jump:hover {
+      background: var(--evn-blue);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
 
     /* 4. TABLE SECTION */
     .card {
@@ -1098,9 +1293,12 @@
   <!-- HEADER -->
   <header class="app-header">
     <div class="header-top">
-      <div class="brand-title">
-        ⚡ THU THẬP GIS HẠ THẾ
-        <span>Công ty Điện lực Vũng Tàu (PCVT)</span>
+      <div class="header-brand-wrap">
+        <img src="logo.png" alt="EVN Logo" class="header-logo" onerror="this.style.display='none'">
+        <div class="brand-title">
+          ⚡ THU THẬP GIS HẠ THẾ
+          <span>Công ty Điện lực Vũng Tàu (PCVT)</span>
+        </div>
       </div>
       <div class="header-actions">
         <button id="btnReload" class="btn-icon" title="Tải lại dữ liệu">
@@ -1133,25 +1331,30 @@
       </div>
     </div>
 
-    <!-- 1. KHUNG ĐIỀU HƯỚNG PHÒNG / ĐỘI VÀ TÌM KIẾM LỒNG NHAU (CHỈ TÌM TRONG ĐỘI ĐANG CHỌN) -->
+    <!-- 1. KHUNG ĐIỀU HƯỚNG TAB: CHỨC NĂNG CHUNG (BÊN TRÁI NHẤT) & 3 PHÒNG/ĐỘI -->
     <section class="team-workspace-card">
       <div class="tabs-nav" id="departmentTabs">
-        <button class="tab-btn active" data-team="kinh_doanh">
+        <!-- TAB CHỨC NĂNG CHUNG BÊN TRÁI NHẤT THEO YÊU CẦU -->
+        <button class="tab-btn active" data-team="tong_hop" id="tabTongHop">
+          <span class="tab-btn-title">🌐 Chức Năng Chung</span>
+          <span class="tab-badge" id="badgeTongHop">0 trạm</span>
+        </button>
+        <button class="tab-btn" data-team="kinh_doanh" id="tabKD">
           <span class="tab-btn-title">🏢 Phòng Kinh Doanh</span>
           <span class="tab-badge" id="badgeKD">0 trạm</span>
         </button>
-        <button class="tab-btn" data-team="do_dem">
+        <button class="tab-btn" data-team="do_dem" id="tabDD">
           <span class="tab-btn-title">⚡ Đội QL Hệ Thống Đo Đếm</span>
           <span class="tab-badge" id="badgeDD">0 trạm</span>
         </button>
-        <button class="tab-btn" data-team="thu_ghi">
+        <button class="tab-btn" data-team="thu_ghi" id="tabTG">
           <span class="tab-btn-title">📋 Đội QL Thu Ghi</span>
           <span class="tab-badge" id="badgeTG">0 trạm</span>
         </button>
       </div>
 
-      <!-- THANH TÌM KIẾM NẰM TRỌN TRONG PHÒNG / ĐỘI ĐANG CHỌN -->
-      <div class="nested-search-body">
+      <!-- THANH TÌM KIẾM THEO TRẠM: CHỈ HIỂN THỊ KHI Ở 3 TAB PHÒNG/ĐỘI, ẨN KHI Ở TAB CHỨC NĂNG CHUNG -->
+      <div class="nested-search-body" id="nestedSearchSection" style="display: none;">
         <div class="search-header-meta">
           <div class="search-team-indicator">
             <span>🔍 Đang tìm kiếm trong:</span>
@@ -1164,17 +1367,17 @@
         </div>
         <div class="search-input-box">
           <span class="search-icon-left">🔍</span>
-          <input type="text" id="topSearchInput" placeholder="Gõ MA_TRAM hoặc ID trạm mới để tìm trong Phòng Kinh Doanh..." autocomplete="off">
+          <input type="text" id="topSearchInput" placeholder="Gõ MA_TRAM hoặc ID trạm mới để tìm trong phòng/đội..." autocomplete="off">
           <button id="btnClearTopSearch" class="search-btn-clear" style="display: none;" title="Xóa tìm kiếm">✕</button>
         </div>
       </div>
     </section>
 
-    <!-- 3. SUMMARY BAR (THANH TỔNG HỢP TIẾN ĐỘ CỦA ĐỘI) -->
+    <!-- 3. SUMMARY BAR (THANH TỔNG HỢP TIẾN ĐỘ) -->
     <section class="summary-card">
       <div class="summary-header">
         <div class="summary-title" id="summaryTeamTitle">
-          📊 Tổng hợp tiến độ: Phòng Kinh Doanh
+          🌐 Báo Cáo Tổng Hợp Chung: 3 Phòng / Đội (Toàn Công Ty)
         </div>
         <div class="summary-progress-label" id="summaryPercent">
           0.0%
@@ -1185,34 +1388,70 @@
       </div>
       <div class="summary-grid">
         <div class="metric-box">
-          <div class="metric-label">Số trạm</div>
+          <div class="metric-label" id="labelStationCount">Số trạm</div>
           <div class="metric-value" id="metricStationCount">0</div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">Tổng khối lượng</div>
+          <div class="metric-label" id="labelTotalVolume">Tổng khối lượng</div>
           <div class="metric-value" id="metricTotalVolume">0</div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">Đã hoàn thành</div>
+          <div class="metric-label" id="labelCompleted" style="color: #059669; font-weight: 700;">Tổng Hoàn thành (3 Đội)</div>
           <div class="metric-value completed" id="metricCompleted">0</div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">Đã xóa</div>
+          <div class="metric-label" id="labelDeleted" style="color: #dc2626; font-weight: 700;">Tổng Xóa (3 Đội)</div>
           <div class="metric-value deleted" id="metricDeleted">0</div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">Vị trí thêm</div>
+          <div class="metric-label" id="labelAdded" style="color: #7c3aed; font-weight: 700;">Tổng Thêm (3 Đội)</div>
           <div class="metric-value added" id="metricAdded">0</div>
         </div>
         <div class="metric-box col-span-mobile">
-          <div class="metric-label">Còn lại</div>
+          <div class="metric-label" id="labelRemaining">Còn lại</div>
           <div class="metric-value remaining" id="metricRemaining">0</div>
+        </div>
+      </div>
+
+      <!-- BẢNG PHÂN BỔ CHI TIẾT 3 PHÒNG / ĐỘI (CHỈ HIỂN THỊ KHI Ở TAB CHỨC NĂNG CHUNG) -->
+      <div id="teamBreakdownSection" class="breakdown-section" style="display: block;">
+        <div class="breakdown-header">
+          <span>📊 Phân bổ chi tiết số liệu theo 3 Phòng / Đội:</span>
+          <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">💡 Bấm vào từng đội để chuyển nhanh tới Tab nhập liệu của đội đó</span>
+        </div>
+        <div class="breakdown-grid" id="teamBreakdownGrid">
+          <!-- 3 cards render tự động qua JS -->
+        </div>
+
+        <!-- BẢNG TỔNG HỢP SO SÁNH 3 ĐỘI TRONG TAB CHỨC NĂNG CHUNG -->
+        <div class="overview-table-wrap">
+          <table class="overview-summary-table">
+            <thead>
+              <tr>
+                <th style="text-align: left;">Phòng / Đội</th>
+                <th style="text-align: center;">Số trạm</th>
+                <th style="text-align: right;">Tổng KL</th>
+                <th style="text-align: right; color: #059669;">Hoàn thành</th>
+                <th style="text-align: right; color: #dc2626;">Xóa</th>
+                <th style="text-align: right; color: #7c3aed;">Thêm</th>
+                <th style="text-align: right; color: #d97706;">Còn lại</th>
+                <th style="text-align: center;">% Hoàn thành (Tổng/Tổng KL)</th>
+                <th style="text-align: center; width: 115px;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="overviewTableBody">
+              <!-- Render tự động qua JS -->
+            </tbody>
+            <tfoot id="overviewTableFoot">
+              <!-- Render hàng tổng cộng -->
+            </tfoot>
+          </table>
         </div>
       </div>
     </section>
 
-    <!-- 4. BẢNG NHẬP CÁC HẠNG MỤC THEO PHƯƠNG NGANG -->
-    <section class="card">
+    <!-- 4. BẢNG NHẬP CÁC HẠNG MỤC THEO PHƯƠNG NGANG (ẨN Ở TAB CHỨC NĂNG CHUNG THEO YÊU CẦU, CHỈ HIỆN KHI Ở 3 TAB PHÒNG/ĐỘI) -->
+    <section class="card" id="stationsTableSection" style="display: none;">
       <div class="card-title">
         <span>📋 Danh Sách Trạm & Nhập Số Liệu Theo Phương Ngang</span>
         <span id="tableRecordCount" style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">
@@ -1322,7 +1561,7 @@
     const state = {
       isDemoMode: false,
       allStations: [],
-      currentTeam: 'kinh_doanh', // 'kinh_doanh' | 'do_dem' | 'thu_ghi'
+      currentTeam: 'tong_hop', // 'tong_hop' | 'kinh_doanh' | 'do_dem' | 'thu_ghi'
       unlockedStations: {},     // map: ma_tram => true (khi được mở khóa sửa 1 lần)
       unlockingMaTram: null,    // trạm đang mở modal PIN
       isSubmitting: false
@@ -1474,9 +1713,12 @@
     }
 
     /**
-     * Lọc trạm theo đúng phòng/đội tương ứng từng Sheet
+     * Lọc trạm theo đúng phòng/đội tương ứng từng Sheet (hoặc lấy toàn bộ khi ở Tab Chức Năng Chung)
      */
     function getStationsForTeam(teamKey) {
+      if (teamKey === 'tong_hop') {
+        return state.allStations;
+      }
       return state.allStations.filter(st => {
         if (st.teamKey) {
           return st.teamKey === teamKey;
@@ -1494,9 +1736,18 @@
     }
 
     /**
-     * Cập nhật thông tin chỉ báo và placeholder của thanh tìm kiếm lồng theo từng phòng/đội
+     * Cập nhật thông tin chỉ báo và placeholder của thanh tìm kiếm
+     * Ẩn thanh tìm kiếm khi ở tab Chức Năng Chung (vì không hiển thị bảng trạm ở tab này)
      */
     function updateSearchTeamIndicator() {
+      const isTongHop = (state.currentTeam === 'tong_hop');
+      const searchSection = document.getElementById("nestedSearchSection");
+      if (searchSection) {
+        searchSection.style.display = isTongHop ? 'none' : 'block';
+      }
+
+      if (isTongHop) return;
+
       const teamNames = {
         'kinh_doanh': 'Phòng Kinh Doanh',
         'do_dem': 'Đội QL Hệ Thống Đo Đếm',
@@ -1534,26 +1785,34 @@
     }
 
     function updateTabBadges() {
+      const allCount = state.allStations.length;
       const kdCount = getStationsForTeam('kinh_doanh').length;
       const ddCount = getStationsForTeam('do_dem').length;
       const tgCount = getStationsForTeam('thu_ghi').length;
 
-      document.getElementById("badgeKD").innerText = `${kdCount} trạm`;
-      document.getElementById("badgeDD").innerText = `${ddCount} trạm`;
-      document.getElementById("badgeTG").innerText = `${tgCount} trạm`;
+      const badgeTH = document.getElementById("badgeTongHop");
+      if (badgeTH) badgeTH.innerText = `${allCount} trạm`;
+      const badgeKD = document.getElementById("badgeKD");
+      if (badgeKD) badgeKD.innerText = `${kdCount} trạm`;
+      const badgeDD = document.getElementById("badgeDD");
+      if (badgeDD) badgeDD.innerText = `${ddCount} trạm`;
+      const badgeTG = document.getElementById("badgeTG");
+      if (badgeTG) badgeTG.innerText = `${tgCount} trạm`;
     }
 
     function renderSummaryBar() {
+      const isTongHop = (state.currentTeam === 'tong_hop');
       const teamStations = getStationsForTeam(state.currentTeam);
       
       const teamTitles = {
-        'kinh_doanh': 'Phòng Kinh Doanh',
-        'do_dem': 'Đội Quản lý hệ thống đo đếm',
-        'thu_ghi': 'Đội quản lý thu ghi'
+        'tong_hop': '🌐 Báo Cáo Tổng Hợp Chung: 3 Phòng / Đội (Toàn Công Ty)',
+        'kinh_doanh': '📊 Tổng hợp tiến độ: Phòng Kinh Doanh',
+        'do_dem': '📊 Tổng hợp tiến độ: Đội Quản lý hệ thống đo đếm',
+        'thu_ghi': '📊 Tổng hợp tiến độ: Đội quản lý thu ghi'
       };
 
-      const titleName = teamTitles[state.currentTeam] || 'Phòng Kinh Doanh';
-      document.getElementById("summaryTeamTitle").innerText = `📊 Tổng hợp tiến độ: ${titleName}`;
+      const titleName = teamTitles[state.currentTeam] || 'Tổng hợp tiến độ';
+      document.getElementById("summaryTeamTitle").innerText = titleName;
 
       const totalStations = teamStations.length;
       let totalVolume = 0;
@@ -1576,12 +1835,30 @@
       });
 
       // CÔNG THỨC MỚI: Còn lại = Tổng khối lượng - Cột Tổng (của các trạm đã hoàn thành)
-      // chứ không phải bằng Tổng khối lượng trừ đi hoàn thành và xóa
       const remainingVolume = totalVolume - completedStationsTotalVolume;
-      // Tỉ lệ % thực hiện được tính theo % số lượng trạm thực hiện
-      const progressPercent = totalStations > 0 
-        ? (Math.round((completedStations / totalStations) * 1000) / 10) 
-        : 0;
+
+      // CÔNG THỨC % TIẾN ĐỘ:
+      // - Với Tab Chức Năng Chung (tong_hop): % hoàn thành của cả tổng 3 phòng đội dựa trên Tổng / Tổng khối lượng
+      // - Với Tab từng phòng/đội riêng lẻ: % số lượng trạm thực hiện
+      let progressPercent = 0;
+      if (isTongHop) {
+        progressPercent = totalVolume > 0 
+          ? (Math.round((completedStationsTotalVolume / totalVolume) * 1000) / 10) 
+          : 0;
+      } else {
+        progressPercent = totalStations > 0 
+          ? (Math.round((completedStations / totalStations) * 1000) / 10) 
+          : 0;
+      }
+
+      // Nhãn tiêu đề 3 chỉ số theo yêu cầu
+      const lblComp = document.getElementById("labelCompleted");
+      const lblDel = document.getElementById("labelDeleted");
+      const lblAdd = document.getElementById("labelAdded");
+
+      if (lblComp) lblComp.innerText = isTongHop ? "Tổng Hoàn thành (3 Đội)" : "Đã hoàn thành";
+      if (lblDel) lblDel.innerText = isTongHop ? "Tổng Xóa (3 Đội)" : "Đã xóa";
+      if (lblAdd) lblAdd.innerText = isTongHop ? "Tổng Thêm (3 Đội)" : "Vị trí thêm";
 
       document.getElementById("metricStationCount").innerText = totalStations;
       document.getElementById("metricTotalVolume").innerText = totalVolume.toLocaleString("vi-VN");
@@ -1594,14 +1871,213 @@
       remEl.innerText = remainingVolume.toLocaleString("vi-VN");
       remEl.className = `metric-value ${remainingVolume < 0 ? 'negative' : 'remaining'}`;
 
-      document.getElementById("summaryPercent").innerText = `${progressPercent.toFixed(1)}%`;
+      const percentSuffix = isTongHop ? "% (Tổng/Tổng KL)" : "%";
+      document.getElementById("summaryPercent").innerText = `${progressPercent.toFixed(1)}${percentSuffix}`;
       document.getElementById("progressBarFill").style.width = `${Math.min(progressPercent, 100)}%`;
+
+      // Render Phân rã 3 đội (Executive Breakdown) khi ở tab Chức Năng Chung
+      const breakdownSection = document.getElementById("teamBreakdownSection");
+      if (breakdownSection) {
+        if (isTongHop) {
+          breakdownSection.style.display = "block";
+          renderTeamBreakdownGrid();
+          renderOverviewTable();
+        } else {
+          breakdownSection.style.display = "none";
+        }
+      }
     }
 
     /**
+     * Hiển thị 3 thẻ so sánh 3 phòng/đội trong tab Chức Năng Chung
+     */
+    function renderTeamBreakdownGrid() {
+      const gridEl = document.getElementById("teamBreakdownGrid");
+      if (!gridEl) return;
+
+      const teams = [
+        { key: 'kinh_doanh', name: '🏢 Phòng Kinh Doanh', sheet: 'Kinh doanh' },
+        { key: 'do_dem', name: '⚡ Đội QL Hệ Thống Đo Đếm', sheet: 'Đội Quản lý HTĐĐ' },
+        { key: 'thu_ghi', name: '📋 Đội QL Thu Ghi', sheet: 'Đội Quản lý Thu Ghi' }
+      ];
+
+      let html = "";
+      teams.forEach(t => {
+        const stations = getStationsForTeam(t.key);
+        let tVolume = 0;
+        let tCompVol = 0;
+        let tDelVol = 0;
+        let tAddVol = 0;
+        let tCompStations = 0;
+        let tCompStationsVol = 0;
+
+        stations.forEach(s => {
+          const tong = (parseInt(s.tong, 10) || 0);
+          tVolume += tong;
+          tCompVol += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
+          tDelVol += (parseInt(s.xoa, 10) || 0);
+          tAddVol += (parseInt(s.them, 10) || 0);
+          if (s.trang_thai === "Hoàn thành") {
+            tCompStations++;
+            tCompStationsVol += tong;
+          }
+        });
+
+        const tRemVol = tVolume - tCompStationsVol;
+        // % theo Tổng/Tổng KL của đội
+        const tPercent = tVolume > 0 ? (Math.round((tCompStationsVol / tVolume) * 1000) / 10) : 0;
+        // % theo số trạm
+        const tStationPercent = stations.length > 0 ? (Math.round((tCompStations / stations.length) * 1000) / 10) : 0;
+
+        html += `
+          <div class="breakdown-card" onclick="switchToTeam('${t.key}')" title="Bấm để chuyển tới tab ${t.name}">
+            <div class="breakdown-card-title">
+              <span>${t.name}</span>
+              <span class="tab-badge" style="background:#e0f2fe; color:#0369a1;">${stations.length} trạm</span>
+            </div>
+            
+            <div class="breakdown-stats-row">
+              <div>
+                <div class="breakdown-mini-label">Hoàn thành</div>
+                <div class="breakdown-mini-val" style="color: #059669;">${tCompVol.toLocaleString("vi-VN")}</div>
+              </div>
+              <div>
+                <div class="breakdown-mini-label">Xóa</div>
+                <div class="breakdown-mini-val" style="color: #dc2626;">${tDelVol.toLocaleString("vi-VN")}</div>
+              </div>
+              <div>
+                <div class="breakdown-mini-label">Thêm</div>
+                <div class="breakdown-mini-val" style="color: #7c3aed;">${tAddVol.toLocaleString("vi-VN")}</div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: #475569; margin-top: 4px;">
+              <span>Tiến độ (Tổng/Tổng KL): <strong style="color: var(--evn-blue);">${tPercent.toFixed(1)}%</strong></span>
+              <span>Đã xong: <strong>${tCompStations}/${stations.length} trạm</strong> (${tStationPercent.toFixed(1)}%)</span>
+            </div>
+
+            <div class="breakdown-progress-line">
+              <div class="breakdown-progress-bar" style="width: ${Math.min(tPercent, 100)}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      gridEl.innerHTML = html;
+    }
+
+    /**
+     * Bảng so sánh chi tiết số liệu 3 phòng/đội
+     */
+    function renderOverviewTable() {
+      const tbody = document.getElementById("overviewTableBody");
+      const tfoot = document.getElementById("overviewTableFoot");
+      if (!tbody || !tfoot) return;
+
+      const teams = [
+        { key: 'kinh_doanh', name: '🏢 Phòng Kinh Doanh' },
+        { key: 'do_dem', name: '⚡ Đội QL Hệ Thống Đo Đếm' },
+        { key: 'thu_ghi', name: '📋 Đội QL Thu Ghi' }
+      ];
+
+      let totalAllStations = 0;
+      let totalAllVolume = 0;
+      let totalAllCompVol = 0;
+      let totalAllDelVol = 0;
+      let totalAllAddVol = 0;
+      let totalAllCompStationsVol = 0;
+
+      let bodyHtml = "";
+      teams.forEach(t => {
+        const stations = getStationsForTeam(t.key);
+        let tVol = 0;
+        let tCompVol = 0;
+        let tDelVol = 0;
+        let tAddVol = 0;
+        let tCompStationsVol = 0;
+
+        stations.forEach(s => {
+          const tong = (parseInt(s.tong, 10) || 0);
+          tVol += tong;
+          tCompVol += (parseInt(s.so_luong_hoan_thanh, 10) || 0);
+          tDelVol += (parseInt(s.xoa, 10) || 0);
+          tAddVol += (parseInt(s.them, 10) || 0);
+          if (s.trang_thai === "Hoàn thành") {
+            tCompStationsVol += tong;
+          }
+        });
+
+        const tRemVol = tVol - tCompStationsVol;
+        const tPercent = tVol > 0 ? (Math.round((tCompStationsVol / tVol) * 1000) / 10) : 0;
+
+        totalAllStations += stations.length;
+        totalAllVolume += tVol;
+        totalAllCompVol += tCompVol;
+        totalAllDelVol += tDelVol;
+        totalAllAddVol += tAddVol;
+        totalAllCompStationsVol += tCompStationsVol;
+
+        bodyHtml += `
+          <tr>
+            <td style="font-weight: 800; color: var(--evn-dark-blue);">${t.name}</td>
+            <td style="text-align: center; font-family: monospace; font-weight: 700;">${stations.length}</td>
+            <td style="text-align: right; font-family: monospace; font-weight: 700;">${tVol.toLocaleString("vi-VN")}</td>
+            <td style="text-align: right; font-family: monospace; font-weight: 800; color: #059669;">${tCompVol.toLocaleString("vi-VN")}</td>
+            <td style="text-align: right; font-family: monospace; font-weight: 800; color: #dc2626;">${tDelVol.toLocaleString("vi-VN")}</td>
+            <td style="text-align: right; font-family: monospace; font-weight: 800; color: #7c3aed;">${tAddVol.toLocaleString("vi-VN")}</td>
+            <td style="text-align: right; font-family: monospace; font-weight: 700; color: #d97706;">${tRemVol.toLocaleString("vi-VN")}</td>
+            <td style="text-align: center; font-weight: 800; color: var(--evn-blue); font-size: 0.92rem;">
+              ${tPercent.toFixed(1)}%
+            </td>
+            <td style="text-align: center;">
+              <button type="button" class="btn-team-jump" onclick="switchToTeam('${t.key}')">
+                Vào nhập ➔
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = bodyHtml;
+
+      const totalAllRemVol = totalAllVolume - totalAllCompStationsVol;
+      const totalAllPercent = totalAllVolume > 0 ? (Math.round((totalAllCompStationsVol / totalAllVolume) * 1000) / 10) : 0;
+
+      tfoot.innerHTML = `
+        <tr>
+          <td style="text-transform: uppercase;">🌐 TỔNG CỘNG (3 ĐỘI)</td>
+          <td style="text-align: center; font-family: monospace;">${totalAllStations}</td>
+          <td style="text-align: right; font-family: monospace;">${totalAllVolume.toLocaleString("vi-VN")}</td>
+          <td style="text-align: right; font-family: monospace; color: #059669;">${totalAllCompVol.toLocaleString("vi-VN")}</td>
+          <td style="text-align: right; font-family: monospace; color: #dc2626;">${totalAllDelVol.toLocaleString("vi-VN")}</td>
+          <td style="text-align: right; font-family: monospace; color: #7c3aed;">${totalAllAddVol.toLocaleString("vi-VN")}</td>
+          <td style="text-align: right; font-family: monospace; color: #d97706;">${totalAllRemVol.toLocaleString("vi-VN")}</td>
+          <td style="text-align: center; font-size: 0.95rem; color: var(--evn-blue);">${totalAllPercent.toFixed(1)}%</td>
+          <td></td>
+        </tr>
+      `;
+    }
+
+    /**
+     * Chuyển nhanh tab từ card phân rã hoặc bảng tổng quan
+     */
+    window.switchToTeam = function(teamKey) {
+      const btn = document.querySelector(`.tab-btn[data-team="${teamKey}"]`);
+      if (btn) btn.click();
+    };
+
+    /**
      * HIỂN THỊ BẢNG VỚI 4 CỘT NHẬP THEO PHƯƠNG NGANG
+     * (KHÔNG THỂ HIỆN BẢNG KHI Ở TAB CHỨC NĂNG CHUNG THEO YÊU CẦU NGƯỜI DÙNG)
      */
     function renderTable() {
+      const tableSection = document.getElementById("stationsTableSection");
+      if (state.currentTeam === 'tong_hop') {
+        if (tableSection) tableSection.style.display = "none";
+        return;
+      }
+      if (tableSection) tableSection.style.display = "block";
+
       const teamStations = getStationsForTeam(state.currentTeam);
       const searchKeyword = (document.getElementById("topSearchInput").value || "").trim().toLowerCase();
       const statusFilter = document.getElementById("tableFilterStatus").value;
